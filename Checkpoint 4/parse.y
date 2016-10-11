@@ -7,6 +7,8 @@
  *
  * Programmer --- Patrick Fischer
  * Looks like I need to add something for a newline.
+ * I need to change my list syntax. List is not a reserved word.
+ * arrayname[exp] should instead be arrayname[LITINT];
  * Note: This parser assumes that the algsection is blank.
  * Should look like main;, data: (with variables, etc), blank algorithm:,
  * and then an end main;.
