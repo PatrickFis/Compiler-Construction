@@ -59,7 +59,10 @@
 %token        OR
 %token        NOT
 %token        VAR
+%token        NEWLINE
 %token <sval> VARIABLE
+
+%%
 
 program : headingstmt datasection algsection endmainstmt;
 
@@ -157,3 +160,10 @@ factor: atom
        ;
 
 commentstmt: COMMENT;
+
+%%
+
+int yyerror() {
+  printf("Called yyerror()\n");
+  return 0;
+}
