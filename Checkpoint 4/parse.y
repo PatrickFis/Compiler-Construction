@@ -69,8 +69,8 @@ program : headingstmt datasection algsection endstmt;
 
 headingstmt: RWMAIN SEMICOLON;
 
-datasection: DATA COLON
-            |DATA COLON decstmtlist
+datasection: RWDATA COLON
+            |RWDATA COLON decstmtlist
             ; // decstmtlist is a listing of the variables used by this Slic program.
 
 decstmtlist: decstmtlist decstmt
