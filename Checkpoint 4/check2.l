@@ -76,65 +76,123 @@
 
 (l|L)(i|I)(s|S)(t|T)                               { if(DEBUG) printf("RWLIST: %s\n", yytext); }
 
-(u|U)(p|P)(w|W)(a|A)(r|R)(d|D)                     { if(DEBUG) printf("RWUPWARD: %s\n", yytext); }
+(u|U)(p|P)(w|W)(a|A)(r|R)(d|D)                     { if(DEBUG) printf("RWUPWARD: %s\n", yytext);
+                                                     return RWUPWARD;
+                                                   }
 
-(d|D)(o|O)(w|W)(n|N)(w|W)(a|A)(r|R)(d|D)           { if(DEBUG) printf("RWDOWNWARD: %s\n", yytext); }
+(d|D)(o|O)(w|W)(n|N)(w|W)(a|A)(r|R)(d|D)           { if(DEBUG) printf("RWDOWNWARD: %s\n", yytext);
+                                                     return RWDOWNWARD;
+                                                   }
 
-(t|T)(o|O)                                         { if(DEBUG) printf("RWTO: %s\n", yytext); }
+(t|T)(o|O)                                         { if(DEBUG) printf("RWTO: %s\n", yytext);
+                                                     return RWTO;
+                                                   }
 
-(r|R)(e|E)(a|A)(d|D)                               { if(DEBUG) printf("RWREAD: %s\n", yytext); }
+(r|R)(e|E)(a|A)(d|D)                               { if(DEBUG) printf("RWREAD: %s\n", yytext);
+                                                     return RWREAD;
+                                                   }
 
-(p|P)(r|R)(i|I)(n|N)(t|T)                          { if(DEBUG) printf("RWPRINT: %s\n", yytext); }
+(p|P)(r|R)(i|I)(n|N)(t|T)                          { if(DEBUG) printf("RWPRINT: %s\n", yytext);
+                                                     return RWPRINT;
+                                                   }
 
-\"([^\\\"]|\\.)*\"                                 { if(DEBUG) printf("CHARSTRING: %s\n", yytext); }
+\"([^\\\"]|\\.)*\"                                 { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
+                                                     return CHARSTRING;
+                                                   }
 
 #.*                                                { if(DEBUG) printf("COMMENT: %s\n", yytext); }
 
-!                                                  { if(DEBUG) printf("CARRETURN: %s\n", yytext); }
+!                                                  { if(DEBUG) printf("CARRETURN: %s\n", yytext);
+                                                     return CARRETURN;
+                                                   }
 
-":="                                               { if(DEBUG) printf("ASSIGNOP: %s\n", yytext); }
+":="                                               { if(DEBUG) printf("ASSIGNOP: %s\n", yytext);
+                                                     return ASSIGNOP;
+                                                   }
 
-,                                                  { if(DEBUG) printf("COMMA: %s\n", yytext); }
+,                                                  { if(DEBUG) printf("COMMA: %s\n", yytext);
+                                                     return SEMICOLON;
+                                                   }
 
-";"                                                { if(DEBUG) printf("SEMICOLON: %s\n", yytext); }
+";"                                                { if(DEBUG) printf("SEMICOLON: %s\n", yytext);
+                                                     return SEMICOLON;
+                                                   }
 
-":"                                                { if(DEBUG) printf("COLON: %s\n", yytext); }
+":"                                                { if(DEBUG) printf("COLON: %s\n", yytext);
+                                                     return COLON;
+                                                   }
 
-"("                                                { if(DEBUG) printf("LPAREN: %s\n", yytext); }
+"("                                                { if(DEBUG) printf("LPAREN: %s\n", yytext);
+                                                     return LPAREN;
+                                                   }
 
-")"                                                { if(DEBUG) printf("RPAREN: %s\n", yytext); }
+")"                                                { if(DEBUG) printf("RPAREN: %s\n", yytext);
+                                                     return RPAREN;
+                                                   }
 
-"["										                             { if(DEBUG) printf("LBRACK: %s\n", yytext); }
+"["										                             { if(DEBUG) printf("LBRACK: %s\n", yytext);
+                                                     return LBRACK;
+                                                   }
 
-"]"										                             { if(DEBUG) printf("RBRACK: %s\n", yytext); }
+"]"										                             { if(DEBUG) printf("RBRACK: %s\n", yytext);
+                                                     return RBRACK;
+                                                   }
 
-"+"										                             { if(DEBUG) printf("ADD: %s\n", yytext); }
+"+"										                             { if(DEBUG) printf("ADD: %s\n", yytext);
+                                                     return ADD;
+                                                   }
 
-"-"										                             { if(DEBUG) printf("MINUS: %s\n", yytext); }
+"-"										                             { if(DEBUG) printf("MINUS: %s\n", yytext);
+                                                     return MINUS;
+                                                   }
 
-"*"										                             { if(DEBUG) printf("MULT: %s\n", yytext); }
+"*"										                             { if(DEBUG) printf("MULT: %s\n", yytext);
+                                                     return MULT;
+                                                   }
 
-"/"										                             { if(DEBUG) printf("DIV: %s\n", yytext); }
+"/"										                             { if(DEBUG) printf("DIV: %s\n", yytext);
+                                                     return DIV;
+                                                   }
 
-"<"										                             { if(DEBUG) printf("LESS: %s\n", yytext); }
+"<"										                             { if(DEBUG) printf("LESS: %s\n", yytext);
+                                                     return LESS;
+                                                   }
 
-">"									 	                             { if(DEBUG) printf("GREATER: %s\n", yytext); }
+">"									 	                             { if(DEBUG) printf("GREATER: %s\n", yytext);
+                                                     return GREATER;
+                                                   }
 
-"<="										                           { if(DEBUG) printf("LESSEQU: %s\n", yytext); }
+"<="										                           { if(DEBUG) printf("LESSEQU: %s\n", yytext);
+                                                     return LESSEQU;
+                                                   }
 
-">+"										                           { if(DEBUG) printf("GREATEQU: %s\n", yytext); }
+">="										                           { if(DEBUG) printf("GREATEQU: %s\n", yytext);
+                                                     return GREATEQU;
+                                                   }
 
-"="										                             { if(DEBUG) printf("EQUAL: %s\n", yytext); }
+"="										                             { if(DEBUG) printf("EQUAL: %s\n", yytext);
+                                                     return EQUAL;
+                                                   }
 
-"<>"										                           { if(DEBUG) printf("NOTEQUAL: %s\n", yytext); }
+"<>"										                           { if(DEBUG) printf("NOTEQUAL: %s\n", yytext);
+                                                     return NOTEQUAL;
+                                                   }
 
-"&"										                             { if(DEBUG) printf("AND: %s\n", yytext); }
+"&"										                             { if(DEBUG) printf("AND: %s\n", yytext);
+                                                     return AND;
+                                                   }
 
-"|"										                             { if(DEBUG) printf("OR: %s\n", yytext); }
+"|"										                             { if(DEBUG) printf("OR: %s\n", yytext);
+                                                     return OR;
+                                                   }
 
-"~"										                             { if(DEBUG) printf("NOT: %s\n", yytext); }
+"~"										                             { if(DEBUG) printf("NOT: %s\n", yytext);
+                                                     return NOT;
+                                                   }
 
-([a-zA-Z][a-zA-Z0-9]*)+                            { if(DEBUG) printf("VAR: %s\n", yytext); }
+([a-zA-Z][a-zA-Z0-9]*)+                            { if(DEBUG) printf("VAR: %s\n", yytext);
+                                                     return VAR;
+                                                   }
 
 .|\n                                               { if(DEBUG) printf("Possible error: %s\n", yytext); }
 
