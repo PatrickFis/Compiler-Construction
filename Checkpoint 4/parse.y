@@ -8,6 +8,8 @@
  * Programmer --- Patrick Fischer
  * Looks like I need to add something for a newline.
  * Note: This parser assumes that the algsection is blank.
+ * Should look like main;, data: (with variables, etc), blank algorithm:,
+ * and then an end main;.
  * ========================================================================
  */
 
