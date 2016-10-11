@@ -7,6 +7,7 @@
  *
  * Programmer --- Patrick Fischer
  * Looks like I need to add something for a newline.
+ * Note: This parser assumes that the algsection is blank.
  * ========================================================================
  */
 

@@ -111,7 +111,7 @@
                                                    }
 
 ,                                                  { if(DEBUG) printf("COMMA: %s\n", yytext);
-                                                     return SEMICOLON;
+                                                     return COMMA;
                                                    }
 
 ";"                                                { if(DEBUG) printf("SEMICOLON: %s\n", yytext);
