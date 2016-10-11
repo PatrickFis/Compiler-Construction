@@ -39,6 +39,7 @@
 %token        CHARSTRING
 %token        CARRETURN
 %token        ASSIGNOP
+%token        COMMA
 %token        SEMICOLON
 %token        COLON
 %token        LPAREN
@@ -159,7 +160,7 @@ factor: atom
        |LPAREN exp RPAREN
        ;
 
-commentstmt: COMMENT;
+//commentstmt: COMMENT;
 
 %%
 
