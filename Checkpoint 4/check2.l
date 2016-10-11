@@ -193,8 +193,11 @@
 ([a-zA-Z][a-zA-Z0-9]*)+                            { if(DEBUG) printf("VAR: %s\n", yytext);
                                                      return VAR;
                                                    }
+\n                                                 { if(DEBUG) printf("NEWLINE: %s\n", yytext);
+                                                     return NEWLINE;
+                                                   }
 
-.|\n                                               { if(DEBUG) printf("Possible error: %s\n", yytext); }
+.                                                  { if(DEBUG) printf("Possible error: %s\n", yytext); }
 
 %%
 
