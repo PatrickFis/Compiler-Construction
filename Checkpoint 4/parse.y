@@ -65,7 +65,7 @@
 
 %%
 
-program : headingstmt datasection algsection endmainstmt;
+program : headingstmt datasection algsection endstmt;
 
 headingstmt: RWMAIN SEMICOLON;
 
