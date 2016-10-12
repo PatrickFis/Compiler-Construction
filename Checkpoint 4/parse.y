@@ -90,7 +90,7 @@ varlist: varref COMMA varlist
         |varref SEMICOLON
         ;
 varref: VAR
-       |liststmt
+       |VAR LBRACK LITINT RBRACK SEMICOLON;
        ; // varref refers to the VAR token or a list statement.
 
 liststmt: RWLIST LBRACK exp RBRACK SEMICOLON;
