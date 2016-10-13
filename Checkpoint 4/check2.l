@@ -100,7 +100,7 @@
                                                      return CHARSTRING;
                                                    }
 
-#.*                                                { if(DEBUG) printf("COMMENT: %s\n", yytext); }
+#.*[\n]*                                                { if(DEBUG) printf("COMMENT: %s\n", yytext); }
 
 !                                                  { if(DEBUG) printf("CARRETURN: %s\n", yytext);
                                                      return CARRETURN;

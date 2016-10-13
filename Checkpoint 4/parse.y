@@ -70,7 +70,7 @@
 
 %%
 
-program : headingstmt datasection algsection endstmt;
+program : headingstmt datasection algsection endmainstmt;
 
 headingstmt: RWMAIN SEMICOLON NEWLINE;
 
@@ -95,11 +95,7 @@ varref: VAR
 
 algsection: RWALG COLON NEWLINE;
 
-endstmt: RWEND RWMAIN SEMICOLON
-        |RWEND RWIF SEMICOLON
-        |RWEND RWWHILE SEMICOLON
-        |RWEND RWCOUNTING SEMICOLON
-        ;
+endmainstmt: RWEND RWMAIN SEMICOLON NEWLINE;
 
 %%
 

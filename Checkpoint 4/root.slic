@@ -1,10 +1,20 @@
-main;
-data:
-real: N;
-real: X;
-real: Estimate;
-real: NewEst;
-real: Diff;
+#=================================================================
+# File--------root.slic
+# Programmer--Bryan Crawley
+# Project-----Square root
+#
+# This program computes and displays the square root of a
+# floating-point number. The result is an estimate with
+# about two decimal places of precision.
+#=================================================================
 
-algorithm:
+main;
+	data:
+		real: N;
+		real: X;
+		real: Estimate;
+		real: NewEst;
+		real: Diff;
+
+	algorithm:
 end main;
