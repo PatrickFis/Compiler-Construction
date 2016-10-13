@@ -86,12 +86,12 @@ decstmt: RWINT COLON varlist
         ; // The reserved word is followed by a list because any number of variables can be declared on a single line.
 
 varlist: varref COMMA varlist
-        |varref SEMICOLON
         |varref SEMICOLON NEWLINE
+        |varref SEMICOLON
         ;
 
 varref: VAR
-       |VAR LBRACK LITINT RBRACK SEMICOLON NEWLINE;
+       |VAR LBRACK LITINT RBRACK
        ; // varref refers to the VAR token or an array.
 
 algsection: RWALG COLON NEWLINE;
@@ -99,7 +99,6 @@ algsection: RWALG COLON NEWLINE;
 endmainstmt: RWEND RWMAIN SEMICOLON NEWLINE;
 
 %%
-
 int yyerror() {
   printf("Called yyerror()\n");
   return 0;

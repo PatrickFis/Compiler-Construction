@@ -12,7 +12,7 @@
  * ========================================================================
  */
 
-#define DEBUG 1
+#define DEBUG 0
 #include "y.tab.h"
 #include <stdio.h>
 
@@ -192,7 +192,7 @@
                                                      return VAR;
                                                    }
 
-[\n]*                                              { if(DEBUG) printf("NEWLINE\n\n", yytext);
+[\n]*                                              { if(DEBUG) printf("NEWLINE\n\n");
                                                      return NEWLINE;
                                                    }
 
