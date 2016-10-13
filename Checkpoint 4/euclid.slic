@@ -1,0 +1,19 @@
+#==========================================================================
+# File--------euclid.slic
+# Programmer--Bryan Crawley
+# Project-----Euclid's Algorithm
+#
+# This program uses Euclid's Algorithm to compute the greatest common
+# divisor of any two positive integers.
+#==========================================================================
+
+main;
+data:
+    integer: a;       # One of the two integers.
+    integer: b;       # The other integer.
+    integer: d;       # Used for scratch work.
+    integer: temp;    # Used in exchanging a and b.
+    integer: asave;   # Save original value of a.
+    integer: bsave;   # Save original value of b.
+algorithm:
+end main;

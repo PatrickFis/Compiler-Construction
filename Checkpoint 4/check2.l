@@ -100,7 +100,7 @@
                                                      return CHARSTRING;
                                                    }
 
-#.*[\n]*                                                { if(DEBUG) printf("COMMENT: %s\n", yytext); }
+#.*[\n]*                                           { if(DEBUG) printf("COMMENT: %s\n", yytext); }
 
 !                                                  { if(DEBUG) printf("CARRETURN: %s\n", yytext);
                                                      return CARRETURN;
@@ -193,7 +193,8 @@
 ([a-zA-Z][a-zA-Z0-9]*)+                            { if(DEBUG) printf("VAR: %s\n", yytext);
                                                      return VAR;
                                                    }
-\n                                                 { if(DEBUG) printf("NEWLINE: %s\n", yytext);
+
+[\n]+                                              { if(DEBUG) printf("NEWLINE\n\n", yytext);
                                                      return NEWLINE;
                                                    }
 

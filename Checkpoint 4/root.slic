@@ -16,5 +16,10 @@ main;
 		real: NewEst;
 		real: Diff;
 
+
+
+
+
+
 	algorithm:
 end main;
