@@ -200,9 +200,3 @@
 .                                                  { if(DEBUG) printf("Possible error: %s\n", yytext); }
 
 %%
-
-int main()
-{
-    yylex();
-    return 0;
-}
