@@ -72,14 +72,14 @@
 
 program : headingstmt datasection algsection endstmt;
 
-headingstmt: RWMAIN SEMICOLON;
+headingstmt: RWMAIN SEMICOLON NEWLINE;
 
-datasection: RWDATA COLON
-            |RWDATA COLON decstmtlist
+datasection: RWDATA COLON NEWLINE
+            |RWDATA COLON NEWLINE decstmtlist
             ; // decstmtlist is a listing of the variables used by this Slic program.
 
-decstmtlist: decstmtlist decstmt
-            |decstmt
+decstmtlist: decstmtlist decstmt NEWLINE
+            |decstmt NEWLINE
             ; // decstmt is just a variable declaration.
 
 decstmt: RWINT COLON varlist
@@ -93,7 +93,7 @@ varref: VAR
        |VAR LBRACK LITINT RBRACK SEMICOLON;
        ; // varref refers to the VAR token or a list statement.
 
-algsection: RWALG COLON;
+algsection: RWALG COLON NEWLINE;
 
 endstmt: RWEND RWMAIN SEMICOLON
         |RWEND RWIF SEMICOLON

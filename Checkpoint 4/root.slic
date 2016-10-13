@@ -1,0 +1,10 @@
+main;
+data:
+real: N;
+real: X;
+real: Estimate;
+real: NewEst;
+real: Diff;
+
+algorithm:
+end main;

@@ -12,8 +12,8 @@
  * ========================================================================
  */
 
-#define DEBUG 0
-#include "yy.tab.h"
+#define DEBUG 1
+#include "y.tab.h"
 #include <stdio.h>
 
 %}
