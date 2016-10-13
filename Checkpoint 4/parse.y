@@ -6,7 +6,7 @@
  * parse.y - Bison parser for Slic.
  *
  * Programmer --- Patrick Fischer
- * 
+ *
  * ========================================================================
  */
 
