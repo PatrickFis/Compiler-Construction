@@ -74,8 +74,6 @@
                                                      return RWREAL;
                                                    }
 
-(l|L)(i|I)(s|S)(t|T)                               { if(DEBUG) printf("RWLIST: %s\n", yytext); }
-
 (u|U)(p|P)(w|W)(a|A)(r|R)(d|D)                     { if(DEBUG) printf("RWUPWARD: %s\n", yytext);
                                                      return RWUPWARD;
                                                    }
@@ -194,7 +192,7 @@
                                                      return VAR;
                                                    }
 
-[\n]+                                              { if(DEBUG) printf("NEWLINE\n\n", yytext);
+[\n]*                                              { if(DEBUG) printf("NEWLINE\n\n", yytext);
                                                      return NEWLINE;
                                                    }
 

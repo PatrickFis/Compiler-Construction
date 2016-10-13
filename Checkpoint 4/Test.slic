@@ -1,0 +1,10 @@
+#==========================================================================
+# File--------Test.slic
+# Project-----Euclid's Algorithm
+#==========================================================================
+main;
+data:
+  integer: test, test2, test3, test4, test5;
+  real: array[1];
+algorithm:
+end main;

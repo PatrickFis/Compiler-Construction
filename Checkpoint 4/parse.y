@@ -16,7 +16,6 @@
  */
 
 #include <stdio.h>
-
 %}
 
 %union {
@@ -88,10 +87,11 @@ decstmt: RWINT COLON varlist
 
 varlist: varref COMMA varlist
         |varref SEMICOLON
-        |varref SEMICOLON NEWLINE;
+        |varref SEMICOLON NEWLINE
         ;
+
 varref: VAR
-       |VAR LBRACK LITINT RBRACK SEMICOLON;
+       |VAR LBRACK LITINT RBRACK SEMICOLON NEWLINE;
        ; // varref refers to the VAR token or an array.
 
 algsection: RWALG COLON NEWLINE;
