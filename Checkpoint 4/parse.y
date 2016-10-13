@@ -78,8 +78,8 @@ datasection: RWDATA COLON NEWLINE
             |RWDATA COLON NEWLINE decstmtlist
             ; // decstmtlist is a listing of the variables used by this Slic program.
 
-decstmtlist: decstmtlist decstmt NEWLINE
-            |decstmt NEWLINE
+decstmtlist: decstmtlist decstmt
+            |decstmt
             ; // decstmt is just a variable declaration.
 
 decstmt: RWINT COLON varlist
@@ -88,10 +88,11 @@ decstmt: RWINT COLON varlist
 
 varlist: varref COMMA varlist
         |varref SEMICOLON
+        |varref SEMICOLON NEWLINE;
         ;
 varref: VAR
        |VAR LBRACK LITINT RBRACK SEMICOLON;
-       ; // varref refers to the VAR token or a list statement.
+       ; // varref refers to the VAR token or an array.
 
 algsection: RWALG COLON NEWLINE;
 
