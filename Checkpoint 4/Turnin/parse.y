@@ -6,7 +6,7 @@
  * parse.y - Bison parser for Slic.
  *
  * Programmer --- Patrick Fischer
- * 
+ *
  * ========================================================================
  */
 
@@ -59,17 +59,16 @@
 %token        OR
 %token        NOT
 %token        VAR
-%token        NEWLINE
 %token <sval> VARIABLE
 
 %%
 
 program : headingstmt datasection algsection endmainstmt;
 
-headingstmt: RWMAIN SEMICOLON NEWLINE;
+headingstmt: RWMAIN SEMICOLON;
 
-datasection: RWDATA COLON NEWLINE
-            |RWDATA COLON NEWLINE decstmtlist
+datasection: RWDATA COLON
+            |RWDATA COLON  decstmtlist
             ; // decstmtlist is a listing of the variables used by this Slic program.
 
 decstmtlist: decstmtlist decstmt
@@ -81,7 +80,7 @@ decstmt: RWINT COLON varlist
         ; // The reserved word is followed by a list because any number of variables can be declared on a single line.
 
 varlist: varref COMMA varlist
-        |varref SEMICOLON NEWLINE
+        |varref SEMICOLON
         |varref SEMICOLON
         ;
 
@@ -89,9 +88,9 @@ varref: VAR
        |VAR LBRACK LITINT RBRACK
        ; // varref refers to the VAR token or an array.
 
-algsection: RWALG COLON NEWLINE;
+algsection: RWALG COLON;
 
-endmainstmt: RWEND RWMAIN SEMICOLON NEWLINE;
+endmainstmt: RWEND RWMAIN SEMICOLON;
 
 %%
 int yyerror() {
