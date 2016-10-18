@@ -11,7 +11,7 @@
  * ========================================================================
  */
 
-#define DEBUG 0
+#define DEBUG 1
 #include "y.tab.h"
 #include <stdio.h>
 
@@ -192,7 +192,7 @@
                                                    }
 
 [\n]*                                              { if(DEBUG) printf("NEWLINE\n\n");
-                                                     return NEWLINE;
+                                                     //return NEWLINE;
                                                    }
 
 .                                                  { if(DEBUG) printf("Possible error: %s\n", yytext); }
