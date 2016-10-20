@@ -1,12 +1,14 @@
 #include "stable.h"
-
+#include "stdio.h"
 // Global symbol table
 struct symbol_table *table;
-
 // Insert a new symbol_table_entry into table
 void insert(struct symbol_table_entry entry) {
+  printf("line1");
   table->table[table->count] = entry;
+  printf("line2");
   table->count++;
+  printf("line3");
 }
 
 // If name is present in table, then return its' array location.
