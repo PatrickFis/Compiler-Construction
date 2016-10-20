@@ -22,6 +22,9 @@ int main()
   x = createEntry("name", 0, 0, 0, 4);
   printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", x.name, x.address, x.kind, x.type, x.size);
   insert(x);
+  struct symbol_table_entry y;
+  y = retrieve("name");
+  printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
   //  int n;
   //  yydebug = 0;
   //  n = yyparse();

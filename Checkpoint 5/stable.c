@@ -8,6 +8,7 @@ void insert(struct symbol_table_entry entry) {
   table->table[table->count] = entry;
   // printf("line2");
   table->count++;
+  table->memorySize += entry.size;
   // printf("line3");
 }
 
