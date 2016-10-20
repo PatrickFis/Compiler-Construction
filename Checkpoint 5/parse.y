@@ -81,7 +81,6 @@ decstmt: RWINT COLON varlist
 
 varlist: varref COMMA varlist
         |varref SEMICOLON
-        |varref SEMICOLON
         ;
 
 varref: VAR
