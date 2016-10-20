@@ -1,4 +1,8 @@
+#ifndef stable_h
+#define stable_h
+
 struct symbol_table_entry {
+  char *name;
   int address;
   int kind;
   int type;
@@ -6,7 +10,14 @@ struct symbol_table_entry {
 };
 
 struct symbol_table {
-  symbol_table_entry table[100];
+  struct symbol_table_entry table[100];
   int count;
   int memorySize;
-}
+};
+
+void insert(struct symbol_table_entry entry);
+int isPresent(char *name);
+struct symbol_table_entry retrieve(char *name);
+extern struct symbol_table *table;
+
+#endif /** stable_h */
