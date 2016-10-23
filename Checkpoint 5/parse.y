@@ -11,10 +11,14 @@
  */
 
 #include <stdio.h>
+#include "stable.h"
+struct symbol_table *table;
 %}
 
 %union {
    char *sval;
+   struct symbol_table *tableptr;
+   struct symbol_table_entry *entry;
 }
 
 %token        RWMAIN
@@ -61,22 +65,25 @@
 %token        VAR
 %token <sval> VARIABLE
 
+%type <tableptr> datasection
+%type <entry> decstmtlist
+%type <entry> decstmt
 %%
 
 program : headingstmt datasection algsection endmainstmt;
 
 headingstmt: RWMAIN SEMICOLON;
 
-datasection: RWDATA COLON
-            |RWDATA COLON  decstmtlist
+datasection: RWDATA COLON { table = $$; table = malloc(sizeof(struct symbol_table));}
+            |RWDATA COLON  decstmtlist { table = $$; table = malloc(sizeof(struct symbol_table));}
             ; // decstmtlist is a listing of the variables used by this Slic program.
 
-decstmtlist: decstmtlist decstmt
-            |decstmt
+decstmtlist: decstmtlist decstmt { $2 = malloc(sizeof(struct symbol_table_entry));}
+            |decstmt { $1 = malloc(sizeof(struct symbol_table_entry));}
             ; // decstmt is just a variable declaration.
 
-decstmt: RWINT COLON varlist
-        |RWREAL COLON varlist
+decstmt: RWINT COLON varlist { printf("%s", $1); $$->type = TYPE_INT;}
+        |RWREAL COLON varlist { $$->type = TYPE_REAL;}
         ; // The reserved word is followed by a list because any number of variables can be declared on a single line.
 
 varlist: varref COMMA varlist

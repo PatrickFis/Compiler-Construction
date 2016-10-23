@@ -12,22 +12,24 @@
 #include "stable.h"
 #include <stdio.h>
 #include <stdlib.h>
-extern int yydebug;
+extern int yydebug; // Can be used when bison is called with the --debug flag
 struct symbol_table *table;
 int main()
 {
-  table = malloc(sizeof(struct symbol_table));
-  table->count = 0;
-  struct symbol_table_entry x;
-  x = createEntry("name", 0, 0, 0, 4);
-  printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", x.name, x.address, x.kind, x.type, x.size);
-  insert(x);
-  struct symbol_table_entry y;
-  y = retrieve("name");
-  printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
-  //  int n;
+  // Initalize the symbol table
+  // table = malloc(sizeof(struct symbol_table));
+  // table->count = 0;
+  // table->memorySize = 0;
+  // struct symbol_table_entry x;
+  // x = createEntry("name", 0, 0, 0, 4);
+  // printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", x.name, x.address, x.kind, x.type, x.size);
+  // insert(x);
+  // struct symbol_table_entry y;
+  // y = retrieve("name");
+  // printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
+   int n;
   //  yydebug = 0;
-  //  n = yyparse();
-  //  printf("\nyyparse returns %d\n", n);
-  //  exit(0);
+   n = yyparse();
+   printf("\nyyparse returns %d\n", n);
+   exit(0);
 }

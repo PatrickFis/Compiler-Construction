@@ -1,6 +1,8 @@
 #ifndef stable_h
 #define stable_h
 
+#define TYPE_INT 0
+#define TYPE_REAL 1
 struct symbol_table_entry {
   char *name;
   int address;
