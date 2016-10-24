@@ -137,11 +137,12 @@ typedef union YYSTYPE
 #line 18 "parse.y"
 {
    char *sval;
+   int ival;
    struct symbol_table *tableptr;
    struct symbol_table_entry *entry;
 }
 /* Line 1529 of yacc.c.  */
-#line 145 "y.tab.h"
+#line 146 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

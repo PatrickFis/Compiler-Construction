@@ -17,6 +17,7 @@ struct symbol_table *table;
 
 %union {
    char *sval;
+   int ival;
    struct symbol_table *tableptr;
    struct symbol_table_entry *entry;
 }
@@ -30,7 +31,7 @@ struct symbol_table *table;
 %token        RWEND
 %token        RWDATA
 %token        RWALG
-%token        LITINT
+%token <ival> LITINT
 %token        LITREAL
 %token        RWINT
 %token        RWREAL
@@ -65,7 +66,8 @@ struct symbol_table *table;
 %token        VAR
 %token <sval> VARIABLE
 
-
+%type <entry> decstmt
+%type <entry> varlist
 %type <entry> varref
 %%
 
@@ -74,15 +76,29 @@ program : headingstmt datasection algsection endmainstmt;
 headingstmt: RWMAIN SEMICOLON;
 
 datasection: RWDATA COLON
-            |RWDATA COLON  decstmtlist
+            |RWDATA COLON decstmtlist
             ; // decstmtlist is a listing of the variables used by this Slic program.
 
 decstmtlist: decstmtlist decstmt
             |decstmt
             ; // decstmt is just a variable declaration.
 
-decstmt: RWINT COLON varlist
-        |RWREAL COLON varlist
+decstmt: RWINT COLON varlist { $$ = malloc(sizeof(struct symbol_table_entry));
+$$->type=TYPE_INT;
+$$->name=$3->name;
+$$->kind = $3->kind;
+$$->address = $3->address;
+$$->size = $3->size;
+insert(*$$);
+}
+        |RWREAL COLON varlist { $$ = malloc(sizeof(struct symbol_table_entry));
+        $$->type=TYPE_REAL;
+        $$->name=$3->name;
+        $$->kind = $3->kind;
+        $$->address = $3->address;
+        $$->size = $3->size;
+        insert(*$$);
+        }
         ; // The reserved word is followed by a list because any number of variables can be declared on a single line.
 
 varlist: varref COMMA varlist
@@ -91,11 +107,9 @@ varlist: varref COMMA varlist
 
 varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
               $$->name = "Test";
-              $$->address = 2;
-              $$->kind = 1;
-              $$->type = TYPE_INT;
+              $$->address = 0;
+              $$->kind = KIND_SCALAR;
               $$->size = 1;
-              insert(*$$);
               }
        |VAR LBRACK LITINT RBRACK
        ; // varref refers to the VAR token or an array.

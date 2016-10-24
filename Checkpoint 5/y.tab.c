@@ -201,11 +201,12 @@ typedef union YYSTYPE
 #line 18 "parse.y"
 {
    char *sval;
+   int ival;
    struct symbol_table *tableptr;
    struct symbol_table_entry *entry;
 }
 /* Line 193 of yacc.c.  */
-#line 209 "y.tab.c"
+#line 210 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -218,7 +219,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 222 "y.tab.c"
+#line 223 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -510,8 +511,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    72,    72,    74,    76,    77,    80,    81,    84,    85,
-      88,    89,    92,   100,   103,   105
+       0,    74,    74,    76,    78,    79,    82,    83,    86,    94,
+     104,   105,   108,   114,   117,   119
 };
 #endif
 
@@ -1433,21 +1434,43 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 12:
-#line 92 "parse.y"
+        case 8:
+#line 86 "parse.y"
+    { (yyval.entry) = malloc(sizeof(struct symbol_table_entry));
+(yyval.entry)->type=TYPE_INT;
+(yyval.entry)->name=(yyvsp[(3) - (3)].entry)->name;
+(yyval.entry)->kind = (yyvsp[(3) - (3)].entry)->kind;
+(yyval.entry)->address = (yyvsp[(3) - (3)].entry)->address;
+(yyval.entry)->size = (yyvsp[(3) - (3)].entry)->size;
+insert(*(yyval.entry));
+}
+    break;
+
+  case 9:
+#line 94 "parse.y"
+    { (yyval.entry) = malloc(sizeof(struct symbol_table_entry));
+        (yyval.entry)->type=TYPE_REAL;
+        (yyval.entry)->name=(yyvsp[(3) - (3)].entry)->name;
+        (yyval.entry)->kind = (yyvsp[(3) - (3)].entry)->kind;
+        (yyval.entry)->address = (yyvsp[(3) - (3)].entry)->address;
+        (yyval.entry)->size = (yyvsp[(3) - (3)].entry)->size;
+        insert(*(yyval.entry));
+        }
+    break;
+
+  case 12:
+#line 108 "parse.y"
     { (yyval.entry) = malloc(sizeof(struct symbol_table_entry));
               (yyval.entry)->name = "Test";
-              (yyval.entry)->address = 2;
-              (yyval.entry)->kind = 1;
-              (yyval.entry)->type = TYPE_INT;
+              (yyval.entry)->address = 0;
+              (yyval.entry)->kind = KIND_SCALAR;
               (yyval.entry)->size = 1;
-              insert(*(yyval.entry));
               }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1451 "y.tab.c"
+#line 1474 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1661,7 +1684,7 @@ yyreturn:
 }
 
 
-#line 107 "parse.y"
+#line 121 "parse.y"
 
 int yyerror() {
   printf("Called yyerror()\n");

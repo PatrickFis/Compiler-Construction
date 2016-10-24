@@ -3,6 +3,9 @@
 
 #define TYPE_INT 0
 #define TYPE_REAL 1
+
+#define KIND_SCALAR 0
+#define KIND_ARRAY 1
 struct symbol_table_entry {
   char *name;
   int address;
