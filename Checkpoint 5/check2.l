@@ -189,8 +189,10 @@
                                                    }
 
 ([a-zA-Z][a-zA-Z0-9]*)+                            { if(DEBUG) printf("VAR: %s\n", yytext);
-                                                     yylval.sval = yytext;
+                                                     yylval.sval = strdup(yytext); // Had to use strdup to not copy large chunks of text
+                                                     //printf("yylval.sval = %s\n", yylval.sval);
                                                      return VAR;
+                                                     free(yylval.sval); // Free up memory used by strdup
                                                    }
 
 [\n]*                                              { if(DEBUG) printf("NEWLINE\n\n");

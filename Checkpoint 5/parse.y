@@ -12,6 +12,7 @@
 
 #include "stable.h"
 #include <stdio.h>
+#define DEBUG 0
 struct symbol_table *table;
 %}
 
@@ -107,12 +108,18 @@ varlist: varref COMMA varlist
 
 varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
               $$->name = $1;
-              printf("$1 = %s\n", $1);
+              if(DEBUG) printf("$1 = %s\n", $1);
               $$->address = 0;
               $$->kind = KIND_SCALAR;
               $$->size = 1;
               }
-       |VAR LBRACK LITINT RBRACK
+       |VAR LBRACK LITINT RBRACK {
+       $$ = malloc(sizeof(struct symbol_table_entry));
+       $$->name = $1;
+       $$->address = 0;
+       $$->kind = KIND_ARRAY;
+       $$->size = $3;
+       }
        ; // varref refers to the VAR token or an array.
 
 algsection: RWALG COLON;
