@@ -10,6 +10,7 @@ void insert(struct symbol_table_entry entry) {
   table->count++;
   table->memorySize += entry.size;
   // printf("line3");
+  printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", entry.name, entry.address, entry.kind, entry.type, entry.size);
 }
 
 // If name is present in table, then return its' array location.

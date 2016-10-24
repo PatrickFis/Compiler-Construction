@@ -91,8 +91,8 @@ varlist: varref COMMA varlist
 
 varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
               $$->name = "Test";
-              $$->address = 0;
-              $$->kind = 0;
+              $$->address = 2;
+              $$->kind = 1;
               $$->type = TYPE_INT;
               $$->size = 1;
               insert(*$$);
