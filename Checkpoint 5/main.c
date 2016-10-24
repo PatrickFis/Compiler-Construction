@@ -31,7 +31,8 @@ int main()
   //  yydebug = 1;
    n = yyparse();
    struct symbol_table_entry y;
-   y = table->table[0];
+   y = retrieve("Test");
+  //  y = table->table[0];
    printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
    printf("\nyyparse returns %d\n", n);
    exit(0);

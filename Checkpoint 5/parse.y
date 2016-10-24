@@ -65,7 +65,7 @@ struct symbol_table *table;
 %token        VAR
 %token <sval> VARIABLE
 
-%type <tableptr> datasection
+
 %type <entry> varref
 %%
 
@@ -73,8 +73,8 @@ program : headingstmt datasection algsection endmainstmt;
 
 headingstmt: RWMAIN SEMICOLON;
 
-datasection: RWDATA COLON { table = $$; table = malloc(sizeof(struct symbol_table));}
-            |RWDATA COLON  decstmtlist { table = $$; table = malloc(sizeof(struct symbol_table));}
+datasection: RWDATA COLON
+            |RWDATA COLON  decstmtlist
             ; // decstmtlist is a listing of the variables used by this Slic program.
 
 decstmtlist: decstmtlist decstmt
