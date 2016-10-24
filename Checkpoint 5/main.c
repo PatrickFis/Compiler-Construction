@@ -17,9 +17,9 @@ struct symbol_table *table;
 int main()
 {
   // Initalize the symbol table
-  // table = malloc(sizeof(struct symbol_table));
-  // table->count = 0;
-  // table->memorySize = 0;
+  table = malloc(sizeof(struct symbol_table));
+  table->count = 0;
+  table->memorySize = 0;
   // struct symbol_table_entry x;
   // x = createEntry("name", 0, 0, 0, 4);
   // printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", x.name, x.address, x.kind, x.type, x.size);
@@ -28,8 +28,11 @@ int main()
   // y = retrieve("name");
   // printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
    int n;
-  //  yydebug = 0;
+  //  yydebug = 1;
    n = yyparse();
+   struct symbol_table_entry y;
+   y = table->table[0];
+   printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
    printf("\nyyparse returns %d\n", n);
    exit(0);
 }

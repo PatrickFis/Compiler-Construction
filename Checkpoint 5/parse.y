@@ -10,8 +10,8 @@
  * ========================================================================
  */
 
-#include <stdio.h>
 #include "stable.h"
+#include <stdio.h>
 struct symbol_table *table;
 %}
 
@@ -66,8 +66,7 @@ struct symbol_table *table;
 %token <sval> VARIABLE
 
 %type <tableptr> datasection
-%type <entry> decstmtlist
-%type <entry> decstmt
+%type <entry> varref
 %%
 
 program : headingstmt datasection algsection endmainstmt;
@@ -78,19 +77,26 @@ datasection: RWDATA COLON { table = $$; table = malloc(sizeof(struct symbol_tabl
             |RWDATA COLON  decstmtlist { table = $$; table = malloc(sizeof(struct symbol_table));}
             ; // decstmtlist is a listing of the variables used by this Slic program.
 
-decstmtlist: decstmtlist decstmt { $2 = malloc(sizeof(struct symbol_table_entry));}
-            |decstmt { $1 = malloc(sizeof(struct symbol_table_entry));}
+decstmtlist: decstmtlist decstmt
+            |decstmt
             ; // decstmt is just a variable declaration.
 
-decstmt: RWINT COLON varlist { printf("%s", $1); $$->type = TYPE_INT;}
-        |RWREAL COLON varlist { $$->type = TYPE_REAL;}
+decstmt: RWINT COLON varlist
+        |RWREAL COLON varlist
         ; // The reserved word is followed by a list because any number of variables can be declared on a single line.
 
 varlist: varref COMMA varlist
         |varref SEMICOLON
         ;
 
-varref: VAR
+varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
+              $$->name = "Test";
+              $$->address = 0;
+              $$->kind = 0;
+              $$->type = TYPE_INT;
+              $$->size = 1;
+              insert(*$$);
+              }
        |VAR LBRACK LITINT RBRACK
        ; // varref refers to the VAR token or an array.
 
