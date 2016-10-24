@@ -928,61 +928,62 @@ case 11:
 YY_RULE_SETUP
 #line 60 "check2.l"
 { if(DEBUG) printf("LITINT: %s\n", yytext);
+                                                     yylval.ival = atoi(yytext);
                                                      return LITINT;
                                                    }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 64 "check2.l"
+#line 65 "check2.l"
 { if(DEBUG) printf("LITREAL: %s\n", yytext);
                                                      return LITREAL;
                                                    }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 68 "check2.l"
+#line 69 "check2.l"
 { if(DEBUG) printf("RWINT: %s\n", yytext);
                                                      return RWINT;
                                                    }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 72 "check2.l"
+#line 73 "check2.l"
 { if(DEBUG) printf("RWREAL: %s\n", yytext);
                                                      return RWREAL;
                                                    }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 76 "check2.l"
+#line 77 "check2.l"
 { if(DEBUG) printf("RWUPWARD: %s\n", yytext);
                                                      return RWUPWARD;
                                                    }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 80 "check2.l"
+#line 81 "check2.l"
 { if(DEBUG) printf("RWDOWNWARD: %s\n", yytext);
                                                      return RWDOWNWARD;
                                                    }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 84 "check2.l"
+#line 85 "check2.l"
 { if(DEBUG) printf("RWTO: %s\n", yytext);
                                                      return RWTO;
                                                    }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 88 "check2.l"
+#line 89 "check2.l"
 { if(DEBUG) printf("RWREAD: %s\n", yytext);
                                                      return RWREAD;
                                                    }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 92 "check2.l"
+#line 93 "check2.l"
 { if(DEBUG) printf("RWPRINT: %s\n", yytext);
                                                      return RWPRINT;
                                                    }
@@ -990,7 +991,7 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 96 "check2.l"
+#line 97 "check2.l"
 { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
                                                      return CHARSTRING;
                                                    }
@@ -998,189 +999,190 @@ YY_RULE_SETUP
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 100 "check2.l"
+#line 101 "check2.l"
 { if(DEBUG) printf("COMMENT: %s\n", yytext); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 102 "check2.l"
+#line 103 "check2.l"
 { if(DEBUG) printf("CARRETURN: %s\n", yytext);
                                                      return CARRETURN;
                                                    }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 106 "check2.l"
+#line 107 "check2.l"
 { if(DEBUG) printf("ASSIGNOP: %s\n", yytext);
                                                      return ASSIGNOP;
                                                    }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 110 "check2.l"
+#line 111 "check2.l"
 { if(DEBUG) printf("COMMA: %s\n", yytext);
                                                      return COMMA;
                                                    }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 114 "check2.l"
+#line 115 "check2.l"
 { if(DEBUG) printf("SEMICOLON: %s\n", yytext);
                                                      return SEMICOLON;
                                                    }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 118 "check2.l"
+#line 119 "check2.l"
 { if(DEBUG) printf("COLON: %s\n", yytext);
                                                      return COLON;
                                                    }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 122 "check2.l"
+#line 123 "check2.l"
 { if(DEBUG) printf("LPAREN: %s\n", yytext);
                                                      return LPAREN;
                                                    }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 126 "check2.l"
+#line 127 "check2.l"
 { if(DEBUG) printf("RPAREN: %s\n", yytext);
                                                      return RPAREN;
                                                    }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 130 "check2.l"
+#line 131 "check2.l"
 { if(DEBUG) printf("LBRACK: %s\n", yytext);
                                                      return LBRACK;
                                                    }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 134 "check2.l"
+#line 135 "check2.l"
 { if(DEBUG) printf("RBRACK: %s\n", yytext);
                                                      return RBRACK;
                                                    }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 138 "check2.l"
+#line 139 "check2.l"
 { if(DEBUG) printf("ADD: %s\n", yytext);
                                                      return ADD;
                                                    }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 142 "check2.l"
+#line 143 "check2.l"
 { if(DEBUG) printf("MINUS: %s\n", yytext);
                                                      return MINUS;
                                                    }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 146 "check2.l"
+#line 147 "check2.l"
 { if(DEBUG) printf("MULT: %s\n", yytext);
                                                      return MULT;
                                                    }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 150 "check2.l"
+#line 151 "check2.l"
 { if(DEBUG) printf("DIV: %s\n", yytext);
                                                      return DIV;
                                                    }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 154 "check2.l"
+#line 155 "check2.l"
 { if(DEBUG) printf("LESS: %s\n", yytext);
                                                      return LESS;
                                                    }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 158 "check2.l"
+#line 159 "check2.l"
 { if(DEBUG) printf("GREATER: %s\n", yytext);
                                                      return GREATER;
                                                    }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 162 "check2.l"
+#line 163 "check2.l"
 { if(DEBUG) printf("LESSEQU: %s\n", yytext);
                                                      return LESSEQU;
                                                    }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 166 "check2.l"
+#line 167 "check2.l"
 { if(DEBUG) printf("GREATEQU: %s\n", yytext);
                                                      return GREATEQU;
                                                    }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 170 "check2.l"
+#line 171 "check2.l"
 { if(DEBUG) printf("EQUAL: %s\n", yytext);
                                                      return EQUAL;
                                                    }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 174 "check2.l"
+#line 175 "check2.l"
 { if(DEBUG) printf("NOTEQUAL: %s\n", yytext);
                                                      return NOTEQUAL;
                                                    }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 178 "check2.l"
+#line 179 "check2.l"
 { if(DEBUG) printf("AND: %s\n", yytext);
                                                      return AND;
                                                    }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 182 "check2.l"
+#line 183 "check2.l"
 { if(DEBUG) printf("OR: %s\n", yytext);
                                                      return OR;
                                                    }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 186 "check2.l"
+#line 187 "check2.l"
 { if(DEBUG) printf("NOT: %s\n", yytext);
                                                      return NOT;
                                                    }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 190 "check2.l"
+#line 191 "check2.l"
 { if(DEBUG) printf("VAR: %s\n", yytext);
+                                                     yylval.sval = yytext;
                                                      return VAR;
                                                    }
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 194 "check2.l"
+#line 196 "check2.l"
 { if(DEBUG) printf("NEWLINE\n\n");
                                                      //return NEWLINE;
                                                    }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 198 "check2.l"
+#line 200 "check2.l"
 { if(DEBUG) printf("Possible error: %s\n", yytext); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 200 "check2.l"
+#line 202 "check2.l"
 ECHO;
 	YY_BREAK
-#line 1184 "lex.yy.c"
+#line 1186 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2177,7 +2179,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 200 "check2.l"
+#line 202 "check2.l"
 
 
 

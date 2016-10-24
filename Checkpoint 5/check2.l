@@ -58,6 +58,7 @@
                                                    }
 
 [-+]?[0-9]+                                        { if(DEBUG) printf("LITINT: %s\n", yytext);
+                                                     yylval.ival = atoi(yytext);
                                                      return LITINT;
                                                    }
 
@@ -188,6 +189,7 @@
                                                    }
 
 ([a-zA-Z][a-zA-Z0-9]*)+                            { if(DEBUG) printf("VAR: %s\n", yytext);
+                                                     yylval.sval = yytext;
                                                      return VAR;
                                                    }
 

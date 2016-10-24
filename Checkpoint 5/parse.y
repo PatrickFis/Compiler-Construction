@@ -63,7 +63,7 @@ struct symbol_table *table;
 %token        AND
 %token        OR
 %token        NOT
-%token        VAR
+%token <sval> VAR
 %token <sval> VARIABLE
 
 %type <entry> decstmt
@@ -83,22 +83,22 @@ decstmtlist: decstmtlist decstmt
             |decstmt
             ; // decstmt is just a variable declaration.
 
-decstmt: RWINT COLON varlist { $$ = malloc(sizeof(struct symbol_table_entry));
-$$->type=TYPE_INT;
-$$->name=$3->name;
-$$->kind = $3->kind;
-$$->address = $3->address;
-$$->size = $3->size;
-insert(*$$);
-}
+decstmt: RWINT COLON varlist {  $$ = malloc(sizeof(struct symbol_table_entry));
+                                $$->type=TYPE_INT;
+                                $$->name=$3->name;
+                                $$->kind = $3->kind;
+                                $$->address = $3->address;
+                                $$->size = $3->size;
+                                insert(*$$);
+                                }
         |RWREAL COLON varlist { $$ = malloc(sizeof(struct symbol_table_entry));
-        $$->type=TYPE_REAL;
-        $$->name=$3->name;
-        $$->kind = $3->kind;
-        $$->address = $3->address;
-        $$->size = $3->size;
-        insert(*$$);
-        }
+                                $$->type=TYPE_REAL;
+                                $$->name=$3->name;
+                                $$->kind = $3->kind;
+                                $$->address = $3->address;
+                                $$->size = $3->size;
+                                insert(*$$);
+                                }
         ; // The reserved word is followed by a list because any number of variables can be declared on a single line.
 
 varlist: varref COMMA varlist
@@ -106,7 +106,8 @@ varlist: varref COMMA varlist
         ;
 
 varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
-              $$->name = "Test";
+              $$->name = $1;
+              printf("$1 = %s\n", $1);
               $$->address = 0;
               $$->kind = KIND_SCALAR;
               $$->size = 1;

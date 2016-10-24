@@ -4,13 +4,10 @@
 struct symbol_table *table;
 // Insert a new symbol_table_entry into table
 void insert(struct symbol_table_entry entry) {
-  // printf("line1");
   table->table[table->count] = entry;
-  // printf("line2");
   table->count++;
   table->memorySize += entry.size;
-  // printf("line3");
-  printf("name = %s, address = %d, kind = %d, type = %d, size = %d, count = %d\n", entry.name, entry.address, entry.kind, entry.type, entry.size, table->count);
+  // printf("name = %s, address = %d, kind = %d, type = %d, size = %d, count = %d\n", entry.name, entry.address, entry.kind, entry.type, entry.size, table->count);
 }
 
 // If name is present in table, then return its' array location.

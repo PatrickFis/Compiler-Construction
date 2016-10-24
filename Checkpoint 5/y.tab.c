@@ -512,7 +512,7 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    74,    74,    76,    78,    79,    82,    83,    86,    94,
-     104,   105,   108,   114,   117,   119
+     104,   105,   108,   115,   118,   120
 };
 #endif
 
@@ -1436,32 +1436,33 @@ yyreduce:
     {
         case 8:
 #line 86 "parse.y"
-    { (yyval.entry) = malloc(sizeof(struct symbol_table_entry));
-(yyval.entry)->type=TYPE_INT;
-(yyval.entry)->name=(yyvsp[(3) - (3)].entry)->name;
-(yyval.entry)->kind = (yyvsp[(3) - (3)].entry)->kind;
-(yyval.entry)->address = (yyvsp[(3) - (3)].entry)->address;
-(yyval.entry)->size = (yyvsp[(3) - (3)].entry)->size;
-insert(*(yyval.entry));
-}
+    {  (yyval.entry) = malloc(sizeof(struct symbol_table_entry));
+                                (yyval.entry)->type=TYPE_INT;
+                                (yyval.entry)->name=(yyvsp[(3) - (3)].entry)->name;
+                                (yyval.entry)->kind = (yyvsp[(3) - (3)].entry)->kind;
+                                (yyval.entry)->address = (yyvsp[(3) - (3)].entry)->address;
+                                (yyval.entry)->size = (yyvsp[(3) - (3)].entry)->size;
+                                insert(*(yyval.entry));
+                                }
     break;
 
   case 9:
 #line 94 "parse.y"
     { (yyval.entry) = malloc(sizeof(struct symbol_table_entry));
-        (yyval.entry)->type=TYPE_REAL;
-        (yyval.entry)->name=(yyvsp[(3) - (3)].entry)->name;
-        (yyval.entry)->kind = (yyvsp[(3) - (3)].entry)->kind;
-        (yyval.entry)->address = (yyvsp[(3) - (3)].entry)->address;
-        (yyval.entry)->size = (yyvsp[(3) - (3)].entry)->size;
-        insert(*(yyval.entry));
-        }
+                                (yyval.entry)->type=TYPE_REAL;
+                                (yyval.entry)->name=(yyvsp[(3) - (3)].entry)->name;
+                                (yyval.entry)->kind = (yyvsp[(3) - (3)].entry)->kind;
+                                (yyval.entry)->address = (yyvsp[(3) - (3)].entry)->address;
+                                (yyval.entry)->size = (yyvsp[(3) - (3)].entry)->size;
+                                insert(*(yyval.entry));
+                                }
     break;
 
   case 12:
 #line 108 "parse.y"
     { (yyval.entry) = malloc(sizeof(struct symbol_table_entry));
-              (yyval.entry)->name = "Test";
+              (yyval.entry)->name = (yyvsp[(1) - (1)].sval);
+              printf("$1 = %s\n", (yyvsp[(1) - (1)].sval));
               (yyval.entry)->address = 0;
               (yyval.entry)->kind = KIND_SCALAR;
               (yyval.entry)->size = 1;
@@ -1470,7 +1471,7 @@ insert(*(yyval.entry));
 
 
 /* Line 1267 of yacc.c.  */
-#line 1474 "y.tab.c"
+#line 1475 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1684,7 +1685,7 @@ yyreturn:
 }
 
 
-#line 121 "parse.y"
+#line 122 "parse.y"
 
 int yyerror() {
   printf("Called yyerror()\n");
