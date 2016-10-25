@@ -22,7 +22,7 @@ int main()
   table->count = 0;
   table->memorySize = 0;
   int n;
-  //  yydebug = 1;
+  // yydebug = 1;
   n = yyparse();
   struct symbol_table_entry y;
   for(int i = 0; i < table->count; i++) {
