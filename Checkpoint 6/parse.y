@@ -4,6 +4,9 @@
  * ========================================================================
  *
  * parse.y - Bison parser for Slic.
+ * bison -v will produce a .output file that will help with shift/reduce
+ * errors.
+ * There may be a shift/reduce conflict with my assignstmt.
  * Added code to add variables to symbol table defined in stable.h.
  * Programmer --- Patrick Fischer
  *
@@ -72,7 +75,7 @@ struct symbol_table *table;
 %type <entry> varref
 %%
 
-program : headingstmt datasection algsection endmainstmt;
+program : headingstmt datasection algsection;
 
 headingstmt: RWMAIN SEMICOLON;
 
@@ -149,7 +152,7 @@ factor: LITINT
        |LPAREN exp RPAREN
        ;
 
-endmainstmt: RWEND RWMAIN SEMICOLON {printf("GOT HERE");};
+endmainstmt: RWEND RWMAIN SEMICOLON;
 
 %%
 int yyerror() {

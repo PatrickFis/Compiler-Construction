@@ -19,9 +19,3 @@ main;
 	algorithm:
 		N := 12;
 end main;
-
-
-
-
-	algorithm:
-end main;
