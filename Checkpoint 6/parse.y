@@ -6,6 +6,8 @@
  * parse.y - Bison parser for Slic.
  * bison -v will produce a .output file that will help with shift/reduce
  * errors.
+ * Noticed that starting non-terminal and algsection both had a reference
+ * to endmainstmt. Removed from starting non-terminal.
  * There may be a shift/reduce conflict with my assignstmt.
  * Added code to add variables to symbol table defined in stable.h.
  * Programmer --- Patrick Fischer
@@ -14,6 +16,7 @@
  */
 
 #include "stable.h"
+#include "ast.h"
 #include <stdio.h>
 #define DEBUG 0
 struct symbol_table *table;
@@ -24,6 +27,8 @@ struct symbol_table *table;
    int ival;
    struct symbol_table *tableptr;
    struct symbol_table_entry *entry;
+   struct statement *stmt;
+   struct ast_expression *expr;
 }
 
 %token        RWMAIN
@@ -73,6 +78,8 @@ struct symbol_table *table;
 %type <entry> decstmt
 %type <entry> varlist
 %type <entry> varref
+%type <stmt> assignstmt
+%type <expr> varname
 %%
 
 program : headingstmt datasection algsection;
@@ -130,7 +137,11 @@ algsection: RWALG COLON programbody;
 programbody: assignstmt programbody
             |endmainstmt;
 
-assignstmt: varname assign exp SEMICOLON;
+assignstmt: varname assign exp SEMICOLON
+            {
+              $$ = malloc(sizeof(struct statement));
+              // Will need code to insert this into a linked list
+            };
 
 varname: VAR;
 

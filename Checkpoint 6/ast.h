@@ -19,6 +19,8 @@ struct ast_expression { // This portion will just be used for expressions(possib
   int value;
 };
 
-extern struct statement *tree;
+void insertStmt(struct statement *stmt);
+extern struct statement *list;
+extern struct statement *head; // Pointer to head of the list
 
 #endif /** ast_h */
