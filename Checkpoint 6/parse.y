@@ -149,7 +149,7 @@ factor: LITINT
        |LPAREN exp RPAREN
        ;
 
-endmainstmt: RWEND RWMAIN SEMICOLON;
+endmainstmt: RWEND RWMAIN SEMICOLON {printf("GOT HERE");};
 
 %%
 int yyerror() {

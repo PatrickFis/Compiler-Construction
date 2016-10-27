@@ -17,6 +17,7 @@ extern int yydebug; // Can be used when bison is called with the --debug flag
 struct symbol_table *table;
 int main()
 {
+  int i; // Removed declaration from for loop for easier compilation
   // Initalize the symbol table
   table = malloc(sizeof(struct symbol_table));
   table->count = 0;
@@ -25,7 +26,7 @@ int main()
   // yydebug = 1;
   n = yyparse();
   struct symbol_table_entry y;
-  for(int i = 0; i < table->count; i++) {
+  for(i = 0; i < table->count; i++) {
     y = table->table[i];
     printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
   }

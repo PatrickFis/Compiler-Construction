@@ -17,7 +17,7 @@ main;
 		real: Diff;
 		integer: array[20];
 	algorithm:
-		N = 12;
+		N := 12;
 end main;
 
 
