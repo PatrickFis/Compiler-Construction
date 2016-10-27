@@ -16,7 +16,9 @@ main;
 		real: NewEst;
 		real: Diff;
 		integer: array[20];
-
+	algorithm:
+		N = 12;
+end main;
 
 
 

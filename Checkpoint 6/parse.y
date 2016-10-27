@@ -122,7 +122,32 @@ varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
                                  }
        ; // varref refers to the VAR token or an array.
 
-algsection: RWALG COLON;
+algsection: RWALG COLON programbody;
+
+programbody: assignstmt programbody
+            |endmainstmt;
+
+assignstmt: varname assign exp SEMICOLON;
+
+varname: VAR;
+
+assign: ASSIGNOP;
+
+exp: MINUS exp // Unary minus(TEST THIS)
+    |exp ADD term // Code to parse expressions
+    |exp MINUS term
+    |term
+    ;
+
+term: term MULT factor
+     |term DIV factor
+     |factor
+     ;
+
+factor: LITINT
+       |LITREAL
+       |LPAREN exp RPAREN
+       ;
 
 endmainstmt: RWEND RWMAIN SEMICOLON;
 
