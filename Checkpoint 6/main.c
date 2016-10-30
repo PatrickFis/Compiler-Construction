@@ -9,12 +9,15 @@
 * ========================================================================
 */
 
+#include "ast.h"
 #include "y.tab.h"
 #include "stable.h"
 #include <stdio.h>
 #include <stdlib.h>
 extern int yydebug; // Can be used when bison is called with the --debug flag
-struct symbol_table *table;
+struct symbol_table *table; // Symbol table
+struct statement *list; // Linked list holding our abstract syntax tree
+struct statement *head; // Head of the linked list
 int main()
 {
   int i; // Removed declaration from for loop for easier compilation
