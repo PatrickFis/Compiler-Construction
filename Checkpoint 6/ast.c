@@ -1,5 +1,6 @@
 #include "ast.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
 struct statement *head;

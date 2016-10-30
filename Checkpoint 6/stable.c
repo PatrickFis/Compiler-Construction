@@ -7,6 +7,8 @@
 
 #include "stable.h"
 #include "stdio.h"
+#include <string.h>
+
 // Global symbol table
 struct symbol_table *table;
 // Insert a new symbol_table_entry into table
@@ -20,12 +22,14 @@ void insert(struct symbol_table_entry entry) {
 
 // If name is present in table, then return its' array location.
 // This method was incorrect... strings cannot be compared with the == operator.
-// strcmp must be used instead.
+// strcmp must be used instead. Remember that strcmp returns 0 if the strings
+// are equal.
 int isPresent(char *name) {
   int i;
+  // printf("%s\n", name);
   for(i = 0; i < 100; i++) {
     // printf("%s\n", table->table[i].name);
-    if(strcmp(table->table[i].name, name)) {
+    if(strcmp(table->table[i].name, name) == 0) {
       return i;
     }
   }

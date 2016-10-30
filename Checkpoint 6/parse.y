@@ -141,10 +141,10 @@ assignstmt: VAR assign exp SEMICOLON
             {
               // So the retrieve function isn't working because isPresent isn't finding the correct variable...
               $$ = malloc(sizeof(struct statement));
-              int test = isPresent($1);
-              printf("%d\n", test);
-              //$$->target = retrieve($1);
-              //printf("target->name: %s\n", retrieve($1).name);
+              int tableLoc = isPresent($1); // Location of VAR in symbol table
+              printf("%d, VAR: %s\n", tableLoc, $1);
+              $$->target = &table->table[tableLoc]; // Why is this tableLoc - 1?
+              //printf("target->name: %s\n", $$->target->name);
               // Will need code to insert this into a linked list
             };
 
