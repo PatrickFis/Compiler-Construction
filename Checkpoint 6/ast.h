@@ -1,9 +1,17 @@
 #ifndef ast_h
 #define ast_h
 
+#define OP_ASGN 0
+#define OP_ADD 1
+#define OP_SUB 2
+#define OP_MUL 3
+#define OP_DIV 4
+#define OP_UMIN 5
+
 struct statement {
     struct statement *link;
     struct ast_expression *exp;
+    struct symbol_table_entry *target;
 };
 
 struct ast_node { // This portion will probably be used for control structures, etc

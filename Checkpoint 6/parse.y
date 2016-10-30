@@ -79,7 +79,7 @@ struct symbol_table *table;
 %type <entry> varlist
 %type <entry> varref
 %type <stmt> assignstmt
-%type <expr> varname
+%type <sval> varname
 %%
 
 program : headingstmt datasection algsection;
@@ -137,9 +137,14 @@ algsection: RWALG COLON programbody;
 programbody: assignstmt programbody
             |endmainstmt;
 
-assignstmt: varname assign exp SEMICOLON
+assignstmt: VAR assign exp SEMICOLON
             {
+              // So the retrieve function isn't working because isPresent isn't finding the correct variable...
               $$ = malloc(sizeof(struct statement));
+              int test = isPresent($1);
+              printf("%d\n", test);
+              //$$->target = retrieve($1);
+              //printf("target->name: %s\n", retrieve($1).name);
               // Will need code to insert this into a linked list
             };
 

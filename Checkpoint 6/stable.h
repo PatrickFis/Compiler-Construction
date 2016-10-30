@@ -4,7 +4,7 @@
  * This is the header file for my symbol table.
  *
  */
- 
+
 #ifndef stable_h
 #define stable_h
 

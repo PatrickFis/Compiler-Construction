@@ -19,10 +19,13 @@ void insert(struct symbol_table_entry entry) {
 }
 
 // If name is present in table, then return its' array location.
+// This method was incorrect... strings cannot be compared with the == operator.
+// strcmp must be used instead.
 int isPresent(char *name) {
   int i;
   for(i = 0; i < 100; i++) {
-    if(table->table[i].name == name) {
+    // printf("%s\n", table->table[i].name);
+    if(strcmp(table->table[i].name, name)) {
       return i;
     }
   }
