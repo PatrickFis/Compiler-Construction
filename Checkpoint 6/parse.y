@@ -147,25 +147,50 @@ assignstmt: VAR assign exp SEMICOLON
               $$->target = &table->table[isPresent($1)];
               if(DEBUG) printf("target->name: %s\n", $$->target->name);
               $$->exp = malloc(sizeof(struct ast_expression));
+              $$->exp->kind = $3->kind;
+              $$->exp->operator = OP_ASGN;
+              $$->exp->value = $3->value;
               // Will need code to insert this into a linked list
+              //insertStmt($$);
+              
             };
 
 varname: VAR;
 
 assign: ASSIGNOP;
 
-exp: MINUS exp // Unary minus(TEST THIS)
-    |exp ADD term // Code to parse expressions
-    |exp MINUS term
-    |term
+exp: MINUS exp  { // Unary minus(TEST THIS)
+                  if(DEBUG) printf("GOT HERE1\n");
+                  $$ = malloc(sizeof(struct ast_expression));
+    }
+    |exp ADD term {// Code to parse expressions
+      if(DEBUG) printf("GOT HERE2\n");
+      $$ = malloc(sizeof(struct ast_expression));
+    }
+    |exp MINUS term {
+      if(DEBUG) printf("GOT HERE3\n");
+      $$ = malloc(sizeof(struct ast_expression));
+    }
+    |term {
+      if(DEBUG) printf("GOT HERE4\n");
+      $$ = $1;
+    }
     ;
 
 term: term MULT factor
      |term DIV factor
-     |factor
+     |factor {
+      if(DEBUG) printf("GOT HERE44\n");
+      $$ = $1;
+     }
      ;
 
-factor: LITINT
+factor: LITINT {
+        if(DEBUG) printf("%d\n", $1);
+        $$ = malloc(sizeof(struct ast_expression));
+        $$->kind = KIND_INT;
+        $$->value = $1;
+       }
        |LITREAL
        |LPAREN exp RPAREN
        ;

@@ -23,6 +23,8 @@ int main()
   int i; // Removed declaration from for loop for easier compilation
   // Initalize the symbol table
   table = malloc(sizeof(struct symbol_table));
+  list = malloc(sizeof(struct statement));
+
   table->count = 0;
   table->memorySize = 0;
   int n;
@@ -33,6 +35,8 @@ int main()
     y = table->table[i];
     printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
   }
+
+  // printf("head->exp->kind: %c\n", list->exp->kind);
   printf("\nyyparse returns %d\n", n);
   exit(0);
 }

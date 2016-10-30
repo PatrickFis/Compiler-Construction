@@ -1,6 +1,9 @@
 #ifndef ast_h
 #define ast_h
 
+#define KIND_INT 0
+#define KIND_REAL 1
+
 #define OP_ASGN 0
 #define OP_ADD 1
 #define OP_SUB 2
