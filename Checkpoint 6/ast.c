@@ -14,10 +14,11 @@ void insertStmt(struct statement *stmt) {
     }
     struct statement *next;
     next = head;
-    while(next != NULL) {
+    while(next->link != NULL) {
         next = next->link;
     }
     next->link = stmt;
+    next->exp = stmt->exp;
 }
 
 //struct ast_expression createExp(char kind, char operator, struct ast_expression l_operand,
