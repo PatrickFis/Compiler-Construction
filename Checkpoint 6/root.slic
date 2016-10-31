@@ -22,4 +22,5 @@ main;
 		Estimate := 36;
 		NewEst := 48;
 		Diff := 60;
+		N := 12 + 12;
 end main;

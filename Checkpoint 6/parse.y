@@ -141,7 +141,6 @@ algsection: RWALG COLON programbody {
             };
 
 programbody: assignstmt programbody {
-             //$1->exp->operator = OP_ASGN;
              insertStmt($1);
              }
             |endmainstmt;
@@ -154,7 +153,7 @@ assignstmt: VAR assign exp SEMICOLON
               if(DEBUG) printf("target->name: %s\n", $$->target->name);
               $$->exp = malloc(sizeof(struct ast_expression));
               $$->exp->kind = $3->kind;
-              $$->exp->operator = OP_ASGN;
+              $$->exp->operator = $3->operator;
               $$->exp->value = $3->value;
               // Will need code to insert this into a linked list
               //insertStmt($$);
@@ -170,6 +169,11 @@ exp: MINUS exp  { // Unary minus(TEST THIS)
     |exp ADD term {// Code to parse expressions
       if(DEBUG) printf("GOT HERE2\n");
       $$ = malloc(sizeof(struct ast_expression));
+      $$->l_operand = $1;
+      // printf("%d\n", $$->l_operand->value);
+      $$->operator = OP_ADD;
+      $$->r_operand = $3;
+      // printf("%d\n", $$->r_operand->value);
     }
     |exp MINUS term {
       if(DEBUG) printf("GOT HERE3\n");

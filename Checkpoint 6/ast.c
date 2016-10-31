@@ -1,11 +1,13 @@
 #include "ast.h"
+#include "stable.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
 struct statement *head;
-
+int count = 0; // Keep track of how many statements we have
 void insertStmt(struct statement *stmt) {
+  count++;
   // printf("stmt->exp->kind: %d\n", stmt->exp->operator);
   if(head == NULL) {
     // Initalize head here if it has not already been done.
@@ -17,7 +19,7 @@ void insertStmt(struct statement *stmt) {
     return;
   }
   // printf("head kind: %d, operator: %d, value: %d\n", head->exp->kind, head->exp->operator, head->exp->value);
-  if(head->link == NULL) {
+  if(head->link == NULL) { // Added this because the head node was being overwritten
     struct statement *next = malloc(sizeof(struct statement));
     next->link = stmt;
     next->exp = stmt->exp;
@@ -48,14 +50,34 @@ void insertStmt(struct statement *stmt) {
 //    expr.value = value;
 //    return expr;
 //}
+
+// List is in reverse order for some reason
 void printList() {
   struct statement *next;
   next = head;
   while(next->link != NULL) {
     printf("kind: %d, operator: %d, value: %d\n", next->exp->kind, next->exp->operator, next->exp->value);
+    exprgen(next);
     next = next->link;
   }
 }
+
+void exprgen(struct statement *stmt) {
+  if(stmt->exp->kind == KIND_INT) {
+    // printf("stmt kind: %d\n", stmt->exp->value);
+  }
+  switch(stmt->exp->operator) {
+    case OP_ASGN: {
+      // Load values
+      printf("OP_ASGN FOUND\n");
+      printf("LLI %d\n", stmt->target->address);
+    }
+    case OP_ADD: {
+      printf("GOT TO OP_ADD PORTION!!!\n");
+    }
+  }
+}
+
 struct ast_expression createExp(char kind, char operator, int value) {
   struct ast_expression expr;
   expr.kind = kind;
