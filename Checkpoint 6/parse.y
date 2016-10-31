@@ -155,6 +155,10 @@ assignstmt: VAR assign exp SEMICOLON
               $$->exp->kind = $3->kind;
               $$->exp->operator = $3->operator;
               $$->exp->value = $3->value;
+              $$->exp->address = $$->target->address;
+
+              $$->exp->l_operand = $3->l_operand; // Added because portion under exp wasn't working
+              $$->exp->r_operand = $3->r_operand;
               // Will need code to insert this into a linked list
               //insertStmt($$);
 
@@ -170,10 +174,11 @@ exp: MINUS exp  { // Unary minus(TEST THIS)
       if(DEBUG) printf("GOT HERE2\n");
       $$ = malloc(sizeof(struct ast_expression));
       $$->l_operand = $1;
-      // printf("%d\n", $$->l_operand->value);
+    //  printf("l_op %d\n", $$->l_operand->value);
+      //$$->kind = KIND_OP;
       $$->operator = OP_ADD;
       $$->r_operand = $3;
-      // printf("%d\n", $$->r_operand->value);
+    //  printf("r_op %d\n", $$->r_operand->value);
     }
     |exp MINUS term {
       if(DEBUG) printf("GOT HERE3\n");
@@ -181,6 +186,7 @@ exp: MINUS exp  { // Unary minus(TEST THIS)
     }
     |term {
       if(DEBUG) printf("GOT HERE4\n");
+      //$$->kind = KIND_OP;
       $$ = $1;
     }
     ;
@@ -189,6 +195,7 @@ term: term MULT factor
      |term DIV factor
      |factor {
       if(DEBUG) printf("GOT HERE44\n");
+      //$$->kind = KIND_OP;
       $$ = $1;
      }
      ;

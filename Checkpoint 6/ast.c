@@ -57,24 +57,34 @@ void printList() {
   next = head;
   while(next->link != NULL) {
     printf("kind: %d, operator: %d, value: %d\n", next->exp->kind, next->exp->operator, next->exp->value);
-    exprgen(next);
+    exprgen(next->exp);
     next = next->link;
   }
 }
 
-void exprgen(struct statement *stmt) {
-  if(stmt->exp->kind == KIND_INT) {
-    // printf("stmt kind: %d\n", stmt->exp->value);
+void exprgen(struct ast_expression *exp) {
+  if(exp->kind == KIND_INT) {
+    printf("LLI %d\n", exp->value);
+    if(exp->operator == OP_ASGN) {
+      printf("STO\n");
+    }
   }
-  switch(stmt->exp->operator) {
-    case OP_ASGN: {
+  switch(exp->operator) {
+    case OP_ASGN:
       // Load values
-      printf("OP_ASGN FOUND\n");
-      printf("LLI %d\n", stmt->target->address);
-    }
-    case OP_ADD: {
-      printf("GOT TO OP_ADD PORTION!!!\n");
-    }
+      // printf("OP_ASGN FOUND\n");
+      printf("LAA %d\n", exp->address);
+      break;
+
+    case OP_ADD:
+      // printf("GOT TO OP_ADD PORTION!!!\n");
+      exprgen(exp->l_operand);
+      exprgen(exp->r_operand);
+      printf("ADI\n");
+      // printf("exp->l_operand->value: %d\n", exp->l_operand->value);
+      // exprgen(exp->l_operand);
+      // exprgen(exp->r_operand);
+      break;
   }
 }
 

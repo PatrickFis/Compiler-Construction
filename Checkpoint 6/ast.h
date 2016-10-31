@@ -3,6 +3,7 @@
 
 #define KIND_INT 0
 #define KIND_REAL 1
+#define KIND_OP 2
 
 #define OP_ASGN 0
 #define OP_ADD 1
@@ -28,13 +29,14 @@ struct ast_expression { // This portion will just be used for expressions(possib
     struct ast_expression *l_operand;
     struct ast_expression *r_operand;
     int value;
+    int address;
 };
 
 void insertStmt(struct statement *stmt);
 //struct ast_expression createExp(char kind, char operator, struct ast_expression l_operand, struct ast_expression r_operand, int value);
 struct ast_expression createExp(char kind, char operator, int value);
 void printList();
-void exprgen(struct statement *stmt);
+void exprgen(struct ast_expression *exp);
 extern struct statement *list;
 extern struct statement *head; // Pointer to head of the list
 
