@@ -6,11 +6,14 @@ struct statement *list; // Extern struct declared in ast.h. Used as a linked lis
 struct statement *head;
 
 void insertStmt(struct statement *stmt) {
+    struct statement test = *stmt;
+    printf("stmt->exp->kind: %d\n", stmt->exp->operator);
     if(head == NULL) {
         // Initalize head here if it has not already been done.
         head = malloc(sizeof(struct statement));
         head->link = NULL;
         head->exp = stmt->exp;
+        head->target = stmt->target;
         return;
     }
     struct statement *next;
@@ -20,6 +23,7 @@ void insertStmt(struct statement *stmt) {
     }
     next->link = stmt;
     next->exp = stmt->exp;
+    next->target = stmt->target;
 }
 
 //struct ast_expression createExp(char kind, char operator, struct ast_expression l_operand,

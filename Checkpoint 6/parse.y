@@ -20,6 +20,7 @@
 #include <stdio.h>
 #define DEBUG 0
 struct symbol_table *table;
+struct statement *list;
 %}
 
 %union {
@@ -79,10 +80,10 @@ struct symbol_table *table;
 %type <entry> varlist
 %type <entry> varref
 %type <stmt> assignstmt
-%type <sval> varname
 %type <expr> exp
 %type <expr> term
 %type <expr> factor
+%type <stmt> programbody
 %%
 
 program : headingstmt datasection algsection;
@@ -135,9 +136,14 @@ varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
                                  }
        ; // varref refers to the VAR token or an array.
 
-algsection: RWALG COLON programbody;
+algsection: RWALG COLON programbody {
+            list = $3;
+            };
 
-programbody: assignstmt programbody
+programbody: assignstmt programbody {
+             //$1->exp->operator = OP_ASGN;
+             insertStmt($1);
+             }
             |endmainstmt;
 
 assignstmt: VAR assign exp SEMICOLON
@@ -152,10 +158,8 @@ assignstmt: VAR assign exp SEMICOLON
               $$->exp->value = $3->value;
               // Will need code to insert this into a linked list
               //insertStmt($$);
-              
-            };
 
-varname: VAR;
+            };
 
 assign: ASSIGNOP;
 
