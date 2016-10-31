@@ -175,7 +175,7 @@ exp: MINUS exp  { // Unary minus(TEST THIS)
       $$ = malloc(sizeof(struct ast_expression));
       $$->l_operand = $1;
     //  printf("l_op %d\n", $$->l_operand->value);
-      //$$->kind = KIND_OP;
+      $$->kind = KIND_OP;
       $$->operator = OP_ADD;
       $$->r_operand = $3;
     //  printf("r_op %d\n", $$->r_operand->value);

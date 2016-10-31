@@ -62,6 +62,7 @@ void printList() {
   }
 }
 
+// Code generation for expressions
 void exprgen(struct ast_expression *exp) {
   if(exp->kind == KIND_INT) {
     printf("LLI %d\n", exp->value);
@@ -71,9 +72,11 @@ void exprgen(struct ast_expression *exp) {
       // Load values
       // printf("OP_ASGN FOUND\n");
       printf("LAA %d\n", exp->address);
-      // exprgen(exp->l_operand);
-      // exprgen(exp->r_operand);
-      printf("STO\n");
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->l_operand == NULL && exp->r_operand == NULL)
+        printf("STO\n");
+      // printf("STO\n");
       break;
 
     case OP_ADD:
@@ -81,6 +84,7 @@ void exprgen(struct ast_expression *exp) {
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       printf("ADI\n");
+      printf("STO\n");
       // printf("exp->l_operand->value: %d\n", exp->l_operand->value);
       // exprgen(exp->l_operand);
       // exprgen(exp->r_operand);
