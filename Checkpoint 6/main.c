@@ -35,9 +35,10 @@ int main()
     y = table->table[i];
     printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
   }
-  struct statement *test = malloc(sizeof(struct statement));
-  test = head;
-  printf("head->exp->kind: %c\n", test->exp->kind);
+  printList();
+  // struct statement *test = malloc(sizeof(struct statement));
+  // test = head;
+  // printf("head->exp->kind: %c\n", head->exp->operator);
   printf("\nyyparse returns %d\n", n);
   exit(0);
 }
