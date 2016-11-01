@@ -63,6 +63,7 @@
                                                    }
 
 [-+]?([0-9]*\.?[0-9]+|[0-9]+\.)((e|E)[-+]?[0-9]+)? { if(DEBUG) printf("LITREAL: %s\n", yytext);
+                                                     yylval.rval = atof(yytext);
                                                      return LITREAL;
                                                    }
 

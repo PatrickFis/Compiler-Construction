@@ -29,6 +29,7 @@ struct ast_expression { // This portion will just be used for expressions(possib
     struct ast_expression *l_operand;
     struct ast_expression *r_operand;
     int value;
+    double rvalue;
     int address;
     struct symbol_table_entry *target;
 };

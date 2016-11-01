@@ -48,7 +48,6 @@ void insertStmt(struct statement *stmt) {
 //    return expr;
 //}
 
-// List is in reverse order for some reason
 void printList() {
   struct statement *next;
   next = list;

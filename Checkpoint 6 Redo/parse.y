@@ -26,6 +26,7 @@ struct statement *list;
 %union {
    char *sval;
    int ival;
+   double rval;
    struct symbol_table *tableptr;
    struct symbol_table_entry *entry;
    struct statement *stmt;
@@ -42,7 +43,7 @@ struct statement *list;
 %token        RWDATA
 %token        RWALG
 %token <ival> LITINT
-%token        LITREAL
+%token <rval> LITREAL
 %token        RWINT
 %token        RWREAL
 %token        RWUPWARD
@@ -218,7 +219,11 @@ factor: LITINT {
           $$->kind = KIND_INT;
           $$->value = $1;
        }
-       |LITREAL
+       |LITREAL {
+          if(DEBUG) printf("%Lf\n", $1);
+          $$->kind = KIND_REAL;
+          $$->rvalue = $1;
+       }
        |LPAREN exp RPAREN
        ;
 
