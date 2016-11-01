@@ -121,6 +121,53 @@ void exprgen(struct ast_expression *exp) {
       if(exp->kind == KIND_INT) printf("DVI\n");
       else printf("DVF\n");
       break;
+
+    case OP_LSTHN:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) printf("LTI\n");
+      else printf("LTF\n");
+      break;
+
+    case OP_LSTHNEQL:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) printf("LEI\n");
+      else printf("LEF\n");
+      break;
+
+    case OP_GRTHN:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) printf("GTI\n");
+      else printf("GTF\n");
+      break;
+
+    case OP_GRTHNEQL:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) printf("GEI\n");
+      else printf("GEF\n");
+      break;
+
+    case OP_EQUAL:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) printf("EQI\n");
+      else printf("EQF\n");
+      break;
+
+    case OP_NEQUAL:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) printf("NEI\n");
+      else printf("NEF\n");
+      break;
+
+    // case OP_AND:
+    // case OP_OR:
+    // case OP_NOT:
+
   }
 }
 

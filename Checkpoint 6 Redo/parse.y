@@ -18,7 +18,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 1
+#define DEBUG 0
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -175,7 +175,55 @@ assignstmt: VAR assign exp SEMICOLON
 
 assign: ASSIGNOP;
 
-exp: exp ADD term {// Code to parse expressions
+exp: exp LESS term { // Code to parse < booleans
+                      if(DEBUG) printf("Got to LESS\n");
+                      $$ = malloc(sizeof(struct ast_expression));
+                      $$->kind = KIND_OP;
+                      $$->operator = OP_LSTHN;
+                      $$->l_operand = $1;
+                      $$->r_operand = $3;
+                   }
+    |exp LESSEQU term { // Code to parse <= booleans
+                        if(DEBUG) printf("Got to LESSTHN\n");
+                        $$ = malloc(sizeof(struct ast_expression));
+                        $$->kind = KIND_OP;
+                        $$->operator = OP_LSTHNEQL;
+                        $$->l_operand = $1;
+                        $$->r_operand = $3;
+                      }
+    |exp GREATER term { // Code to parse > booleans
+                        if(DEBUG) printf("Got to GREATER\n");
+                        $$ = malloc(sizeof(struct ast_expression));
+                        $$->kind = KIND_OP;
+                        $$->operator = OP_GRTHN;
+                        $$->l_operand = $1;
+                        $$->r_operand = $3;
+                      }
+    |exp GREATEQU term { // Code to parse >= booleans
+                        if(DEBUG) printf("Got to GREATEQU\n");
+                        $$ = malloc(sizeof(struct ast_expression));
+                        $$->kind = KIND_OP;
+                        $$->operator = OP_GRTHNEQL;
+                        $$->l_operand = $1;
+                        $$->r_operand = $3;
+                       }
+    |exp EQUAL term { // Code to parse = booleans
+                      if(DEBUG) printf("Got to EQUAL\n");
+                      $$ = malloc(sizeof(struct ast_expression));
+                      $$->kind = KIND_OP;
+                      $$->operator = OP_EQUAL;
+                      $$->l_operand = $1;
+                      $$->r_operand = $3;
+                    }
+    |exp NOTEQUAL term { // Code to parse <> booleans
+                        if(DEBUG) printf("Got to NOTEQUAL\n");
+                        $$ = malloc(sizeof(struct ast_expression));
+                        $$->kind = KIND_OP;
+                        $$->operator = OP_NEQUAL;
+                        $$->l_operand = $1;
+                        $$->r_operand = $3;
+                       }
+    |exp ADD term {// Code to parse expressions
                     if(DEBUG) printf("GOT HERE2\n");
                     $$ = malloc(sizeof(struct ast_expression));
                     $$->kind = KIND_OP;
