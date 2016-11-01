@@ -149,7 +149,11 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
             |assignstmt { // Only one assignment
               $$ = malloc(sizeof(struct statement));
               $$->exp = $1;
-              $$->link = NULL;
+              // Added the temp struct to insert the last expressions into the linked list.
+              struct statement *temp = malloc(sizeof(struct statement));
+              temp->exp = $$->exp;
+              temp->link = NULL;
+              $$->link = temp;
             }
             ;
 
