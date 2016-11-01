@@ -11,6 +11,15 @@
 #define OP_MUL 3
 #define OP_DIV 4
 #define OP_UMIN 5
+#define OP_LSTHN 6
+#define OP_LSTHNEQL 7
+#define OP_GRTHN 8
+#define OP_GRTHNEQL 9
+#define OP_EQUAL 10
+#define OP_NEQUAL 11
+#define OP_AND 12
+#define OP_OR 13
+#define OP_NOT 14
 
 struct statement {
     struct statement *link;

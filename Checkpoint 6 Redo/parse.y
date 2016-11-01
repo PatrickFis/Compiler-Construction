@@ -18,7 +18,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -223,16 +223,18 @@ term: term MULT factor {
              }
              ;
 factor: MINUS unit {
+                    if(DEBUG) printf("Got to negation\n");
                     $$ = malloc(sizeof(struct ast_expression));
                     $$->kind = KIND_OP;
                     $$->operator = OP_UMIN;
                     $$->r_operand = $2;
                    }
        |unit {
+              if(DEBUG) printf("Got to unit\n");
               $$ = $1;
              }
              ;
-             
+
 unit: LITINT { // Parses integers
                 if(DEBUG) printf("%d\n", $1);
                   $$ = malloc(sizeof(struct ast_expression));
