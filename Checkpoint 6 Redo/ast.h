@@ -15,7 +15,7 @@
 struct statement {
     struct statement *link;
     struct ast_expression *exp;
-    struct symbol_table_entry *target;
+    //struct symbol_table_entry *target;
 };
 
 struct ast_node { // This portion will probably be used for control structures, etc
@@ -30,6 +30,7 @@ struct ast_expression { // This portion will just be used for expressions(possib
     struct ast_expression *r_operand;
     int value;
     int address;
+    struct symbol_table_entry *target;
 };
 
 void insertStmt(struct statement *stmt);

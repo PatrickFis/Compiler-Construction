@@ -14,7 +14,6 @@ void insertStmt(struct statement *stmt) {
     head = malloc(sizeof(struct statement));
     head->link = NULL;
     head->exp = stmt->exp;
-    head->target = stmt->target;
     // printf("head kind: %d, operator: %d, value: %d\n", head->exp->kind, head->exp->operator, head->exp->value);
     return;
   }
@@ -23,7 +22,6 @@ void insertStmt(struct statement *stmt) {
     struct statement *next = malloc(sizeof(struct statement));
     next->link = stmt;
     next->exp = stmt->exp;
-    next->target = stmt->target;
     head->link = next;
   }
   else {
@@ -34,7 +32,6 @@ void insertStmt(struct statement *stmt) {
     }
     next->link = stmt;
     next->exp = stmt->exp;
-    next->target = stmt->target;
   }
 }
 
