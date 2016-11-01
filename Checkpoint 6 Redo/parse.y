@@ -18,7 +18,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -174,10 +174,14 @@ assignstmt: VAR assign exp SEMICOLON
 
 assign: ASSIGNOP;
 
-exp: MINUS exp  { // Unary minus(TEST THIS)
+exp: MINUS exp  { // Unary minus
                   if(DEBUG) printf("GOT HERE1\n");
-
-    }
+                  $$ = malloc(sizeof(struct ast_expression));
+                  $$->kind = KIND_OP;
+                  $$->operator = OP_UMIN;
+                  $$->l_operand = NULL;
+                  $$->r_operand = $2;
+                }
     |exp ADD term {// Code to parse expressions
                     if(DEBUG) printf("GOT HERE2\n");
                     $$ = malloc(sizeof(struct ast_expression));

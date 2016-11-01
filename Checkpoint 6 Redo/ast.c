@@ -67,6 +67,7 @@ void exprgen(struct ast_expression *exp) {
   else if(exp->kind == KIND_REAL) { // If expression involves reals
     printf("LLF %f\n", exp->rvalue);
   }
+
   switch(exp->operator) {
     case OP_ASGN:
       // Load values
@@ -84,12 +85,17 @@ void exprgen(struct ast_expression *exp) {
         printf("STO\n");
       }
       break;
+    case OP_UMIN:
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) printf("NGI\n");
+      else printf("NGF");
 
     case OP_ADD:
       // printf("GOT TO OP_ADD PORTION!!!\n");
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      printf("ADI\n");
+      if(exp->kind == KIND_INT) printf("ADI\n");
+      else printf("ADF\n");
       // printf("exp->l_operand->value: %d\n", exp->l_operand->value);
       // exprgen(exp->l_operand);
       // exprgen(exp->r_operand);
@@ -98,19 +104,22 @@ void exprgen(struct ast_expression *exp) {
     case OP_SUB:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      printf("SBI\n");
+      if(exp->kind == KIND_INT) printf("SBI\n");
+      else printf("SBF\n");
       break;
 
     case OP_MUL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      printf("MLI\n");
+      if(exp->kind == KIND_INT) printf("MLI\n");
+      else printf("MLF\n");
       break;
 
     case OP_DIV:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      printf("DVI\n");
+      if(exp->kind == KIND_INT) printf("DVI\n");
+      else printf("DVF\n");
       break;
   }
 }
