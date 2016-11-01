@@ -18,7 +18,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -141,19 +141,24 @@ algsection: RWALG COLON programbody {
             };
 
 programbody: assignstmt programbody {
-             //insertStmt($1);
+              $$ = malloc(sizeof(struct statement));
+              $$->exp = $1;
+              $$->link = $2;
+              //insertStmt($$);
              }
             |endmainstmt;
 
 assignstmt: VAR assign exp SEMICOLON
             {
+              if(DEBUG) printf("Got to assignstmt");
+              $3 = malloc(sizeof(struct ast_expression));
               $$ = malloc(sizeof(struct ast_expression));
               $$->kind = KIND_OP;
               $$->operator = OP_ASGN;
               $$->l_operand = NULL; // Gonna set this to NULL and use r_operand for the exp
               $$->r_operand = $3;
-              *$$->target = retrieve($1); // Get target from symbol table
-              $$->address = $$->target->address;
+              //*$$->target = retrieve($1); // Get target from symbol table, this is causing a segfault
+              //$$->address = $$->target->address;
 
             };
 
@@ -165,7 +170,11 @@ exp: MINUS exp  { // Unary minus(TEST THIS)
     }
     |exp ADD term {// Code to parse expressions
       if(DEBUG) printf("GOT HERE2\n");
-
+      $$ = malloc(sizeof(struct ast_expression));
+      $$->kind = KIND_OP;
+      $$->operator = OP_ADD;
+      $$->l_operand = $1;
+      $$->r_operand = $3;
     //  printf("l_op %d\n", $$->l_operand->value);
 
     //  printf("r_op %d\n", $$->r_operand->value);
@@ -176,7 +185,10 @@ exp: MINUS exp  { // Unary minus(TEST THIS)
     }
     |term {
       if(DEBUG) printf("GOT HERE4\n");
-
+      //$$ = malloc(sizeof(struct ast_expression));
+      //$$->kind = KIND_OP;
+      //$$->l_operand = $1;
+      $$ = $1;
     }
     ;
 
@@ -184,13 +196,18 @@ term: term MULT factor
      |term DIV factor
      |factor {
       if(DEBUG) printf("GOT HERE44\n");
-
+        //$$ = malloc(sizeof(struct ast_expression));
+        //$$->kind = KIND_OP;
+        //$$->l_operand = $1;
+        $$ = $1;
      }
      ;
 
 factor: LITINT {
         if(DEBUG) printf("%d\n", $1);
-
+          $$ = malloc(sizeof(struct ast_expression));
+          $$->kind = KIND_INT;
+          $$->value = $1;
        }
        |LITREAL
        |LPAREN exp RPAREN
