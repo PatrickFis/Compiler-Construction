@@ -21,4 +21,5 @@ main;
 		X := 24;
 		Estimate := 36;
 		NewEst := 77.2;
+		N := 12 + 12;
 end main;

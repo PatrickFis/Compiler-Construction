@@ -77,8 +77,12 @@ void exprgen(struct ast_expression *exp) {
         exprgen(exp->l_operand);
       if(exp->r_operand != NULL)
         exprgen(exp->r_operand);
-      if(exp->l_operand == NULL && exp->r_operand == NULL)
+      if(exp->l_operand == NULL && exp->r_operand != NULL) {
+        // Surprisingly, checking if r_operand is not NULL seems to have fixed
+        // an issue where the STO instruction was being printed more than
+        // once.
         printf("STO\n");
+      }
       break;
 
     case OP_ADD:

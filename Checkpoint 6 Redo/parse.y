@@ -185,9 +185,6 @@ exp: MINUS exp  { // Unary minus(TEST THIS)
       $$->operator = OP_ADD;
       $$->l_operand = $1;
       $$->r_operand = $3;
-    //  printf("l_op %d\n", $$->l_operand->value);
-
-    //  printf("r_op %d\n", $$->r_operand->value);
     }
     |exp MINUS term {
       if(DEBUG) printf("GOT HERE3\n");
@@ -213,13 +210,13 @@ term: term MULT factor
      }
      ;
 
-factor: LITINT {
+factor: LITINT { // Parses integers
         if(DEBUG) printf("%d\n", $1);
           $$ = malloc(sizeof(struct ast_expression));
           $$->kind = KIND_INT;
           $$->value = $1;
        }
-       |LITREAL {
+       |LITREAL { // Parses reals
           if(DEBUG) printf("%f\n", $1);
           $$ = malloc(sizeof(struct ast_expression));
           $$->kind = KIND_REAL;
