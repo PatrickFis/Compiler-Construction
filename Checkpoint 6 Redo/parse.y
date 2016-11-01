@@ -18,7 +18,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -223,6 +223,20 @@ exp: exp LESS term { // Code to parse < booleans
                         $$->l_operand = $1;
                         $$->r_operand = $3;
                        }
+    |exp AND term { // Code to parse & booleans
+                    if(DEBUG) printf("Got to AND\n");
+                    $$->kind = KIND_OP;
+                    $$->operator = OP_AND;
+                    $$->l_operand = $1;
+                    $$->r_operand = $3;
+                  }
+    |exp OR term { // Code to parse | booleans
+                  if(DEBUG) printf("Got to OR\n");
+                  $$->kind = KIND_OP;
+                  $$->operator = OP_OR;
+                  $$->l_operand = $1;
+                  $$->r_operand = $3;
+                 }
     |exp ADD term {// Code to parse expressions
                     if(DEBUG) printf("GOT HERE2\n");
                     $$ = malloc(sizeof(struct ast_expression));
@@ -277,6 +291,17 @@ factor: MINUS unit {
                     $$->operator = OP_UMIN;
                     $$->r_operand = $2;
                    }
+       |NOT unit {
+                   // Code to parse ~ booleans, this may not be correct, will need
+                   // to check it. ~ Should only be applied to one expression at a
+                   // time. May need to be moved to another portion of the grammar.
+                   if(DEBUG) printf("Got to NOT\n");
+                   $$ = malloc(sizeof(struct ast_expression));
+                   $$->kind = KIND_OP;
+                   $$->operator = OP_NOT;
+                   //$$->l_operand = NULL;
+                   $$->r_operand = $2;
+                 }
        |unit {
               if(DEBUG) printf("Got to unit\n");
               $$ = $1;

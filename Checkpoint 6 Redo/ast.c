@@ -164,9 +164,54 @@ void exprgen(struct ast_expression *exp) {
       else printf("NEF\n");
       break;
 
-    // case OP_AND:
-    // case OP_OR:
-    // case OP_NOT:
+    case OP_AND: // These Boolean instructions require a bit of clever faking
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) {
+        // Boolean and = multiplication
+        printf("MLI\n");
+        printf("LLI 1\n");
+        printf("EQI\n"); // Check if l_op * r_op = 1
+      }
+      else {
+        printf("MLF\n");
+        printf("LLF 1.0\n");
+        printf("EQF\n");
+      }
+      break;
+
+    case OP_OR:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->kind == KIND_INT) {
+        // Boolean or = addition
+        printf("ADI\n");
+        printf("LLI 1\n");
+        printf("EQI\n");
+      }
+      else {
+        printf("ADF\n");
+        printf("LLF 1.0\n");
+        printf("EQF\n");
+      }
+      break;
+
+    case OP_NOT:
+      // if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      printf("exp->kind %d\n", exp->kind);
+      if(exp->kind == KIND_INT) {
+        // Boolean not = complement
+        printf("LLI 0\n");
+        printf("NEI\n"); // If exp != 0, then exp is true
+      }
+      else {
+        printf("exp->kind: %d\n", exp->value);
+        printf("LLF 0.0\n");
+        printf("NEF\n");
+      }
+      break;
+
 
   }
 }

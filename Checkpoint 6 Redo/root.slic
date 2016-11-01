@@ -15,6 +15,7 @@ main;
 		real: Estimate;
 		real: NewEst;
 		real: Diff;
+		integer: int;
 	algorithm:
 		N := 12;
 		X := 24;
@@ -31,4 +32,5 @@ main;
 		NewEst := 44 >= 23;
 		Diff := 12 = 12;
 		N := 62 <> 62;
+		int := ~1;
 end main;
