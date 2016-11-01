@@ -18,7 +18,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 1
+#define DEBUG 0
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -84,6 +84,7 @@ struct statement *list;
 %type <expr> exp
 %type <expr> term
 %type <expr> factor
+%type <expr> unit
 %type <stmt> programbody
 %%
 
@@ -174,15 +175,7 @@ assignstmt: VAR assign exp SEMICOLON
 
 assign: ASSIGNOP;
 
-exp: MINUS exp  { // Unary minus
-                  if(DEBUG) printf("GOT HERE1\n");
-                  $$ = malloc(sizeof(struct ast_expression));
-                  $$->kind = KIND_OP;
-                  $$->operator = OP_UMIN;
-                  $$->l_operand = NULL;
-                  $$->r_operand = $2;
-                }
-    |exp ADD term {// Code to parse expressions
+exp: exp ADD term {// Code to parse expressions
                     if(DEBUG) printf("GOT HERE2\n");
                     $$ = malloc(sizeof(struct ast_expression));
                     $$->kind = KIND_OP;
@@ -229,8 +222,18 @@ term: term MULT factor {
                 $$ = $1;
              }
              ;
-
-factor: LITINT { // Parses integers
+factor: MINUS unit {
+                    $$ = malloc(sizeof(struct ast_expression));
+                    $$->kind = KIND_OP;
+                    $$->operator = OP_UMIN;
+                    $$->r_operand = $2;
+                   }
+       |unit {
+              $$ = $1;
+             }
+             ;
+             
+unit: LITINT { // Parses integers
                 if(DEBUG) printf("%d\n", $1);
                   $$ = malloc(sizeof(struct ast_expression));
                   $$->kind = KIND_INT;
@@ -243,6 +246,7 @@ factor: LITINT { // Parses integers
                   $$->rvalue = $1;
                 }
        |LPAREN exp RPAREN {
+                            $2 = malloc(sizeof(struct ast_expression));
                             $$ = $2;
                           }
                           ;
