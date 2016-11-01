@@ -220,7 +220,8 @@ factor: LITINT {
           $$->value = $1;
        }
        |LITREAL {
-          if(DEBUG) printf("%Lf\n", $1);
+          if(DEBUG) printf("%f\n", $1);
+          $$ = malloc(sizeof(struct ast_expression));
           $$->kind = KIND_REAL;
           $$->rvalue = $1;
        }

@@ -61,8 +61,11 @@ void printList() {
 // Code generation for expressions
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
-  if(exp->kind == KIND_INT) {
+  if(exp->kind == KIND_INT) { // If expression involves integers
     printf("LLI %d\n", exp->value);
+  }
+  else if(exp->kind == KIND_REAL) { // If expression involves reals
+    printf("LLF %f\n", exp->rvalue);
   }
   switch(exp->operator) {
     case OP_ASGN:
