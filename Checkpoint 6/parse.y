@@ -169,35 +169,37 @@ assign: ASSIGNOP;
 exp: MINUS exp  { // Unary minus(TEST THIS)
                   if(DEBUG) printf("GOT HERE1\n");
                   $$ = malloc(sizeof(struct ast_expression));
-    }
-    |exp ADD term {// Code to parse expressions
-      if(DEBUG) printf("GOT HERE2\n");
-      $$ = malloc(sizeof(struct ast_expression));
-      $$->l_operand = $1;
-    //  printf("l_op %d\n", $$->l_operand->value);
-      $$->kind = KIND_OP;
-      $$->operator = OP_ADD;
-      $$->r_operand = $3;
-    //  printf("r_op %d\n", $$->r_operand->value);
-    }
-    |exp MINUS term {
-      if(DEBUG) printf("GOT HERE3\n");
-      $$ = malloc(sizeof(struct ast_expression));
-    }
+                }
+    |exp ADD term { // Code to parse addition expressions
+                    if(DEBUG) printf("GOT HERE2\n");
+                    $$ = malloc(sizeof(struct ast_expression));
+                    $$->l_operand = $1;
+                    $$->kind = KIND_OP;
+                    $$->operator = OP_ADD;
+                    $$->r_operand = $3;
+                  }
+    |exp MINUS term { // Code to parse subtraction expressions
+                      if(DEBUG) printf("GOT HERE3\n");
+                      $$ = malloc(sizeof(struct ast_expression));
+                      $$->l_operand = $1;
+                      $$->kind = KIND_OP;
+                      $$->operator = OP_SUB;
+                      $$->r_operand = $3;
+                    }
     |term {
-      if(DEBUG) printf("GOT HERE4\n");
-      //$$->kind = KIND_OP;
-      $$ = $1;
-    }
+            if(DEBUG) printf("GOT HERE4\n");
+            //$$->kind = KIND_OP;
+            $$ = $1;
+          }
     ;
 
 term: term MULT factor
      |term DIV factor
      |factor {
-      if(DEBUG) printf("GOT HERE44\n");
-      //$$->kind = KIND_OP;
-      $$ = $1;
-     }
+              if(DEBUG) printf("GOT HERE44\n");
+              //$$->kind = KIND_OP;
+              $$ = $1;
+             }
      ;
 
 factor: LITINT {

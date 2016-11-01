@@ -179,51 +179,69 @@ exp: MINUS exp  { // Unary minus(TEST THIS)
 
     }
     |exp ADD term {// Code to parse expressions
-      if(DEBUG) printf("GOT HERE2\n");
-      $$ = malloc(sizeof(struct ast_expression));
-      $$->kind = KIND_OP;
-      $$->operator = OP_ADD;
-      $$->l_operand = $1;
-      $$->r_operand = $3;
-    }
+                    if(DEBUG) printf("GOT HERE2\n");
+                    $$ = malloc(sizeof(struct ast_expression));
+                    $$->kind = KIND_OP;
+                    $$->operator = OP_ADD;
+                    $$->l_operand = $1;
+                    $$->r_operand = $3;
+                  }
     |exp MINUS term {
-      if(DEBUG) printf("GOT HERE3\n");
-
-    }
+                      if(DEBUG) printf("GOT HERE3\n");
+                      $$ = malloc(sizeof(struct ast_expression));
+                      $$->kind = KIND_OP;
+                      $$->operator = OP_SUB;
+                      $$->l_operand = $1;
+                      $$->r_operand = $3;
+                    }
     |term {
-      if(DEBUG) printf("GOT HERE4\n");
-      //$$ = malloc(sizeof(struct ast_expression));
-      //$$->kind = KIND_OP;
-      //$$->l_operand = $1;
-      $$ = $1;
-    }
-    ;
+            if(DEBUG) printf("GOT HERE4\n");
+            //$$ = malloc(sizeof(struct ast_expression));
+            //$$->kind = KIND_OP;
+            //$$->l_operand = $1;
+            $$ = $1;
+          }
+          ;
 
-term: term MULT factor
-     |term DIV factor
+term: term MULT factor {
+                          $$ = malloc(sizeof(struct ast_expression));
+                          $$->kind = KIND_OP;
+                          $$->operator = OP_MUL;
+                          $$->l_operand = $1;
+                          $$->r_operand = $3;
+                       }
+     |term DIV factor {
+                          $$ = malloc(sizeof(struct ast_expression));
+                          $$->kind = KIND_OP;
+                          $$->operator = OP_MUL;
+                          $$->l_operand = $1;
+                          $$->r_operand = $3;
+                      }
      |factor {
-      if(DEBUG) printf("GOT HERE44\n");
-        //$$ = malloc(sizeof(struct ast_expression));
-        //$$->kind = KIND_OP;
-        //$$->l_operand = $1;
-        $$ = $1;
-     }
-     ;
+              if(DEBUG) printf("GOT HERE44\n");
+                //$$ = malloc(sizeof(struct ast_expression));
+                //$$->kind = KIND_OP;
+                //$$->l_operand = $1;
+                $$ = $1;
+             }
+             ;
 
 factor: LITINT { // Parses integers
-        if(DEBUG) printf("%d\n", $1);
-          $$ = malloc(sizeof(struct ast_expression));
-          $$->kind = KIND_INT;
-          $$->value = $1;
-       }
+                if(DEBUG) printf("%d\n", $1);
+                  $$ = malloc(sizeof(struct ast_expression));
+                  $$->kind = KIND_INT;
+                  $$->value = $1;
+               }
        |LITREAL { // Parses reals
-          if(DEBUG) printf("%f\n", $1);
-          $$ = malloc(sizeof(struct ast_expression));
-          $$->kind = KIND_REAL;
-          $$->rvalue = $1;
-       }
-       |LPAREN exp RPAREN
-       ;
+                  if(DEBUG) printf("%f\n", $1);
+                  $$ = malloc(sizeof(struct ast_expression));
+                  $$->kind = KIND_REAL;
+                  $$->rvalue = $1;
+                }
+       |LPAREN exp RPAREN {
+                            $$ = $2;
+                          }
+                          ;
 
 endmainstmt: RWEND RWMAIN SEMICOLON;
 

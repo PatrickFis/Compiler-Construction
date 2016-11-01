@@ -15,11 +15,12 @@ main;
 		real: Estimate;
 		real: NewEst;
 		real: Diff;
-		integer: array[20];
 	algorithm:
 		N := 12;
 		X := 24;
 		Estimate := 36;
 		NewEst := 77.2;
 		N := 12 + 12;
+		X := 24 - 24;
+		NewEst := 24*22;
 end main;

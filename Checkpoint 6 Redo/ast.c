@@ -94,6 +94,24 @@ void exprgen(struct ast_expression *exp) {
       // exprgen(exp->l_operand);
       // exprgen(exp->r_operand);
       break;
+
+    case OP_SUB:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      printf("SBI\n");
+      break;
+
+    case OP_MUL:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      printf("MLI\n");
+      break;
+
+    case OP_DIV:
+      if(exp->l_operand != NULL) exprgen(exp->l_operand);
+      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      printf("DVI\n");
+      break;
   }
 }
 
