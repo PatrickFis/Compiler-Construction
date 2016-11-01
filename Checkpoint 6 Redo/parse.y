@@ -18,7 +18,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 1
+#define DEBUG 0
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -136,30 +136,35 @@ varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
                                  }
        ; // varref refers to the VAR token or an array.
 
-algsection: RWALG COLON programbody {
+algsection: RWALG COLON programbody endmainstmt{
             list = $3;
             };
 
-programbody: assignstmt programbody {
+programbody: assignstmt programbody { // Multiple assignments, removed endmainstmt from programbody to stop a segfault
               $$ = malloc(sizeof(struct statement));
               $$->exp = $1;
               $$->link = $2;
               //insertStmt($$);
              }
-            |endmainstmt;
+            |assignstmt { // Only one assignment
+              $$ = malloc(sizeof(struct statement));
+              $$->exp = $1;
+              $$->link = NULL;
+            }
+            ;
 
 assignstmt: VAR assign exp SEMICOLON
             {
-              if(DEBUG) printf("Got to assignstmt");
-              $3 = malloc(sizeof(struct ast_expression));
+              // This appears to to be working
+              if(DEBUG) printf("Got to assignstmt\n");
               $$ = malloc(sizeof(struct ast_expression));
               $$->kind = KIND_OP;
               $$->operator = OP_ASGN;
               $$->l_operand = NULL; // Gonna set this to NULL and use r_operand for the exp
               $$->r_operand = $3;
-              //*$$->target = retrieve($1); // Get target from symbol table, this is causing a segfault
-              //$$->address = $$->target->address;
-
+              $$->target = &table->table[isPresent($1)]; // Get target from symbol table
+              $$->address = $$->target->address;
+              if(DEBUG) printf("Address %d\n", $$->address);
             };
 
 assign: ASSIGNOP;

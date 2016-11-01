@@ -51,7 +51,7 @@ void insertStmt(struct statement *stmt) {
 // List is in reverse order for some reason
 void printList() {
   struct statement *next;
-  next = head;
+  next = list;
   while(next->link != NULL) {
     // printf("kind: %d, operator: %d, value: %d\n", next->exp->kind, next->exp->operator, next->exp->value);
     exprgen(next->exp);
@@ -61,6 +61,7 @@ void printList() {
 
 // Code generation for expressions
 void exprgen(struct ast_expression *exp) {
+  printf("exp->value = %d\n", exp->value);
   if(exp->kind == KIND_INT) {
     printf("LLI %d\n", exp->value);
   }
@@ -71,7 +72,7 @@ void exprgen(struct ast_expression *exp) {
       printf("LAA %d\n", exp->address);
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->l_operand == NULL && exp->r_operand == NULL)
+      // if(exp->l_operand == NULL && exp->r_operand == NULL)
         printf("STO\n");
       // printf("STO\n");
       break;
@@ -81,7 +82,6 @@ void exprgen(struct ast_expression *exp) {
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       printf("ADI\n");
-      printf("STO\n");
       // printf("exp->l_operand->value: %d\n", exp->l_operand->value);
       // exprgen(exp->l_operand);
       // exprgen(exp->r_operand);
