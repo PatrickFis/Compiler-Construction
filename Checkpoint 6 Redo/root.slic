@@ -19,6 +19,7 @@ main;
 	algorithm:
 		N := 12;
 		X := 24;
+		int := 12 + 21;
 		Estimate := 36;
 		NewEst := 77.2;
 		N := 12.21 + 12.2;

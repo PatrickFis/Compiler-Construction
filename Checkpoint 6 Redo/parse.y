@@ -338,12 +338,14 @@ unit: LITINT { // Parses integers
                   $$ = malloc(sizeof(struct ast_expression));
                   $$->kind = KIND_INT;
                   $$->value = $1;
+                  $$->type = TYPE_REAL;
                }
        |LITREAL { // Parses reals
                   if(DEBUG) printf("%f\n", $1);
                   $$ = malloc(sizeof(struct ast_expression));
                   $$->kind = KIND_REAL;
                   $$->rvalue = $1;
+                  $$->type = TYPE_INT;
                 }
        |LPAREN exp RPAREN {
                             $2 = malloc(sizeof(struct ast_expression));

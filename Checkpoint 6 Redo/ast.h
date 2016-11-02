@@ -35,6 +35,7 @@ struct ast_node { // This portion will probably be used for control structures, 
 struct ast_expression { // This portion will just be used for expressions(possibly just integer expressions)
     char kind;
     char operator;
+    char type;
     struct ast_expression *l_operand;
     struct ast_expression *r_operand;
     int value;

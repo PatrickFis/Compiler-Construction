@@ -61,7 +61,7 @@ void printList() {
 // Code generation for expressions
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
-  if(exp->kind == KIND_INT) { // If expression involves integers
+  if(exp->kind == TYPE_INT) { // If expression involves integers
     printf("LLI %d\n", exp->value);
   }
   else if(exp->kind == KIND_REAL) { // If expression involves reals
@@ -87,18 +87,19 @@ void exprgen(struct ast_expression *exp) {
       break;
     case OP_UMIN:
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("NGI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("NGI\n");
+      else if(exp->type == KIND_REAL) {
         printf("NGF");
       }
       break;
 
     case OP_ADD:
       // printf("GOT TO OP_ADD PORTION!!!\n");
+      // printf("exp->type: %d\n", exp->type);
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("ADI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("ADI\n");
+      if(exp->type == KIND_REAL) {
         printf("ADF\n");
       }
       // printf("exp->l_operand->value: %d\n", exp->l_operand->value);
@@ -109,8 +110,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_SUB:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("SBI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("SBI\n");
+      else if(exp->type == KIND_REAL) {
         printf("SBF\n");
       }
       break;
@@ -118,8 +119,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_MUL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("MLI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("MLI\n");
+      else if(exp->type == KIND_REAL) {
         printf("MLF\n");
       }
       break;
@@ -127,8 +128,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_DIV:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("DVI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("DVI\n");
+      else if(exp->type == KIND_REAL) {
         printf("DVF\n");
       }
       break;
@@ -136,8 +137,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_LSTHN:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("LTI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("LTI\n");
+      else if(exp->type == KIND_REAL) {
         printf("LTF\n");
       }
       break;
@@ -145,8 +146,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_LSTHNEQL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("LEI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("LEI\n");
+      else if(exp->type == KIND_REAL) {
         printf("LEF\n");
       }
       break;
@@ -154,8 +155,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_GRTHN:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("GTI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("GTI\n");
+      else if(exp->type == KIND_REAL) {
         printf("GTF\n");
       }
       break;
@@ -163,8 +164,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_GRTHNEQL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("GEI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("GEI\n");
+      else if(exp->type == KIND_REAL) {
         printf("GEF\n");
       }
       break;
@@ -172,8 +173,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_EQUAL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("EQI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("EQI\n");
+      else if(exp->type == KIND_REAL) {
         printf("EQF\n");
       }
       break;
@@ -181,8 +182,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_NEQUAL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) printf("NEI\n");
-      else if(exp->kind == KIND_REAL) {
+      if(exp->type == TYPE_INT) printf("NEI\n");
+      else if(exp->type == KIND_REAL) {
         printf("NEF\n");
       }
       break;
@@ -190,13 +191,13 @@ void exprgen(struct ast_expression *exp) {
     case OP_AND: // These Boolean instructions require a bit of clever faking
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) {
+      if(exp->type == TYPE_INT) {
         // Boolean and = multiplication
         printf("MLI\n");
         printf("LLI 1\n");
         printf("EQI\n"); // Check if l_op * r_op = 1
       }
-      else if(exp->kind == KIND_REAL) {
+      else if(exp->type == KIND_REAL) {
         printf("MLF\n");
         printf("LLF 1.0\n");
         printf("EQF\n");
@@ -206,13 +207,13 @@ void exprgen(struct ast_expression *exp) {
     case OP_OR:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->kind == KIND_INT) {
+      if(exp->type == TYPE_INT) {
         // Boolean or = addition
         printf("ADI\n");
         printf("LLI 1\n");
         printf("EQI\n");
       }
-      else if(exp->kind == KIND_REAL) {
+      else if(exp->type == KIND_REAL) {
         printf("ADF\n");
         printf("LLF 1.0\n");
         printf("EQF\n");
@@ -222,14 +223,14 @@ void exprgen(struct ast_expression *exp) {
     case OP_NOT:
       // if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      // printf("exp->kind %d\n", exp->kind);
-      if(exp->kind == KIND_INT) {
+      // printf("exp->type %d\n", exp->type);
+      if(exp->type == TYPE_INT) {
         // Boolean not = complement
         printf("LLI 0\n");
         printf("NEI\n"); // If exp != 0, then exp is true
       }
-      else if(exp->kind == KIND_REAL) {
-        // printf("exp->kind: %d\n", exp->value);
+      else if(exp->type == KIND_REAL) {
+        // printf("exp->type: %d\n", exp->value);
         printf("LLF 0.0\n");
         printf("NEF\n");
       }
