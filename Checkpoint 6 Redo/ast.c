@@ -88,14 +88,19 @@ void exprgen(struct ast_expression *exp) {
     case OP_UMIN:
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("NGI\n");
-      else printf("NGF");
+      else if(exp->kind == KIND_REAL) {
+        printf("NGF");
+      }
+      break;
 
     case OP_ADD:
       // printf("GOT TO OP_ADD PORTION!!!\n");
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("ADI\n");
-      else printf("ADF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("ADF\n");
+      }
       // printf("exp->l_operand->value: %d\n", exp->l_operand->value);
       // exprgen(exp->l_operand);
       // exprgen(exp->r_operand);
@@ -105,63 +110,81 @@ void exprgen(struct ast_expression *exp) {
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("SBI\n");
-      else printf("SBF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("SBF\n");
+      }
       break;
 
     case OP_MUL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("MLI\n");
-      else printf("MLF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("MLF\n");
+      }
       break;
 
     case OP_DIV:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("DVI\n");
-      else printf("DVF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("DVF\n");
+      }
       break;
 
     case OP_LSTHN:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("LTI\n");
-      else printf("LTF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("LTF\n");
+      }
       break;
 
     case OP_LSTHNEQL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("LEI\n");
-      else printf("LEF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("LEF\n");
+      }
       break;
 
     case OP_GRTHN:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("GTI\n");
-      else printf("GTF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("GTF\n");
+      }
       break;
 
     case OP_GRTHNEQL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("GEI\n");
-      else printf("GEF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("GEF\n");
+      }
       break;
 
     case OP_EQUAL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("EQI\n");
-      else printf("EQF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("EQF\n");
+      }
       break;
 
     case OP_NEQUAL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->kind == KIND_INT) printf("NEI\n");
-      else printf("NEF\n");
+      else if(exp->kind == KIND_REAL) {
+        printf("NEF\n");
+      }
       break;
 
     case OP_AND: // These Boolean instructions require a bit of clever faking
@@ -173,7 +196,7 @@ void exprgen(struct ast_expression *exp) {
         printf("LLI 1\n");
         printf("EQI\n"); // Check if l_op * r_op = 1
       }
-      else {
+      else if(exp->kind == KIND_REAL) {
         printf("MLF\n");
         printf("LLF 1.0\n");
         printf("EQF\n");
@@ -189,7 +212,7 @@ void exprgen(struct ast_expression *exp) {
         printf("LLI 1\n");
         printf("EQI\n");
       }
-      else {
+      else if(exp->kind == KIND_REAL) {
         printf("ADF\n");
         printf("LLF 1.0\n");
         printf("EQF\n");
@@ -205,7 +228,7 @@ void exprgen(struct ast_expression *exp) {
         printf("LLI 0\n");
         printf("NEI\n"); // If exp != 0, then exp is true
       }
-      else {
+      else if(exp->kind == KIND_REAL) {
         // printf("exp->kind: %d\n", exp->value);
         printf("LLF 0.0\n");
         printf("NEF\n");
