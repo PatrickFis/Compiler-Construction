@@ -15,7 +15,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -179,7 +179,7 @@ assignstmt: VAR assign bexp SEMICOLON
               $$ = malloc(sizeof(struct ast_expression));
               $$->kind = KIND_OP;
               $$->operator = OP_ASGN;
-              $$->l_operand = NULL; // Gonna set this to NULL and use r_operand for the exp
+              // $$->l_operand = NULL; // Gonna set this to NULL and use r_operand for the exp
               $$->r_operand = $3;
               $$->target = &table->table[isPresent($1)]; // Get target from symbol table
               $$->address = $$->target->address;
@@ -347,10 +347,31 @@ unit: LITINT { // Parses integers
                   $$->rvalue = $1;
                   $$->type = TYPE_INT;
                 }
-       |LPAREN exp RPAREN {
+       |LPAREN bexp RPAREN {
                             $2 = malloc(sizeof(struct ast_expression));
                             $$ = $2;
                           }
+       |VAR {
+         if(DEBUG) printf("Got to VAR\n");
+         $$ = malloc(sizeof(struct ast_expression));
+         $$->type = TYPE_VAR;
+         int tableLoc = isPresent($1);
+         if(DEBUG) printf("tableLoc: %d\n", tableLoc);
+         int varType = table->table[tableLoc].type;
+         if(DEBUG) printf("varType: %i\n", varType);
+         if(varType == TYPE_INT) {
+           $$->l_operand = malloc(sizeof(struct ast_expression)); // Trying to hack together a solution with this
+          //  $$->l_operand->kind = KIND_INT;
+           $$->l_operand->type = TYPE_VAR;
+           $$->l_operand->target = &table->table[tableLoc];
+         }
+         if(varType == TYPE_REAL) {
+           $$->l_operand = malloc(sizeof(struct ast_expression)); // Trying to hack together a solution with this
+          //  $$->l_operand->kind = KIND_REAL;
+           $$->l_operand->type = TYPE_VAR;
+           $$->l_operand->target = &table->table[tableLoc];
+         }
+       }
                           ;
 
 endmainstmt: RWEND RWMAIN SEMICOLON;

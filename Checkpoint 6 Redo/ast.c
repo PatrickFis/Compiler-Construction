@@ -67,7 +67,12 @@ void exprgen(struct ast_expression *exp) {
   else if(exp->kind == KIND_REAL) { // If expression involves reals
     printf("LLF %f\n", exp->rvalue);
   }
-
+  if(exp->type == TYPE_VAR) { // Last ditch effort...
+    printf("LAA %d\n",exp->l_operand->target->address);
+    printf("LOD\n");
+    // printf("exp->l_operand->target->address: %d\n",exp->l_operand->target->address);
+    return; // Just stop the recursion when you reach a variable reference
+  }
   switch(exp->operator) {
     case OP_ASGN:
       // Load values
@@ -102,6 +107,11 @@ void exprgen(struct ast_expression *exp) {
       if(exp->type == KIND_REAL) {
         printf("ADF\n");
       }
+      // if(exp->type == TYPE_VAR) {
+      //   printf("%d\n",exp->l_operand->target->address);
+      //   // printf("%d\n",exp->target->);
+      //   printf("LAA type var ");
+      // }
       // printf("exp->l_operand->value: %d\n", exp->l_operand->value);
       // exprgen(exp->l_operand);
       // exprgen(exp->r_operand);

@@ -5,6 +5,8 @@
 #define KIND_REAL 1
 #define KIND_OP 2
 
+#define TYPE_VAR 3 // This is for parsing exp = varname
+
 #define OP_ASGN 0
 #define OP_ADD 1
 #define OP_SUB 2
