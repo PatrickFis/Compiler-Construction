@@ -48,6 +48,12 @@ void insertStmt(struct statement *stmt) {
 //    return expr;
 //}
 
+/*
+ *  This function goes through the abstract syntax tree and calls the exprgen
+ *  function on each statement in a linked list. Will probably change these
+ *  functions when implementing control structures to utilize arrays for
+ *  easy jump locations.
+ */
 void printList() {
   struct statement *next;
   next = list;
@@ -59,13 +65,18 @@ void printList() {
   }
 }
 
-// Code generation for expressions
+/*
+ *  This function generates gstal code for a given expression. It goes through
+ *  the left and right operands of an expression recursively. In the case that
+ *  a given expression contains another variable reference (e.g. n := x),
+ *  recursion will halt after loading the variable.
+ */
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
-  if(exp->kind == TYPE_INT) { // If expression involves integers
+  if(exp->kind == TYPE_INT && exp->type != TYPE_VAR) { // If expression involves integers
     printf("LLI %d\n", exp->value);
   }
-  else if(exp->kind == KIND_REAL) { // If expression involves reals
+  else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
     printf("LLF %f\n", exp->rvalue);
   }
   if(exp->type == TYPE_VAR) {
