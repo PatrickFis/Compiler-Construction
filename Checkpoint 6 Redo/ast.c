@@ -54,6 +54,7 @@ void printList() {
   while(next->link != NULL) {
     // printf("kind: %d, operator: %d, value: %d\n", next->exp->kind, next->exp->operator, next->exp->value);
     exprgen(next->exp);
+    // printf("PTI\nPTL\n");
     next = next->link;
   }
 }
@@ -67,7 +68,7 @@ void exprgen(struct ast_expression *exp) {
   else if(exp->kind == KIND_REAL) { // If expression involves reals
     printf("LLF %f\n", exp->rvalue);
   }
-  if(exp->type == TYPE_VAR) { // Last ditch effort...
+  if(exp->type == TYPE_VAR) {
     printf("LAA %d\n",exp->l_operand->target->address);
     printf("LOD\n");
     // printf("exp->l_operand->target->address: %d\n",exp->l_operand->target->address);

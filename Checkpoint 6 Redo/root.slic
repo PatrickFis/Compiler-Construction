@@ -36,4 +36,8 @@ main;
 		N := 62 <> 62;
 		int := ~1;
 		N := int + int;
+		N := X;
+		N := 1000;
+		X := 1200;
+		N := X;
 end main;
