@@ -10,7 +10,7 @@
 
 main;
 	data:
-		real: N;
+		real: N, nn;
 		real: X;
 		real: Estimate;
 		real: NewEst;

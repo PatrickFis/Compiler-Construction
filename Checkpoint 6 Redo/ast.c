@@ -199,14 +199,14 @@ void exprgen(struct ast_expression *exp) {
     case OP_NOT:
       // if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      printf("exp->kind %d\n", exp->kind);
+      // printf("exp->kind %d\n", exp->kind);
       if(exp->kind == KIND_INT) {
         // Boolean not = complement
         printf("LLI 0\n");
         printf("NEI\n"); // If exp != 0, then exp is true
       }
       else {
-        printf("exp->kind: %d\n", exp->value);
+        // printf("exp->kind: %d\n", exp->value);
         printf("LLF 0.0\n");
         printf("NEF\n");
       }

@@ -4,12 +4,9 @@
  * ========================================================================
  *
  * parse.y - Bison parser for Slic.
- * bison -v will produce a .output file that will help with shift/reduce
- * errors.
- * Noticed that starting non-terminal and algsection both had a reference
- * to endmainstmt. Removed from starting non-terminal.
- * There may be a shift/reduce conflict with my assignstmt.
- * Added code to add variables to symbol table defined in stable.h.
+ * Fixed my symbol table code to allow for insertion of a comma separated list.
+ * Added abstract syntax tree and code generation in ast.h and ast.c.
+ *
  * Programmer --- Patrick Fischer
  *
  * ========================================================================
@@ -85,6 +82,8 @@ struct statement *list;
 %type <expr> term
 %type <expr> factor
 %type <expr> unit
+%type <expr> rexp
+%type <expr> bexp
 %type <stmt> programbody
 %%
 
@@ -100,26 +99,40 @@ decstmtlist: decstmtlist decstmt
             |decstmt
             ; // decstmt is just a variable declaration.
 
-decstmt: RWINT COLON varlist {  $$ = malloc(sizeof(struct symbol_table_entry));
-                                $$->type=TYPE_INT;
-                                $$->name=$3->name;
-                                $$->kind = $3->kind;
-                                $$->address = $3->address;
-                                $$->size = $3->size;
-                                insert(*$$);
+decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry));
+                                  $3 = malloc(sizeof(struct symbol_table_entry));
+                                  $3->type = TYPE_INT;
+                                //$$->type=TYPE_INT;
+                                //$$->name=$3->name;
+                                //$$->kind = $3->kind;
+                                //$$->address = $3->address;
+                                //$$->size = $3->size;
+                                //insert(*$$);
                                 }
-        |RWREAL COLON varlist { $$ = malloc(sizeof(struct symbol_table_entry));
-                                $$->type=TYPE_REAL;
-                                $$->name=$3->name;
-                                $$->kind = $3->kind;
-                                $$->address = $3->address;
-                                $$->size = $3->size;
-                                insert(*$$);
+        |RWREAL COLON varlist { $3 = malloc(sizeof(struct symbol_table_entry));
+                                $3->type=TYPE_REAL;
+                                //$$->name=$3->name;
+                                //$$->kind = $3->kind;
+                                //$$->address = $3->address;
+                                //$$->size = $3->size;
+                                //insert(*$$);
                                 }
         ; // The reserved word is followed by a list because any number of variables can be declared on a single line.
 
-varlist: varref COMMA varlist
-        |varref SEMICOLON
+varlist: varref COMMA varlist {
+                                $$->name = $1->name;
+                                $$->kind = $1->kind;
+                                $$->address = 0;
+                                $$->size = $1->size;
+                                insert(*$$);
+                              }
+        |varref SEMICOLON {
+          $$->name = $1->name;
+          $$->kind = $1->kind;
+          $$->address = 0;
+          $$->size = $1->size;
+          insert(*$$);
+        }
         ;
 
 varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
@@ -159,7 +172,7 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
             }
             ;
 
-assignstmt: VAR assign exp SEMICOLON
+assignstmt: VAR assign bexp SEMICOLON
             {
               // This appears to to be working
               if(DEBUG) printf("Got to assignstmt\n");
@@ -175,7 +188,35 @@ assignstmt: VAR assign exp SEMICOLON
 
 assign: ASSIGNOP;
 
-exp: exp LESS term { // Code to parse < booleans
+bexp: bexp AND rexp { // Code to parse & booleans, bexp = Boolean Expression
+                    if(DEBUG) printf("Got to AND\n");
+                    $$ = malloc(sizeof(struct ast_expression));
+                    $$->kind = KIND_OP;
+                    $$->operator = OP_AND;
+                    $$->l_operand = $1;
+                    $$->r_operand = $3;
+                  }
+      |bexp OR rexp { // Code to parse | booleans
+                  if(DEBUG) printf("Got to OR\n");
+                  $$ = malloc(sizeof(struct ast_expression));
+                  $$->kind = KIND_OP;
+                  $$->operator = OP_OR;
+                  $$->l_operand = $1;
+                  $$->r_operand = $3;
+                 }
+      |NOT rexp { // Code to parse ~ booleans.
+        if(DEBUG) printf("Got to NOT\n");
+        $$ = malloc(sizeof(struct ast_expression));
+        $$->kind = KIND_OP;
+        $$->operator = OP_NOT;
+        $$->r_operand = $2;
+      }
+      |rexp {
+        $$ = $1;
+      }
+      ;
+
+rexp: rexp LESS exp { // Code to parse < booleans, rexp = Relation Expression
                       if(DEBUG) printf("Got to LESS\n");
                       $$ = malloc(sizeof(struct ast_expression));
                       $$->kind = KIND_OP;
@@ -183,7 +224,7 @@ exp: exp LESS term { // Code to parse < booleans
                       $$->l_operand = $1;
                       $$->r_operand = $3;
                    }
-    |exp LESSEQU term { // Code to parse <= booleans
+    |rexp LESSEQU exp { // Code to parse <= booleans
                         if(DEBUG) printf("Got to LESSTHN\n");
                         $$ = malloc(sizeof(struct ast_expression));
                         $$->kind = KIND_OP;
@@ -191,7 +232,7 @@ exp: exp LESS term { // Code to parse < booleans
                         $$->l_operand = $1;
                         $$->r_operand = $3;
                       }
-    |exp GREATER term { // Code to parse > booleans
+    |rexp GREATER exp { // Code to parse > booleans
                         if(DEBUG) printf("Got to GREATER\n");
                         $$ = malloc(sizeof(struct ast_expression));
                         $$->kind = KIND_OP;
@@ -199,7 +240,7 @@ exp: exp LESS term { // Code to parse < booleans
                         $$->l_operand = $1;
                         $$->r_operand = $3;
                       }
-    |exp GREATEQU term { // Code to parse >= booleans
+    |rexp GREATEQU exp { // Code to parse >= booleans
                         if(DEBUG) printf("Got to GREATEQU\n");
                         $$ = malloc(sizeof(struct ast_expression));
                         $$->kind = KIND_OP;
@@ -207,7 +248,7 @@ exp: exp LESS term { // Code to parse < booleans
                         $$->l_operand = $1;
                         $$->r_operand = $3;
                        }
-    |exp EQUAL term { // Code to parse = booleans
+    |rexp EQUAL exp { // Code to parse = booleans
                       if(DEBUG) printf("Got to EQUAL\n");
                       $$ = malloc(sizeof(struct ast_expression));
                       $$->kind = KIND_OP;
@@ -215,7 +256,7 @@ exp: exp LESS term { // Code to parse < booleans
                       $$->l_operand = $1;
                       $$->r_operand = $3;
                     }
-    |exp NOTEQUAL term { // Code to parse <> booleans
+    |rexp NOTEQUAL exp { // Code to parse <> booleans
                         if(DEBUG) printf("Got to NOTEQUAL\n");
                         $$ = malloc(sizeof(struct ast_expression));
                         $$->kind = KIND_OP;
@@ -223,21 +264,16 @@ exp: exp LESS term { // Code to parse < booleans
                         $$->l_operand = $1;
                         $$->r_operand = $3;
                        }
-    |exp AND term { // Code to parse & booleans
-                    if(DEBUG) printf("Got to AND\n");
-                    $$->kind = KIND_OP;
-                    $$->operator = OP_AND;
-                    $$->l_operand = $1;
-                    $$->r_operand = $3;
-                  }
-    |exp OR term { // Code to parse | booleans
-                  if(DEBUG) printf("Got to OR\n");
-                  $$->kind = KIND_OP;
-                  $$->operator = OP_OR;
-                  $$->l_operand = $1;
-                  $$->r_operand = $3;
-                 }
-    |exp ADD term {// Code to parse expressions
+                       ;
+    |exp {
+      if(DEBUG) printf("GOT HERE4\n");
+      //$$ = malloc(sizeof(struct ast_expression));
+      //$$->kind = KIND_OP;
+      //$$->l_operand = $1;
+      $$ = $1;
+    }
+
+exp: exp ADD term {// Code to parse expressions
                     if(DEBUG) printf("GOT HERE2\n");
                     $$ = malloc(sizeof(struct ast_expression));
                     $$->kind = KIND_OP;
@@ -291,17 +327,6 @@ factor: MINUS unit {
                     $$->operator = OP_UMIN;
                     $$->r_operand = $2;
                    }
-       |NOT unit {
-                   // Code to parse ~ booleans, this may not be correct, will need
-                   // to check it. ~ Should only be applied to one expression at a
-                   // time. May need to be moved to another portion of the grammar.
-                   if(DEBUG) printf("Got to NOT\n");
-                   $$ = malloc(sizeof(struct ast_expression));
-                   $$->kind = KIND_OP;
-                   $$->operator = OP_NOT;
-                   //$$->l_operand = NULL;
-                   $$->r_operand = $2;
-                 }
        |unit {
               if(DEBUG) printf("Got to unit\n");
               $$ = $1;
