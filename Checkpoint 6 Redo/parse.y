@@ -15,7 +15,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 1
+#define DEBUG 0
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -102,6 +102,7 @@ decstmtlist: decstmtlist decstmt
 decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry));
                                   $3 = malloc(sizeof(struct symbol_table_entry));
                                   $3->type = TYPE_INT;
+                                  if(DEBUG) printf("$3->type: %d\n",$3->type);
                                 //$$->type=TYPE_INT;
                                 //$$->name=$3->name;
                                 //$$->kind = $3->kind;
@@ -111,6 +112,7 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
                                 }
         |RWREAL COLON varlist { $3 = malloc(sizeof(struct symbol_table_entry));
                                 $3->type=TYPE_REAL;
+                                if(DEBUG) printf("$3->type: %d\n",$3->type);
                                 //$$->name=$3->name;
                                 //$$->kind = $3->kind;
                                 //$$->address = $3->address;
@@ -122,6 +124,7 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
 varlist: varref COMMA varlist {
                                 $$->name = $1->name;
                                 $$->kind = $1->kind;
+                                // $$->type = TYPE_INT; // Debug
                                 $$->address = 0;
                                 $$->size = $1->size;
                                 insert(*$$);
@@ -130,6 +133,7 @@ varlist: varref COMMA varlist {
         |varref SEMICOLON {
           $$->name = $1->name;
           $$->kind = $1->kind;
+          // $$->type = TYPE_INT;
           $$->address = 0;
           $$->size = $1->size;
           insert(*$$);
