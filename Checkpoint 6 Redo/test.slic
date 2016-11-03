@@ -10,8 +10,7 @@
 
 main;
 	data:
-		#real: N;
-		integer: x;
+		real: N;
 	algorithm:
-		x := 12;
+		N := 1;
 end main;

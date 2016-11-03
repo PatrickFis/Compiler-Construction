@@ -340,6 +340,8 @@ unit: LITINT { // Parses integers
                   $$->kind = KIND_INT;
                   $$->value = $1;
                   $$->type = TYPE_INT;
+                  $$->r_operand = NULL; // Last ditch effort
+                  $$->l_operand = NULL;
                }
        |LITREAL { // Parses reals
                   if(DEBUG) printf("%f\n", $1);
@@ -347,6 +349,8 @@ unit: LITINT { // Parses integers
                   $$->kind = KIND_REAL;
                   $$->rvalue = $1;
                   $$->type = TYPE_REAL;
+                  $$->r_operand = NULL;
+                  $$->l_operand = NULL;
                 }
        |LPAREN bexp RPAREN {
                             $2 = malloc(sizeof(struct ast_expression));
