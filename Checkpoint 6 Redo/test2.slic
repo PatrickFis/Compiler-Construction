@@ -13,5 +13,5 @@ main;
 		real: N;
 		real: X;
 	algorithm:
-		N := X + 2;
+		N := X + 2.0;
 end main;

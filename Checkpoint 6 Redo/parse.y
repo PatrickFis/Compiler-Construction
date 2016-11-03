@@ -15,7 +15,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -124,7 +124,7 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
 varlist: varref COMMA varlist {
                                 $$->name = $1->name;
                                 $$->kind = $1->kind;
-                                // $$->type = TYPE_INT; // Debug
+                                $1->type = TYPE_INT; // Debug
                                 $$->address = 0;
                                 $$->size = $1->size;
                                 insert(*$$);
@@ -133,7 +133,7 @@ varlist: varref COMMA varlist {
         |varref SEMICOLON {
           $$->name = $1->name;
           $$->kind = $1->kind;
-          // $$->type = TYPE_INT;
+          $1->type = TYPE_INT; // Debug
           $$->address = 0;
           $$->size = $1->size;
           insert(*$$);
