@@ -30,12 +30,12 @@ int main()
   int n;
   // yydebug = 1;
   n = yyparse();
-  // struct symbol_table_entry y;
-  // for(i = 0; i < table->count; i++) {
-  //   y = table->table[i];
-  //   printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
-  // }
-  printList();
+  struct symbol_table_entry y;
+  for(i = 0; i < table->count; i++) {
+    y = table->table[i];
+    printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
+  }
+  // printList();
   // struct statement *test = malloc(sizeof(struct statement));
   // test = head;
   // printf("head->exp->kind: %c\n", head->exp->operator);

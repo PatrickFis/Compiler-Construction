@@ -15,7 +15,7 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 %}
@@ -125,6 +125,7 @@ varlist: varref COMMA varlist {
                                 $$->address = 0;
                                 $$->size = $1->size;
                                 insert(*$$);
+                                if(DEBUG) printf("$$->type: %d\n", $$->type);
                               }
         |varref SEMICOLON {
           $$->name = $1->name;
@@ -132,6 +133,7 @@ varlist: varref COMMA varlist {
           $$->address = 0;
           $$->size = $1->size;
           insert(*$$);
+          if(DEBUG) printf("$$->type: %d\n", $$->type);
         }
         ;
 
@@ -363,7 +365,7 @@ unit: LITINT { // Parses integers
          int tableLoc = isPresent($1);
          if(DEBUG) printf("tableLoc: %d\n", tableLoc);
          int varType = table->table[tableLoc].type;
-         if(DEBUG) printf("varType: %i\n", varType);
+         if(DEBUG) printf("varType: %d\n", varType);
          if(varType == TYPE_INT) {
            $$->l_operand = malloc(sizeof(struct ast_expression)); // Trying to hack together a solution with this
           //  $$->l_operand->kind = KIND_INT;
