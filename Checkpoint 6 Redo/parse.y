@@ -309,7 +309,7 @@ term: term MULT factor {
      |term DIV factor {
                           $$ = malloc(sizeof(struct ast_expression));
                           $$->kind = KIND_OP;
-                          $$->operator = OP_MUL;
+                          $$->operator = OP_DIV;
                           $$->l_operand = $1;
                           $$->r_operand = $3;
                       }
