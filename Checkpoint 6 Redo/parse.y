@@ -124,10 +124,14 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
 varlist: varref COMMA varlist {
                                 $$->name = $1->name;
                                 $$->kind = $1->kind;
-                                $1->type = 0; // So without this line of code
-                                // my program will seg fault on OS X, but not
-                                // Windows or Linux. It produces the correct
-                                // output without this being set correctly.
+                                // $1->type = 0; // So without this line of code
+                                // // my program will seg fault on OS X, but not
+                                // // Windows or Linux. It produces the correct
+                                // // output without this being set correctly.
+                                // // I have a feeling the output might not be fully
+                                // // correct for later expressions, as this relies
+                                // // on the parser to recognize real and integer
+                                // // values for later instructions.
                                 $$->address = 0;
                                 $$->size = $1->size;
                                 insert(*$$);
@@ -136,7 +140,7 @@ varlist: varref COMMA varlist {
         |varref SEMICOLON {
           $$->name = $1->name;
           $$->kind = $1->kind;
-          $1->type = 0; // Debug
+          // $1->type = 0; // Debug
           $$->address = 0;
           $$->size = $1->size;
           insert(*$$);
