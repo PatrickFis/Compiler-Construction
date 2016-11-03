@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG 1
+#define DEBUG 0
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
 struct statement *head;
 int count = 0; // Keep track of how many statements we have
@@ -104,7 +104,7 @@ void exprgen(struct ast_expression *exp) {
         printf("STO\n");
       }
       break;
-      
+
     case OP_UMIN:
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(exp->type == TYPE_INT) printf("NGI\n");
