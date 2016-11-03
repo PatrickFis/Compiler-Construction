@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG 0
+#define DEBUG 1
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
 struct statement *head;
 int count = 0; // Keep track of how many statements we have
@@ -46,14 +46,12 @@ void insertStmt(struct statement *stmt) {
 void printList() {
   struct statement *next;
   next = list;
-  printf("ISP %d\n", table->memorySize);
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
     exprgen(next->exp);
     // printf("exprgen finished\n"); // Debug
     next = next->link;
   }
-  printf("HLT");
 }
 
 /*
