@@ -3,9 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DEBUG 1
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
 struct statement *head;
 int count = 0; // Keep track of how many statements we have
+
 void insertStmt(struct statement *stmt) {
   count++;
   // printf("stmt->exp->kind: %d\n", stmt->exp->operator);
@@ -35,19 +37,6 @@ void insertStmt(struct statement *stmt) {
   }
 }
 
-//struct ast_expression createExp(char kind, char operator, struct ast_expression l_operand,
-//                                struct ast_expression r_operand, int value) {
-//    struct ast_expression expr;
-//    expr.kind = kind;
-//    expr.operator = operator;
-////    expr.l_operand = malloc(sizeof(struct ast_expression));
-////    expr.l_operand = &l_operand;
-////    expr.r_operand = malloc(sizeof(struct ast_expression));
-////    expr.r_operand = &r_operand;
-//    expr.value = value;
-//    return expr;
-//}
-
 /*
  *  This function goes through the abstract syntax tree and calls the exprgen
  *  function on each statement in a linked list. Will probably change these
@@ -58,9 +47,9 @@ void printList() {
   struct statement *next;
   next = list;
   while(next->link != NULL) {
-    // printf("kind: %d, operator: %d, value: %d\n", next->exp->kind, next->exp->operator, next->exp->value);
+    // printf("Calling exprgen\n"); // Debug
     exprgen(next->exp);
-    // printf("PTI\nPTL\n");
+    // printf("exprgen finished\n"); // Debug
     next = next->link;
   }
 }
@@ -73,29 +62,41 @@ void printList() {
  */
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
+  if(DEBUG) printf("Got to exprgen\n"); // Debug
   if(exp->kind == TYPE_INT && exp->type != TYPE_VAR) { // If expression involves integers
+    if(DEBUG) printf("Got to load int\n");
     printf("LLI %d\n", exp->value);
   }
   else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
+    if(DEBUG) printf("Got to load real\n");
     printf("LLF %f\n", exp->rvalue);
   }
   if(exp->type == TYPE_VAR) {
+    if(DEBUG) printf("Got to variable type\n");
     printf("LAA %d\n",exp->l_operand->target->address);
     printf("LOD\n");
-    // printf("exp->l_operand->target->address: %d\n",exp->l_operand->target->address);
+    if(DEBUG) printf("Finished variable type\n"); // Debug
     return; // Just stop the recursion when you reach a variable reference
   }
+  if(DEBUG) printf("Got to switch statement\n");
   switch(exp->operator) {
     case OP_ASGN:
+      if(DEBUG) printf("Got to OP_ASGN\n");
       // Load values
       // printf("OP_ASGN FOUND\n");
-      if(exp->r_operand != NULL) // Load the address used for assignment
+      if(exp->r_operand != NULL) {// Load the address used for assignment
+        if(DEBUG) printf("r_operand != NULL\n");
         printf("LAA %d\n", exp->address);
-      if(exp->l_operand != NULL) // This check is probably unnecessary
-        exprgen(exp->l_operand);
-      if(exp->r_operand != NULL)
         exprgen(exp->r_operand);
+      }
+      if(exp->l_operand != NULL) {// This check is probably unnecessary
+        if(DEBUG) printf("l_operand != NULL\n");
+        exprgen(exp->l_operand);
+      }
+      // if(exp->r_operand != NULL) // Why is this check here?
+      //   exprgen(exp->r_operand);
       if(exp->l_operand == NULL && exp->r_operand != NULL) {
+        if(DEBUG) printf("Got to STO\n");
         // Surprisingly, checking if r_operand is not NULL seems to have fixed
         // an issue where the STO instruction was being printed more than
         // once.
@@ -260,6 +261,7 @@ void exprgen(struct ast_expression *exp) {
 
 
   }
+  if(DEBUG) printf("Finished exprgen\n");
 }
 
 struct ast_expression createExp(char kind, char operator, int value) {

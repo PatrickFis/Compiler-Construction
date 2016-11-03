@@ -162,6 +162,7 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               //insertStmt($$);
              }
             |assignstmt { // Only one assignment
+              // printf("Only one assignment");
               $$ = malloc(sizeof(struct statement));
               $$->exp = $1;
               // Added the temp struct to insert the last expressions into the linked list.
@@ -266,7 +267,7 @@ rexp: rexp LESS exp { // Code to parse < booleans, rexp = Relation Expression
                        }
                        ;
     |exp {
-      if(DEBUG) printf("GOT HERE4\n");
+      if(DEBUG) printf("Got to exp\n");
       //$$ = malloc(sizeof(struct ast_expression));
       //$$->kind = KIND_OP;
       //$$->l_operand = $1;
@@ -290,7 +291,7 @@ exp: exp ADD term {// Code to parse expressions
                       $$->r_operand = $3;
                     }
     |term {
-            if(DEBUG) printf("GOT HERE4\n");
+            if(DEBUG) printf("Got to term\n");
             //$$ = malloc(sizeof(struct ast_expression));
             //$$->kind = KIND_OP;
             //$$->l_operand = $1;
@@ -313,7 +314,7 @@ term: term MULT factor {
                           $$->r_operand = $3;
                       }
      |factor {
-              if(DEBUG) printf("GOT HERE44\n");
+              if(DEBUG) printf("Got to factor\n");
                 //$$ = malloc(sizeof(struct ast_expression));
                 //$$->kind = KIND_OP;
                 //$$->l_operand = $1;
@@ -338,14 +339,14 @@ unit: LITINT { // Parses integers
                   $$ = malloc(sizeof(struct ast_expression));
                   $$->kind = KIND_INT;
                   $$->value = $1;
-                  $$->type = TYPE_REAL;
+                  $$->type = TYPE_INT;
                }
        |LITREAL { // Parses reals
                   if(DEBUG) printf("%f\n", $1);
                   $$ = malloc(sizeof(struct ast_expression));
                   $$->kind = KIND_REAL;
                   $$->rvalue = $1;
-                  $$->type = TYPE_INT;
+                  $$->type = TYPE_REAL;
                 }
        |LPAREN bexp RPAREN {
                             $2 = malloc(sizeof(struct ast_expression));
