@@ -18,6 +18,7 @@
 #define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
+int entry_count = 0;
 %}
 
 %union {
@@ -103,6 +104,11 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
                                   $3 = malloc(sizeof(struct symbol_table_entry));
                                   $3->type = TYPE_INT;
                                   if(DEBUG) printf("$3->type: %d\n",$3->type);
+                                  int i;
+                                  for(i = table->count - entry_count; i < table->count; i++) {
+                                    table->table[i].type = TYPE_INT;
+                                  }
+                                  entry_count = 0;
                                 //$$->type=TYPE_INT;
                                 //$$->name=$3->name;
                                 //$$->kind = $3->kind;
@@ -113,6 +119,11 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
         |RWREAL COLON varlist { $3 = malloc(sizeof(struct symbol_table_entry));
                                 $3->type=TYPE_REAL;
                                 if(DEBUG) printf("$3->type: %d\n",$3->type);
+                                int i;
+                                for(i = table->count - entry_count; i < table->count; i++) {
+                                  table->table[i].type = TYPE_REAL;
+                                }
+                                entry_count = 0;
                                 //$$->name=$3->name;
                                 //$$->kind = $3->kind;
                                 //$$->address = $3->address;
@@ -136,6 +147,7 @@ varlist: varref COMMA varlist {
                                 $$->address = 0;
                                 $$->size = $1->size;
                                 insert(*$$);
+                                entry_count++;
                                 if(DEBUG) printf("$$->type: %d\n", $$->type);
                               }
         |varref SEMICOLON {
@@ -146,6 +158,7 @@ varlist: varref COMMA varlist {
           $$->address = 0;
           $$->size = $1->size;
           insert(*$$);
+          entry_count++;
           if(DEBUG) printf("$$->type: %d\n", $$->type);
         }
         ;

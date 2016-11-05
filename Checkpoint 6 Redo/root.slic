@@ -16,6 +16,10 @@ main;
 		real: NewEst;
 		real: Diff;
 		integer: int;
+		real: test;
+		integer: test2;
+		real: test3;
+		integer: test4;
 	algorithm:
 		N := 12;
 		X := 24;

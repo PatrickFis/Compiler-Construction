@@ -10,8 +10,8 @@
 
 main;
 	data:
-		real: N;
-		real: X;
+		integer: N;
+		integer: X;
 	algorithm:
 		N := X + 2.0;
 end main;
