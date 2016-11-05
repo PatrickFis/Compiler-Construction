@@ -11,7 +11,9 @@
 main;
 	data:
 		integer: N;
-		integer: X;
+		real: X;
 	algorithm:
 		N := X + 2.0;
+    X := 2.212 + 2.231;
+    X := 8.123 + 1.12345;
 end main;

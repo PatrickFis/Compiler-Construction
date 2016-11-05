@@ -37,6 +37,33 @@ void insertStmt(struct statement *stmt) {
   }
 }
 
+// Didn't really help
+// void recurseAssign(struct ast_expression *exp, int type) {
+//   printf("Got to recurseAssign\n");
+//   if(exp->l_operand != NULL) {
+//     printf("l_operand NOT NULL, type = %d\n", type);
+//     exp->l_operand->type = type;
+//     if(type == TYPE_INT){// && exp->l_operand->value != NULL) {
+//       printf("l_op->value: %d\n", exp->l_operand->value);
+//     }
+//     if(type == TYPE_REAL){// && exp->l_operand->rvalue != NULL) {
+//       printf("l_op->value: %f\n", exp->l_operand->rvalue);
+//     }
+//     recurseAssign(exp->l_operand, type);
+//   }
+//   if(exp->r_operand != NULL) {
+//     printf("r_operand NOT NULL, type = %d\n", type);
+//     exp->r_operand->type = type;
+//     if(type == TYPE_INT){// && exp->r_operand->value != NULL) {
+//       printf("l_op->value: %d\n", exp->r_operand->value);
+//     }
+//     if(type == TYPE_REAL){// && exp->r_operand->rvalue != NULL) {
+//       printf("l_op->value: %f\n", exp->r_operand->rvalue);
+//     }
+//     recurseAssign(exp->r_operand, type);
+//   }
+// }
+
 /*
  *  This function goes through the abstract syntax tree and calls the exprgen
  *  function on each statement in a linked list. Will probably change these
@@ -61,6 +88,9 @@ void printList() {
  *  a given expression contains another variable reference (e.g. n := x),
  *  recursion will halt after loading the variable.
  */
+
+int seenReal = 0;
+
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
   if(DEBUG) printf("Got to exprgen\n"); // Debug
@@ -118,7 +148,9 @@ void exprgen(struct ast_expression *exp) {
       // printf("exp->type: %d\n", exp->type);
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("ADI\n");
+      if(exp->type == TYPE_INT) {
+        printf("ADI\n");
+      }
       if(exp->type == KIND_REAL) {
         printf("ADF\n");
       }

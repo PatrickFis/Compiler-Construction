@@ -15,10 +15,11 @@
 #include "stable.h"
 #include "ast.h"
 #include <stdio.h>
-#define DEBUG 1
+#define DEBUG 0
 struct symbol_table *table;
 struct statement *list;
-int entry_count = 0;
+int entry_count = 0; // Used to keep track of what symbols are being inserted.
+// Variable type will be changed based on entry_count.
 %}
 
 %union {
