@@ -89,11 +89,26 @@ void printList() {
  *  recursion will halt after loading the variable.
  */
 
-int seenReal = 0;
-
+void recurseAssign(struct ast_expression *exp, int type) {
+  // printf("Got here\n");
+  exp->type = type;
+  if(exp->l_operand != NULL) {
+    recurseAssign(exp->l_operand, type);
+    exp->l_operand->type = type;
+  }
+  if(exp->r_operand != NULL) {
+    recurseAssign(exp->r_operand, type);
+    exp->r_operand->type = type;
+  }
+}
+// int seenReal = 0;
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
+  // seenReal = 0;
   if(DEBUG) printf("Got to exprgen\n"); // Debug
+  printf("exp->type: %d\n", exp->type);
+  if(exp->kind == KIND_REAL || exp->type == TYPE_REAL)
+    recurseAssign(exp, KIND_REAL);
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
     if(DEBUG) printf("Got to load int\n");
     printf("LLI %d\n", exp->value);
@@ -101,6 +116,8 @@ void exprgen(struct ast_expression *exp) {
   else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
     if(DEBUG) printf("Got to load real\n");
     printf("LLF %f\n", exp->rvalue);
+    // seenReal = 1;
+    recurseAssign(exp, KIND_REAL);
   }
   if(exp->type == TYPE_VAR) {
     if(DEBUG) printf("Got to variable type\n");
@@ -154,6 +171,10 @@ void exprgen(struct ast_expression *exp) {
       if(exp->type == KIND_REAL) {
         printf("ADF\n");
       }
+      // if(seenReal == 1) {
+      //   printf("ADF\n");
+      // }
+      // else if(seenReal == 0) printf("ADI\n");
       // if(exp->type == TYPE_VAR) {
       //   printf("%d\n",exp->l_operand->target->address);
       //   // printf("%d\n",exp->target->);
