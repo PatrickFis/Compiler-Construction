@@ -110,6 +110,7 @@ void exprgen(struct ast_expression *exp) {
   // if(exp->kind == KIND_REAL || exp->type == TYPE_REAL)
     // recurseAssign(exp, KIND_REAL);
   if(DEBUG) printf("exp->operator: %d\n", exp->operator);
+  // if(exp->target != NULL) printf("%s\n", exp->target->name);
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
     if(DEBUG) printf("Got to load int\n");
     printf("LLI %d\n", exp->value);
