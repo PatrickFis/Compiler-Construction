@@ -301,12 +301,13 @@ rexp: rexp LESS exp { // Code to parse < booleans, rexp = Relation Expression
       //$$->kind = KIND_OP;
       //$$->l_operand = $1;
       $$ = $1;
+      $$->kind = $1->kind;
     }
 
 exp: exp ADD term {// Code to parse expressions
                     if(DEBUG) printf("GOT HERE2\n");
                     $$ = malloc(sizeof(struct ast_expression));
-                    $$->kind = KIND_OP;
+                    $$->kind = $3->type;
                     $$->operator = OP_ADD;
                     $$->l_operand = $1;
                     $$->r_operand = $3;
@@ -325,6 +326,7 @@ exp: exp ADD term {// Code to parse expressions
             //$$->kind = KIND_OP;
             //$$->l_operand = $1;
             $$ = $1;
+            $$->type = $1->type;
           }
           ;
 
@@ -348,6 +350,7 @@ term: term MULT factor {
                 //$$->kind = KIND_OP;
                 //$$->l_operand = $1;
                 $$ = $1;
+                $$->type = $1->type;
              }
              ;
 factor: MINUS unit {
@@ -360,6 +363,7 @@ factor: MINUS unit {
        |unit {
               if(DEBUG) printf("Got to unit\n");
               $$ = $1;
+              $$->type = $1->type;
              }
              ;
 
