@@ -243,6 +243,7 @@ bexp: bexp AND rexp { // Code to parse & booleans, bexp = Boolean Expression
       }
       |rexp {
         $$ = $1;
+        $$->type = $1->type;
       }
       ;
 
@@ -301,7 +302,7 @@ rexp: rexp LESS exp { // Code to parse < booleans, rexp = Relation Expression
       //$$->kind = KIND_OP;
       //$$->l_operand = $1;
       $$ = $1;
-      $$->kind = $1->kind;
+      $$->type = $1->type;
     }
 
 exp: exp ADD term {// Code to parse expressions

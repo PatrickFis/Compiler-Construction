@@ -106,9 +106,10 @@ void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
   // seenReal = 0;
   if(DEBUG) printf("Got to exprgen\n"); // Debug
-  printf("exp->type: %d\n", exp->type);
+  if(DEBUG) printf("exp->type: %d\n", exp->type);
   // if(exp->kind == KIND_REAL || exp->type == TYPE_REAL)
     // recurseAssign(exp, KIND_REAL);
+  if(DEBUG) printf("exp->operator: %d\n", exp->operator);
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
     if(DEBUG) printf("Got to load int\n");
     printf("LLI %d\n", exp->value);
@@ -168,7 +169,7 @@ void exprgen(struct ast_expression *exp) {
       if(exp->type == TYPE_INT) {
         printf("ADI\n");
       }
-      if(exp->type == KIND_REAL) {
+      if(exp->type == TYPE_REAL) {
         printf("ADF\n");
       }
       // if(seenReal == 1) {
