@@ -101,6 +101,17 @@ void recurseAssign(struct ast_expression *exp, int type) {
     exp->r_operand->type = type;
   }
 }
+
+void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) {
+  if(exp->l_operand != NULL) {
+    assignTarget(exp->l_operand, target);
+    exp->l_operand->target = &target;
+  }
+  if(exp->r_operand != NULL) {
+    assignTarget(exp->r_operand, target);
+    exp->r_operand->target = &target;
+  }
+}
 // int seenReal = 0;
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
@@ -119,7 +130,7 @@ void exprgen(struct ast_expression *exp) {
     if(DEBUG) printf("Got to load real\n");
     printf("LLF %f\n", exp->rvalue);
     // seenReal = 1;
-    recurseAssign(exp, KIND_REAL);
+    // recurseAssign(exp, KIND_REAL);
   }
   if(exp->type == TYPE_VAR) {
     if(DEBUG) printf("Got to variable type\n");
@@ -132,6 +143,7 @@ void exprgen(struct ast_expression *exp) {
   switch(exp->operator) {
     case OP_ASGN:
       if(DEBUG) printf("Got to OP_ASGN\n");
+      // assignTarget(exp, *exp->target);
       // Load values
       // printf("OP_ASGN FOUND\n");
       if(exp->r_operand != NULL) {// Load the address used for assignment
