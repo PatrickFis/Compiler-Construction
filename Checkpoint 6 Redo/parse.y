@@ -308,7 +308,7 @@ rexp: rexp LESS exp { // Code to parse < booleans, rexp = Relation Expression
 exp: exp ADD term {// Code to parse expressions
                     if(DEBUG) printf("GOT HERE2\n");
                     $$ = malloc(sizeof(struct ast_expression));
-                    $$->kind = $3->type;
+                    $$->kind = KIND_OP;
                     $$->operator = OP_ADD;
                     $$->l_operand = $1;
                     $$->r_operand = $3;
