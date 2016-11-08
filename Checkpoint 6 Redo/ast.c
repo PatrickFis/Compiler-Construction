@@ -106,10 +106,20 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
   if(exp->l_operand != NULL) {
     assignTarget(exp->l_operand, target);
     exp->l_operand->target = &target;
+    // exp->l_operand->type = target.type;
   }
   if(exp->r_operand != NULL) {
     assignTarget(exp->r_operand, target);
     exp->r_operand->target = &target;
+    // exp->r_operand->type = target.type;
+  }
+  if(exp->l_operand == NULL) {
+    // printf("exp->type = %d\n", exp->type);
+    exp->type = target.type;
+    // printf("exp->type = %d\n", exp->type);
+  }
+  if(exp->r_operand == NULL) {
+    exp->type = target.type;
   }
 }
 // int seenReal = 0;
@@ -143,7 +153,7 @@ void exprgen(struct ast_expression *exp) {
   switch(exp->operator) {
     case OP_ASGN:
       if(DEBUG) printf("Got to OP_ASGN\n");
-      // assignTarget(exp, *exp->target);
+      assignTarget(exp, *exp->target);
       // Load values
       // printf("OP_ASGN FOUND\n");
       if(exp->r_operand != NULL) {// Load the address used for assignment
@@ -179,10 +189,10 @@ void exprgen(struct ast_expression *exp) {
       // printf("exp->type: %d\n", exp->type);
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) {
+      if(exp->target->type == TYPE_INT) {
         printf("ADI\n");
       }
-      if(exp->type == TYPE_REAL) {
+      if(exp->target->type == TYPE_REAL) {
         printf("ADF\n");
       }
       // if(seenReal == 1) {
