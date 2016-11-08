@@ -96,7 +96,9 @@
                                                    }
 
 \"([^\\\"]|\\.)*\"                                 { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
+                                                     yylval.sval = strdup(yytext);
                                                      return CHARSTRING;
+                                                     free(yylval.sval);
                                                    }
 
 #.*[\n]*                                           { if(DEBUG) printf("COMMENT: %s\n", yytext); }

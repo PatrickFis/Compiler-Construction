@@ -7,6 +7,9 @@
  * Fixed my symbol table code to allow for insertion of a comma separated list.
  * Added abstract syntax tree and code generation in ast.h and ast.c.
  *
+ * Add print statements, if statements, and if/else statements. Also implement
+ * code to parse array references.
+ *
  * Programmer --- Patrick Fischer
  *
  * ========================================================================
@@ -87,6 +90,8 @@ int entry_count = 0; // Used to keep track of what symbols are being inserted.
 %type <expr> rexp
 %type <expr> bexp
 %type <stmt> programbody
+// %type <expr> outputstmt
+// %type <expr> printlist
 %%
 
 program : headingstmt datasection algsection;
@@ -199,6 +204,18 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               temp->exp = $$->exp;
               temp->link = NULL;
               $$->link = temp;
+            }
+            // |controlstmt programbody { // If/else statements
+            //
+            // }
+            // |controlstmt {
+            //
+            // }
+            |outputstmt programbody {
+              printf("Got to outputstmt programbody\n");
+            }
+            |outputstmt {
+              printf("Got to outputstmt\n");
             }
             ;
 
@@ -412,7 +429,22 @@ unit: LITINT { // Parses integers
            $$->l_operand->target = &table->table[tableLoc];
          }
        }
-                          ;
+       ;
+
+// controlstmt: RWIF bexp SEMICOLON RWEND RWIF SEMICOLON // condstmt is a conditional, may need to have this read in programbody after the first semicolon?
+//             |RWELSE SEMICOLON RWEND RWIF SEMICOLON
+//             ;
+
+outputstmt: RWPRINT printlist {
+              if(DEBUG) printf("Got to outputstmt\n");
+              // $$ = malloc(sizeof(struct ast_expression));
+            };
+
+printlist: CHARSTRING printlist
+          |CARRETURN printlist
+          |CARRETURN COMMA printlist
+          |SEMICOLON
+          ;
 
 endmainstmt: RWEND RWMAIN SEMICOLON;
 
