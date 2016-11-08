@@ -37,33 +37,6 @@ void insertStmt(struct statement *stmt) {
   }
 }
 
-// Didn't really help
-// void recurseAssign(struct ast_expression *exp, int type) {
-//   printf("Got to recurseAssign\n");
-//   if(exp->l_operand != NULL) {
-//     printf("l_operand NOT NULL, type = %d\n", type);
-//     exp->l_operand->type = type;
-//     if(type == TYPE_INT){// && exp->l_operand->value != NULL) {
-//       printf("l_op->value: %d\n", exp->l_operand->value);
-//     }
-//     if(type == TYPE_REAL){// && exp->l_operand->rvalue != NULL) {
-//       printf("l_op->value: %f\n", exp->l_operand->rvalue);
-//     }
-//     recurseAssign(exp->l_operand, type);
-//   }
-//   if(exp->r_operand != NULL) {
-//     printf("r_operand NOT NULL, type = %d\n", type);
-//     exp->r_operand->type = type;
-//     if(type == TYPE_INT){// && exp->r_operand->value != NULL) {
-//       printf("l_op->value: %d\n", exp->r_operand->value);
-//     }
-//     if(type == TYPE_REAL){// && exp->r_operand->rvalue != NULL) {
-//       printf("l_op->value: %f\n", exp->r_operand->rvalue);
-//     }
-//     recurseAssign(exp->r_operand, type);
-//   }
-// }
-
 /*
  *  This function goes through the abstract syntax tree and calls the exprgen
  *  function on each statement in a linked list. Will probably change these
@@ -83,12 +56,9 @@ void printList() {
 }
 
 /*
- *  This function generates gstal code for a given expression. It goes through
- *  the left and right operands of an expression recursively. In the case that
- *  a given expression contains another variable reference (e.g. n := x),
- *  recursion will halt after loading the variable.
+ *  This function recursively reassigns types. It is just being kept in case
+ *  I need it later.
  */
-
 void recurseAssign(struct ast_expression *exp, int type) {
   // printf("Got here\n");
   exp->type = type;
@@ -102,7 +72,13 @@ void recurseAssign(struct ast_expression *exp, int type) {
   }
 }
 
+/*
+ *  This function recursively assigns targets to expressions, which allows the
+ *  code generator to know what kind of instructions to print.
+ */
 void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) {
+  if(exp->type == TYPE_VAR)
+    return;
   if(exp->l_operand != NULL) {
     assignTarget(exp->l_operand, target);
     exp->l_operand->target = &target;
@@ -113,23 +89,27 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
     exp->r_operand->target = &target;
     // exp->r_operand->type = target.type;
   }
-  if(exp->l_operand == NULL) {
+  if(exp->l_operand == NULL && exp->type != TYPE_VAR) {
     // printf("exp->type = %d\n", exp->type);
     exp->type = target.type;
     // printf("exp->type = %d\n", exp->type);
   }
-  if(exp->r_operand == NULL) {
+  if(exp->r_operand == NULL && exp->type != TYPE_VAR) {
     exp->type = target.type;
   }
 }
-// int seenReal = 0;
+
+/*
+ *  This function generates gstal code for a given expression. It goes through
+ *  the left and right operands of an expression recursively. In the case that
+ *  a given expression contains another variable reference (e.g. n := x),
+ *  recursion will halt after loading the variable.
+ */
+
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
-  // seenReal = 0;
-  if(DEBUG) printf("Got to exprgen\n"); // Debug
+  if(DEBUG) printf("Got to exprgen\n");
   if(DEBUG) printf("exp->type: %d\n", exp->type);
-  // if(exp->kind == KIND_REAL || exp->type == TYPE_REAL)
-    // recurseAssign(exp, KIND_REAL);
   if(DEBUG) printf("exp->operator: %d\n", exp->operator);
   // if(exp->target != NULL) printf("%s\n", exp->target->name);
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
@@ -139,8 +119,6 @@ void exprgen(struct ast_expression *exp) {
   else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
     if(DEBUG) printf("Got to load real\n");
     printf("LLF %f\n", exp->rvalue);
-    // seenReal = 1;
-    // recurseAssign(exp, KIND_REAL);
   }
   if(exp->type == TYPE_VAR) {
     if(DEBUG) printf("Got to variable type\n");
@@ -178,8 +156,8 @@ void exprgen(struct ast_expression *exp) {
 
     case OP_UMIN:
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("NGI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("NGI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("NGF");
       }
       break;
@@ -212,8 +190,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_SUB:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("SBI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("SBI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("SBF\n");
       }
       break;
@@ -221,8 +199,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_MUL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("MLI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("MLI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("MLF\n");
       }
       break;
@@ -230,8 +208,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_DIV:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("DVI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("DVI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("DVF\n");
       }
       break;
@@ -239,8 +217,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_LSTHN:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("LTI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("LTI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("LTF\n");
       }
       break;
@@ -248,8 +226,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_LSTHNEQL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("LEI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("LEI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("LEF\n");
       }
       break;
@@ -257,8 +235,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_GRTHN:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("GTI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("GTI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("GTF\n");
       }
       break;
@@ -266,8 +244,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_GRTHNEQL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("GEI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("GEI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("GEF\n");
       }
       break;
@@ -275,8 +253,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_EQUAL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("EQI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("EQI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("EQF\n");
       }
       break;
@@ -284,8 +262,8 @@ void exprgen(struct ast_expression *exp) {
     case OP_NEQUAL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) printf("NEI\n");
-      else if(exp->type == KIND_REAL) {
+      if(exp->target->type == TYPE_INT) printf("NEI\n");
+      else if(exp->target->type == TYPE_REAL) {
         printf("NEF\n");
       }
       break;
@@ -293,13 +271,13 @@ void exprgen(struct ast_expression *exp) {
     case OP_AND: // These Boolean instructions require a bit of clever faking
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) {
+      if(exp->target->type == TYPE_INT) {
         // Boolean and = multiplication
         printf("MLI\n");
         printf("LLI 1\n");
         printf("EQI\n"); // Check if l_op * r_op = 1
       }
-      else if(exp->type == KIND_REAL) {
+      else if(exp->target->type == TYPE_REAL) {
         printf("MLF\n");
         printf("LLF 1.0\n");
         printf("EQF\n");
@@ -309,13 +287,13 @@ void exprgen(struct ast_expression *exp) {
     case OP_OR:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->type == TYPE_INT) {
+      if(exp->target->type == TYPE_INT) {
         // Boolean or = addition
         printf("ADI\n");
         printf("LLI 1\n");
         printf("EQI\n");
       }
-      else if(exp->type == KIND_REAL) {
+      else if(exp->target->type == TYPE_REAL) {
         printf("ADF\n");
         printf("LLF 1.0\n");
         printf("EQF\n");
@@ -326,12 +304,12 @@ void exprgen(struct ast_expression *exp) {
       // if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       // printf("exp->type %d\n", exp->type);
-      if(exp->type == TYPE_INT) {
+      if(exp->target->type == TYPE_INT) {
         // Boolean not = complement
         printf("LLI 0\n");
         printf("NEI\n"); // If exp != 0, then exp is true
       }
-      else if(exp->type == KIND_REAL) {
+      else if(exp->target->type == TYPE_REAL) {
         // printf("exp->type: %d\n", exp->value);
         printf("LLF 0.0\n");
         printf("NEF\n");

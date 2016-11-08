@@ -387,7 +387,8 @@ unit: LITINT { // Parses integers
                   $$->l_operand = NULL;
                 }
        |LPAREN bexp RPAREN {
-                            $2 = malloc(sizeof(struct ast_expression));
+                            if(DEBUG) printf("Got to parenthesized expression\n");
+                            // $2 = malloc(sizeof(struct ast_expression));
                             $$ = $2;
                           }
        |VAR {
