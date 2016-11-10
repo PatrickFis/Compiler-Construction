@@ -463,6 +463,7 @@ outputstmt: RWPRINT printlist {
                 tempExp = tempExp->r_operand;
               }
               if(DEBUG) printf("buf = %s\n", buf);
+              $$->charString = strdup(buf);
               if(DEBUG) printf("Got out of loop\n");
             };
 
@@ -488,6 +489,24 @@ printlist: CHARSTRING printlist {
             $$->r_operand = $3;
             if(DEBUG) printf("Got to CARRETURN COMMA printlist\n");
           }
+          |exp COMMA printlist {
+
+          }
+          |CHARSTRING COMMA printlist {
+
+          }
+          |exp {
+
+          }
+          // |COMMA exp printlist {
+          //
+          // }
+          // |exp {
+          //
+          // }
+          // |COMMA exp COMMA {
+          //
+          // }
           |SEMICOLON {
             $$ = NULL;
             // $$->r_operand = NULL;

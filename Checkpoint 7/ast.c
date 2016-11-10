@@ -112,8 +112,9 @@ void exprgen(struct ast_expression *exp) {
   if(DEBUG) printf("exp->type: %d\n", exp->type);
   if(DEBUG) printf("exp->operator: %d\n", exp->operator);
   // if(exp->target != NULL) printf("%s\n", exp->target->name);
-  if(exp->operator == OP_PRINT) {
+  if(exp->operator == OP_PRINT) { // This occurs if an expression is a print statement
     printf("Got to OP_PRINT\n");
+    printf("exp->charString, %s\n", exp->charString);
     return;
   }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
