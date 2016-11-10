@@ -7,5 +7,5 @@ main;
 		real: N, nn;
 	algorithm:
     N := 2;
-		print "x";
+		print !,"x";
 end main;

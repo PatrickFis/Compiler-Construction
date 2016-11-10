@@ -104,6 +104,7 @@
 #.*[\n]*                                           { if(DEBUG) printf("COMMENT: %s\n", yytext); }
 
 !                                                  { if(DEBUG) printf("CARRETURN: %s\n", yytext);
+                                                     yylval.sval = strdup(yytext);
                                                      return CARRETURN;
                                                    }
 

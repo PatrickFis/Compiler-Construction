@@ -55,7 +55,7 @@ int entry_count = 0; // Used to keep track of what symbols are being inserted.
 %token        RWREAD
 %token        RWPRINT
 %token <sval> CHARSTRING
-%token        CARRETURN
+%token <sval> CARRETURN
 %token        ASSIGNOP
 %token        COMMA
 %token        SEMICOLON
@@ -213,10 +213,20 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
             //
             // }
             |outputstmt programbody {
-              printf("Got to outputstmt programbody\n");
+              $$ = malloc(sizeof(struct statement));
+              $$->exp = $1;
+              $$->link = $2;
+              if(DEBUG) printf("Got to outputstmt programbody\n");
             }
             |outputstmt {
-              printf("Got to outputstmt\n");
+              $$ = malloc(sizeof(struct statement));
+              $$->exp = $1;
+              // Added the temp struct to insert the last expressions into the linked list.
+              struct statement *temp = malloc(sizeof(struct statement));
+              temp->exp = $$->exp;
+              temp->link = NULL;
+              $$->link = temp;
+              if(DEBUG) printf("Got to outputstmt\n");
             }
             ;
 
@@ -437,7 +447,7 @@ unit: LITINT { // Parses integers
 //             ;
 
 outputstmt: RWPRINT printlist {
-              printf("Got to outputstmt: RWPRINT printlist\n");
+              if(DEBUG) printf("Got to outputstmt: RWPRINT printlist\n");
               // printf("printlist = %s\n", $2); // Doesn't work with carriage returns
               $$ = malloc(sizeof(struct ast_expression));
               $$->operator = OP_PRINT;
@@ -445,29 +455,38 @@ outputstmt: RWPRINT printlist {
               // printf("%d\n",strlen($$->charString));
               char buf[1024];
               struct ast_expression *tempExp = $$->r_operand;
-              while(tempExp->r_operand != NULL) {
+              while(tempExp != NULL) {
                 // Parse the entire charstring
                 // printf("GOT HERE\n");
                 strncat(buf, tempExp->charString, sizeof(tempExp->charString));
                 // printf("%s\n",buf);
                 tempExp = tempExp->r_operand;
               }
-              printf("Got out of loop\n");
+              if(DEBUG) printf("buf = %s\n", buf);
+              if(DEBUG) printf("Got out of loop\n");
             };
 
 printlist: CHARSTRING printlist {
-            printf("Got to CHARSTRING printlist\n");
-            printf("CHARSTRING: %s\n", $1);
+            if(DEBUG) printf("Got to CHARSTRING printlist\n");
+            if(DEBUG) printf("CHARSTRING: %s\n", $1);
             $$ = malloc(sizeof(struct ast_expression));
             $$->r_operand = malloc(sizeof(struct ast_expression));
             $$->charString = $1;
             $$->r_operand = $2;
           }
           |CARRETURN printlist {
-            printf("Got to CARRETURN printlist\n");
+            $$ = malloc(sizeof(struct ast_expression));
+            $$->r_operand = malloc(sizeof(struct ast_expression));
+            $$->charString = $1;
+            $$->r_operand = $2;
+            if(DEBUG) printf("Got to CARRETURN printlist\n");
           }
           |CARRETURN COMMA printlist {
-            printf("Got to CARRETURN COMMA printlist\n");
+            $$ = malloc(sizeof(struct ast_expression));
+            $$->r_operand = malloc(sizeof(struct ast_expression));
+            $$->charString = "!,";
+            $$->r_operand = $3;
+            if(DEBUG) printf("Got to CARRETURN COMMA printlist\n");
           }
           |SEMICOLON {
             $$ = NULL;

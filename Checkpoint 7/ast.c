@@ -112,6 +112,10 @@ void exprgen(struct ast_expression *exp) {
   if(DEBUG) printf("exp->type: %d\n", exp->type);
   if(DEBUG) printf("exp->operator: %d\n", exp->operator);
   // if(exp->target != NULL) printf("%s\n", exp->target->name);
+  if(exp->operator == OP_PRINT) {
+    printf("Got to OP_PRINT\n");
+    return;
+  }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
     if(DEBUG) printf("Got to load int\n");
     printf("LLI %d\n", exp->value);
@@ -315,7 +319,6 @@ void exprgen(struct ast_expression *exp) {
         printf("NEF\n");
       }
       break;
-
 
   }
   if(DEBUG) printf("Finished exprgen\n");
