@@ -2,6 +2,7 @@
 #include "stable.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DEBUG 0
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
@@ -100,6 +101,28 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
 }
 
 /*
+ *  This function will parse print statements and call exprgen when needed
+ */
+void parsePrintStatement(struct ast_expression *exp) {
+  printf("Got to parse print statement\n");
+  if(exp->r_operand != NULL)
+    parsePrintStatement(exp->r_operand);
+  // if(strlen(exp->charString) > 2) {
+    // exp->charString[0] = "";
+    // exp->charString[strlen(exp->charString)-1] = "";
+  // }
+  // Goes through the string...
+  if(exp->charString != NULL) {
+    for(int i = 0; i < strlen(exp->charString); i++) {
+      // Skip over quotes and commas
+      // Will need to add a check for "" in a string, since quotes can be printed
+      if(exp->charString[i] == '\"' || exp->charString[i] == ',') continue;
+      printf("charString[i] = %c\n", exp->charString[i]);
+    }
+    printf("exp->charString: %s\n", exp->charString);
+  }
+}
+/*
  *  This function generates gstal code for a given expression. It goes through
  *  the left and right operands of an expression recursively. In the case that
  *  a given expression contains another variable reference (e.g. n := x),
@@ -108,13 +131,16 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
 
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
+  printf("Got here");
   if(DEBUG) printf("Got to exprgen\n");
   if(DEBUG) printf("exp->type: %d\n", exp->type);
   if(DEBUG) printf("exp->operator: %d\n", exp->operator);
   // if(exp->target != NULL) printf("%s\n", exp->target->name);
   if(exp->operator == OP_PRINT) { // This occurs if an expression is a print statement
     printf("Got to OP_PRINT\n");
-    printf("exp->charString, %s\n", exp->charString);
+    // if(exp->r_operand != NULL)exprgen(exp->r_operand);
+    // printf("exp->charString, %s\n", exp->charString);
+    // parsePrintStatement(exp);
     return;
   }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers

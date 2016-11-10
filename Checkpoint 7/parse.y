@@ -452,19 +452,19 @@ outputstmt: RWPRINT printlist {
               $$ = malloc(sizeof(struct ast_expression));
               $$->operator = OP_PRINT;
               $$->r_operand = $2;
-              // printf("%d\n",strlen($$->charString));
-              char buf[1024];
-              struct ast_expression *tempExp = $$->r_operand;
-              while(tempExp != NULL) {
-                // Parse the entire charstring
-                // printf("GOT HERE\n");
-                strncat(buf, tempExp->charString, sizeof(tempExp->charString));
-                // printf("%s\n",buf);
-                tempExp = tempExp->r_operand;
-              }
-              if(DEBUG) printf("buf = %s\n", buf);
-              $$->charString = strdup(buf);
-              if(DEBUG) printf("Got out of loop\n");
+            //   // printf("%d\n",strlen($$->charString));
+            //   char buf[1024];
+            //   struct ast_expression *tempExp = $$->r_operand;
+            //   while(tempExp != NULL) {
+            //     // Parse the entire charstring
+            //     // printf("GOT HERE\n");
+            //     strncat(buf, tempExp->charString, sizeof(tempExp->charString));
+            //     // printf("%s\n",buf);
+            //     tempExp = tempExp->r_operand;
+            //   }
+            // if(DEBUG) printf("buf = %s\n", buf);
+            //   $$->charString = strdup(buf);
+            // if(DEBUG) printf("Got out of loop\n");
             };
 
 printlist: CHARSTRING printlist {
@@ -474,6 +474,15 @@ printlist: CHARSTRING printlist {
             $$->r_operand = malloc(sizeof(struct ast_expression));
             $$->charString = $1;
             $$->r_operand = $2;
+          }
+          |CHARSTRING COMMA printlist {
+            if(DEBUG) printf("Got to CHARSTRING COMMA printlist\n");
+            $$ = malloc(sizeof(struct ast_expression));
+            $$->r_operand = malloc(sizeof(struct ast_expression));
+            char *temp = ",";
+            strncat($1, temp, 1); // Append a comma to this string.
+            $$->charString = $1;
+            $$->r_operand = $3;
           }
           |CARRETURN printlist {
             $$ = malloc(sizeof(struct ast_expression));
@@ -489,24 +498,20 @@ printlist: CHARSTRING printlist {
             $$->r_operand = $3;
             if(DEBUG) printf("Got to CARRETURN COMMA printlist\n");
           }
-          |exp COMMA printlist {
-
+          |bexp COMMA printlist {
+            // $$ = malloc(sizeof(struct ast_expression));
+            // $$->r_operand = $3;
+            // $$->ta
           }
-          |CHARSTRING COMMA printlist {
-
+          |bexp SEMICOLON{
+            $$ = malloc(sizeof(struct ast_expression));
+            printf("Got here");
+            $$->charString = NULL;
+            $$->r_operand = malloc(sizeof(struct ast_expression));
+            $$->r_operand = $1;
+            $$->r_operand->charString = NULL;
+            // $$->charString = "Found_a_vari";
           }
-          |exp {
-
-          }
-          // |COMMA exp printlist {
-          //
-          // }
-          // |exp {
-          //
-          // }
-          // |COMMA exp COMMA {
-          //
-          // }
           |SEMICOLON {
             $$ = NULL;
             // $$->r_operand = NULL;
