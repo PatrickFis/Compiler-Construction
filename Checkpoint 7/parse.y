@@ -448,7 +448,6 @@ outputstmt: RWPRINT printlist {
               while(tempExp->r_operand != NULL) {
                 // Parse the entire charstring
                 // printf("GOT HERE\n");
-                // if(tempExp->charString[0] == '\0') printf("BREAK ALREADY\n");
                 strncat(buf, tempExp->charString, sizeof(tempExp->charString));
                 // printf("%s\n",buf);
                 tempExp = tempExp->r_operand;
@@ -471,6 +470,7 @@ printlist: CHARSTRING printlist {
             printf("Got to CARRETURN COMMA printlist\n");
           }
           |SEMICOLON {
+            $$ = NULL;
             // $$->r_operand = NULL;
           }
           ;
