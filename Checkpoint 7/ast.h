@@ -22,6 +22,7 @@
 #define OP_AND 12
 #define OP_OR 13
 #define OP_NOT 14
+#define OP_PRINT 15
 
 struct statement {
     struct statement *link;
@@ -38,6 +39,7 @@ struct ast_expression { // This portion will just be used for expressions(possib
     char kind;
     char operator;
     char type;
+    char *charString;
     struct ast_expression *l_operand;
     struct ast_expression *r_operand;
     int value;
