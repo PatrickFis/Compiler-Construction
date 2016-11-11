@@ -7,5 +7,5 @@ main;
 		real: N, nn;
 	algorithm:
 		print !,!,"x+2","x+3";
-		#print N;
+		print N;
 end main;

@@ -114,7 +114,8 @@ void parsePrintStatement(struct ast_expression *exp) {
   // }
   // Goes through the string...
   if(exp->charString == NULL) {
-    // printf("FINALLY GOT A NULL\n");
+    printf("FINALLY GOT A NULL\n");
+    // exprgen(exp->r_operand);
     // exprgen(exp);
     // printf("exp->address: %d\n", exp->address);
   }
@@ -145,8 +146,13 @@ void exprgen(struct ast_expression *exp) {
   if(exp->operator == OP_PRINT) { // This occurs if an expression is a print statement
     printf("Got to OP_PRINT\n");
     // if(exp->r_operand != NULL)exprgen(exp->r_operand);
+    struct ast_expression *x = exp->r_operand;
+    while(x != NULL) {
+      printf("x->charString, %s\n", x->charString);
+      x = x->r_operand;
+    }
     // printf("exp->charString, %s\n", exp->charString);
-    parsePrintStatement(exp);
+    // parsePrintStatement(exp);
     return;
   }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers

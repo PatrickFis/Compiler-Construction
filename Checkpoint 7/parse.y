@@ -508,6 +508,7 @@ printlist: CHARSTRING printlist {
             printf("Got to bexp SEMICOLON\n");
             // $$->charString = NULL;
             $$ = $1;
+
             // $$->r_operand = malloc(sizeof(struct ast_expression));
             // $$->r_operand = $1;
             // Variable references are stored on the l_operand side of an exp
