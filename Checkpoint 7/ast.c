@@ -151,7 +151,7 @@ void parsePrintStatement(struct ast_expression *exp) {
  */
 void parsePrintStatementv2(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
-  printf("iCounter = %d\n", instructionCounter);
+  // printf("iCounter = %d\n", instructionCounter);
   while(x != NULL) {
     if(x->charString == NULL) {
       x->target = &table->table[0];
@@ -159,20 +159,45 @@ void parsePrintStatementv2(struct ast_expression *exp) {
       int iCounterBefore = instructionCounter;
       exprgen(x);
       int iCounterAfter = instructionCounter;
-      printf("iB %d iA %d\n", iCounterBefore, iCounterAfter);
+      // printf("iB %d iA %d\n", iCounterBefore, iCounterAfter);
       // Get the first instruction inserted by the above call to exprgen and
       // find the address used by it. May need to change this to scan all
       // instructions generated between iCounterBefore and iCounterAfter.
-      char *targetToken = strtok(instructionList[iCounterBefore], " ");
+      // Getting the tokens from a copy because apparently using strtok modifies
+      // the target of the function.
+      char *iListCopy = malloc(sizeof(strlen(instructionList[iCounterBefore])));
+      strcpy(iListCopy, instructionList[iCounterBefore]);
+      char *targetToken = strtok(iListCopy, " ");
       targetToken = strtok(NULL, " ");
       int tar = atoi(targetToken);
-      printf("tar = %d\n", tar);
-      printf("tar type = %d\n", table->table[tar].type);
-      printf("%s\n", targetToken);
+      int tarType = table->table[tar].type;
+      // printf("tar = %d\n", tar);
+      // printf("tar type = %d\n", table->table[tar].type);
+      // printf("%s\n", targetToken);
+      // This loops replaces instructions with the correct version for their
+      // target's type.
       for(int i = iCounterBefore; i < iCounterAfter; i++) {
-        printf("%s\n", instructionList[i]);
+        if(tarType == 1) {
+          // If the target is a real number
+          if(instructionList[i][2] == 'I') {
+            instructionList[i][2] = 'F';
+          }
+        }
+        else if(tarType == 0) {
+          // If the target is an integer number
+          if(instructionList[i][2] == 'F') {
+            instructionList[i][2] = 'I';
+          }
+        }
+        // printf("%s\n", instructionList[i]);
       }
-      printf("\n\n\n\n\n");
+      // printf("\n\n\n\n\n");
+      if(tarType == 1) {
+        sprintf(instructionList[instructionCounter++], "PTF");
+      }
+      else if(tarType == 0) {
+        sprintf(instructionList[instructionCounter++], "PTI");
+      }
       break;
     }
     printf("x->charString, %s\n", x->charString);
