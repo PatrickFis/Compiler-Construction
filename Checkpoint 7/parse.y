@@ -479,8 +479,9 @@ printlist: CHARSTRING printlist {
             if(DEBUG) printf("Got to CHARSTRING COMMA printlist\n");
             $$ = malloc(sizeof(struct ast_expression));
             $$->r_operand = malloc(sizeof(struct ast_expression));
-            char *temp = ",";
-            strncat($1, temp, 1); // Append a comma to this string.
+            // Temporarily getting get of this comma to see if it makes printing easier
+            // char *temp = ",";
+            // strncat($1, temp, 1); // Append a comma to this string.
             $$->charString = $1;
             $$->r_operand = $3;
           }
