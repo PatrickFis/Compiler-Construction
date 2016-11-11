@@ -9,6 +9,11 @@ struct statement *list; // Extern struct declared in ast.h. Used as a linked lis
 struct statement *head;
 int count = 0; // Keep track of how many statements we have
 
+char instructionList[10000][100]; // Instructions will be stored in this array...
+// Note that this means there can only be 10000 instructions.
+// This will be incremented to determine where instructions need to go in the array
+int instructionCounter = 0;
+
 void insertStmt(struct statement *stmt) {
   count++;
   // printf("stmt->exp->kind: %d\n", stmt->exp->operator);
@@ -130,6 +135,15 @@ void parsePrintStatement(struct ast_expression *exp) {
   }
 }
 
+/*
+ *  This is for parsing print statements. Currently it will print instructions
+ *  with the same type as the first entry in the symbol table. This may be
+ *  fixable by storing our instructions in an array and doing some backtracing.
+ *  Can possible do a check to see if the previous instruction was a LOD, and
+ *  if it was go back to the instruction before the LOD and use it's target.
+ *  I suppose this can keep track of if an integer type or real type has been
+ *  seen and assign it to every x expression in case only one LOD is found.
+ */
 void parsePrintStatementv2(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
   while(x != NULL) {
