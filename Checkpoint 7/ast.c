@@ -155,14 +155,24 @@ void parsePrintStatementv2(struct ast_expression *exp) {
   while(x != NULL) {
     if(x->charString == NULL) {
       x->target = &table->table[0];
-      // printf("x->target->address %d\n", x->target->address);
-      // printf("Got here 1?\n");
-      // printf("Hi?\n");
-      // printf("x->l_operand->target->name %s\n", x->l_operand->target->name);
-      // printf("Got here?\n");
-      // struct symbol_table_entry *temp85 = &table->table[isPresent(x->l_operand->target->name)];
-      // if(&table->table[isPresent(x)] > -1) printf("Hi\n");
+      // This, and iCounterAfter, will be used to determine if the correct instructions were printed
+      int iCounterBefore = instructionCounter;
       exprgen(x);
+      int iCounterAfter = instructionCounter;
+      printf("iB %d iA %d\n", iCounterBefore, iCounterAfter);
+      // Get the first instruction inserted by the above call to exprgen and
+      // find the address used by it. May need to change this to scan all
+      // instructions generated between iCounterBefore and iCounterAfter.
+      char *targetToken = strtok(instructionList[iCounterBefore], " ");
+      targetToken = strtok(NULL, " ");
+      int tar = atoi(targetToken);
+      printf("tar = %d\n", tar);
+      printf("tar type = %d\n", table->table[tar].type);
+      printf("%s\n", targetToken);
+      for(int i = iCounterBefore; i < iCounterAfter; i++) {
+        printf("%s\n", instructionList[i]);
+      }
+      printf("\n\n\n\n\n");
       break;
     }
     printf("x->charString, %s\n", x->charString);
