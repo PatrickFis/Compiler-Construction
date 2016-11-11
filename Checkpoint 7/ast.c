@@ -134,6 +134,8 @@ void parsePrintStatementv2(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
   while(x != NULL) {
     if(x->charString == NULL) {
+      x->target = &table->table[0];
+      // printf("x->target->address %d\n", x->target->address);
       // printf("Got here 1?\n");
       // printf("Hi?\n");
       // printf("x->l_operand->target->name %s\n", x->l_operand->target->name);
@@ -141,6 +143,7 @@ void parsePrintStatementv2(struct ast_expression *exp) {
       // struct symbol_table_entry *temp85 = &table->table[isPresent(x->l_operand->target->name)];
       // if(&table->table[isPresent(x)] > -1) printf("Hi\n");
       exprgen(x);
+      break;
     }
     printf("x->charString, %s\n", x->charString);
     x = x->r_operand;
