@@ -112,6 +112,14 @@ void parsePrintStatement(struct ast_expression *exp) {
     // exp->charString[strlen(exp->charString)-1] = "";
   // }
   // Goes through the string...
+  if(exp->charString == NULL) {
+    // printf("FINALLY GOT A NULL\n");
+    if(exp->address == 1 && exp->target->name != NULL) {
+      printf("Found an address\n");
+      printf("%s\n", exp->target->name);
+    }
+    // printf("exp->address: %d\n", exp->address);
+  }
   if(exp->charString != NULL) {
     for(int i = 0; i < strlen(exp->charString); i++) {
       // Skip over quotes and commas
@@ -131,7 +139,7 @@ void parsePrintStatement(struct ast_expression *exp) {
 
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
-  printf("Got here");
+  // printf("Got here");
   if(DEBUG) printf("Got to exprgen\n");
   if(DEBUG) printf("exp->type: %d\n", exp->type);
   if(DEBUG) printf("exp->operator: %d\n", exp->operator);
@@ -140,7 +148,7 @@ void exprgen(struct ast_expression *exp) {
     printf("Got to OP_PRINT\n");
     // if(exp->r_operand != NULL)exprgen(exp->r_operand);
     // printf("exp->charString, %s\n", exp->charString);
-    // parsePrintStatement(exp);
+    parsePrintStatement(exp);
     return;
   }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers

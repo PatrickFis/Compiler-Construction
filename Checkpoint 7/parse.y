@@ -505,11 +505,16 @@ printlist: CHARSTRING printlist {
           }
           |bexp SEMICOLON{
             $$ = malloc(sizeof(struct ast_expression));
-            printf("Got here");
-            $$->charString = NULL;
-            $$->r_operand = malloc(sizeof(struct ast_expression));
-            $$->r_operand = $1;
-            $$->r_operand->charString = NULL;
+            printf("Got to bexp SEMICOLON\n");
+            // $$->charString = NULL;
+            $$ = $1;
+            // $$->r_operand = malloc(sizeof(struct ast_expression));
+            // $$->r_operand = $1;
+            // Variable references are stored on the l_operand side of an exp
+            $$->address = $$->l_operand->target->address;
+            $$->target = &table->table[isPresent($1->l_operand->target->name)];
+            printf("$1->l_operand->target->name: %s\n", $1->l_operand->target->name);
+            // $$->r_operand->charString = NULL;
             // $$->charString = "Found_a_vari";
           }
           |SEMICOLON {
