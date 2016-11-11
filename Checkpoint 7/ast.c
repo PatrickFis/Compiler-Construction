@@ -102,6 +102,7 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
 
 /*
  *  This function will parse print statements and call exprgen when needed
+ *  Maybe this should be rewritten to be like exprgen?
  */
 void parsePrintStatement(struct ast_expression *exp) {
   printf("Got to parse print statement\n");
@@ -114,10 +115,7 @@ void parsePrintStatement(struct ast_expression *exp) {
   // Goes through the string...
   if(exp->charString == NULL) {
     // printf("FINALLY GOT A NULL\n");
-    if(exp->address == 1 && exp->target->name != NULL) {
-      printf("Found an address\n");
-      printf("%s\n", exp->target->name);
-    }
+    // exprgen(exp);
     // printf("exp->address: %d\n", exp->address);
   }
   if(exp->charString != NULL) {

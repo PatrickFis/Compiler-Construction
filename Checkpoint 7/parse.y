@@ -511,9 +511,10 @@ printlist: CHARSTRING printlist {
             // $$->r_operand = malloc(sizeof(struct ast_expression));
             // $$->r_operand = $1;
             // Variable references are stored on the l_operand side of an exp
-            $$->address = $$->l_operand->target->address;
-            $$->target = &table->table[isPresent($1->l_operand->target->name)];
-            printf("$1->l_operand->target->name: %s\n", $1->l_operand->target->name);
+            // There's a segfault under this line... probably because the address isn't being assigned if a literal is passed in?
+            // $$->address = $$->l_operand->target->address;
+            // $$->target = &table->table[isPresent($1->l_operand->target->name)];
+            // printf("$1->l_operand->target->name: %s\n", $1->l_operand->target->name);
             // $$->r_operand->charString = NULL;
             // $$->charString = "Found_a_vari";
           }
