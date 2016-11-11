@@ -129,6 +129,23 @@ void parsePrintStatement(struct ast_expression *exp) {
     printf("exp->charString: %s\n", exp->charString);
   }
 }
+
+void parsePrintStatementv2(struct ast_expression *exp) {
+  struct ast_expression *x = exp->r_operand;
+  while(x != NULL) {
+    if(x->charString == NULL) {
+      // printf("Got here 1?\n");
+      // printf("Hi?\n");
+      // printf("x->l_operand->target->name %s\n", x->l_operand->target->name);
+      // printf("Got here?\n");
+      // struct symbol_table_entry *temp85 = &table->table[isPresent(x->l_operand->target->name)];
+      // if(&table->table[isPresent(x)] > -1) printf("Hi\n");
+      exprgen(x);
+    }
+    printf("x->charString, %s\n", x->charString);
+    x = x->r_operand;
+  }
+}
 /*
  *  This function generates gstal code for a given expression. It goes through
  *  the left and right operands of an expression recursively. In the case that
@@ -144,15 +161,15 @@ void exprgen(struct ast_expression *exp) {
   if(DEBUG) printf("exp->operator: %d\n", exp->operator);
   // if(exp->target != NULL) printf("%s\n", exp->target->name);
   if(exp->operator == OP_PRINT) { // This occurs if an expression is a print statement
-    printf("Got to OP_PRINT\n");
+    // printf("Got to OP_PRINT\n");
     // if(exp->r_operand != NULL)exprgen(exp->r_operand);
-    struct ast_expression *x = exp->r_operand;
-    while(x != NULL) {
-      printf("x->charString, %s\n", x->charString);
-      x = x->r_operand;
-    }
+    // struct ast_expression *x = exp->r_operand;
+    // while(x != NULL) {
+    //   printf("x->charString, %s\n", x->charString);
+    //   x = x->r_operand;
+    // }
     // printf("exp->charString, %s\n", exp->charString);
-    // parsePrintStatement(exp);
+    parsePrintStatementv2(exp);
     return;
   }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers

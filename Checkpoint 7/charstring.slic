@@ -6,6 +6,7 @@ main;
 	data:
 		real: N, nn;
 	algorithm:
-		print !,!,"x+2","x+3";
-		print N;
+		#print !,!,"x+2","x+3";
+		print N*2;
+		#N := (N * 2) + 1;
 end main;
