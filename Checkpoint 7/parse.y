@@ -500,9 +500,11 @@ printlist: CHARSTRING printlist {
             if(DEBUG) printf("Got to CARRETURN COMMA printlist\n");
           }
           |bexp COMMA printlist {
-            // $$ = malloc(sizeof(struct ast_expression));
+            printf("Got to bexp COMMA printlist\n");
+            $$ = malloc(sizeof(struct ast_expression));
             // $$->r_operand = $3;
-            // $$->ta
+            $$ = $1;
+            $$->charString = $3->charString;
           }
           |bexp SEMICOLON{
             $$ = malloc(sizeof(struct ast_expression));

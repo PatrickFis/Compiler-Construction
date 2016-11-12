@@ -153,6 +153,9 @@ void parsePrintStatementv2(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
   // printf("iCounter = %d\n", instructionCounter);
   while(x != NULL) {
+    if(x->charString != NULL) {
+      printf("x->charString %s\n", x->charString);
+    }
     if(x->charString == NULL) {
       x->target = &table->table[0];
       // This, and iCounterAfter, will be used to determine if the correct instructions were printed
@@ -200,7 +203,7 @@ void parsePrintStatementv2(struct ast_expression *exp) {
       }
       break;
     }
-    printf("x->charString, %s\n", x->charString);
+    // printf("x->charString, %s\n", x->charString);
     int i;
     // Print a newline character
     if(strcmp(x->charString, "!,") == 0 || strcmp(x->charString, "!") == 0) {
