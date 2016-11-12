@@ -56,13 +56,52 @@ void printList() {
   // printf("ISP %d\n", table->memorySize);
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
+    int iBefore = instructionCounter;
     exprgen(next->exp);
+    int iAfter = instructionCounter;
+    // printf("iB = %d, iA = %d\n", iBefore, iAfter);
     // printf("exprgen finished\n"); // Debug
+    checkInstructions(iBefore, iAfter);
     next = next->link;
   }
 
   for(int i = 0; i < instructionCounter; i++) {
     printf("%s\n", instructionList[i]);
+  }
+}
+
+/*
+ *  This function is called after exprgen in printList. It makes sure that
+ *  the correct instruction types are printed. May need to add another check
+ *  to do conversions of loaded variables that are of the wrong type.
+ */
+void checkInstructions(int iBefore, int iAfter) {
+  int i;
+  int seenReal = 0;
+  for(i = iBefore; i < iAfter; i++) {
+    if(instructionList[i][0] == 'L' && instructionList[i][1] == 'A' && instructionList[i][2] == 'A') {
+      // Using iCopy like the below iListCopy.
+      char *iCopy = malloc(sizeof(strlen(instructionList[i])));
+      strcpy(iCopy, instructionList[i]);
+      char *tar = strtok(iCopy, " "); // = LAA
+      tar = strtok(NULL, " "); // = Number
+      int tarType = table->table[atoi(tar)].type;
+      if(tarType == 1) {
+        seenReal = 1; // If these instructions contain a real, all the instructions need to change
+      }
+    }
+    if(DEBUG) printf("iList: %s\n", instructionList[i]);
+  }
+  if(seenReal == 1) { // Need to check if any other instructions besides operations end with I.
+    for(i = iBefore; i < iAfter; i++) {
+      if(instructionList[i][2] == 'I') {
+        instructionList[i][2] = 'F'; // Change to floating point instructions
+        // If the instruction ends with a number, append a .0 to it.
+        if(strlen(instructionList[i]) > 3) {
+          strcat(instructionList[i], ".0");
+        }
+      }
+    }
   }
 }
 
@@ -86,10 +125,15 @@ void recurseAssign(struct ast_expression *exp, int type) {
 /*
  *  This function recursively assigns targets to expressions, which allows the
  *  code generator to know what kind of instructions to print.
+ *  Checkpoint 7 - Found a bug in this that caused expressions with more than one
+ *  operation to fail. Fixed by returning from this function if exp->kind
+ *  is equal to KIND_OP.
  */
 void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) {
-  if(exp->type == TYPE_VAR)
+  if(exp->type == TYPE_VAR) {
+    // printf("I returned here\n");
     return;
+  }
   if(exp->l_operand != NULL) {
     assignTarget(exp->l_operand, target);
     exp->l_operand->target = &target;
@@ -101,12 +145,16 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
     // exp->r_operand->type = target.type;
   }
   if(exp->l_operand == NULL && exp->type != TYPE_VAR) {
-    // printf("exp->type = %d\n", exp->type);
+    if(DEBUG) printf("exp->type = %d\n", exp->type);
+    if(exp->kind == KIND_OP) return;
     exp->type = target.type;
     // printf("exp->type = %d\n", exp->type);
   }
   if(exp->r_operand == NULL && exp->type != TYPE_VAR) {
+    if(DEBUG) printf("exp->kind: %d\n", exp->kind);
+    if(exp->kind == KIND_OP) return;
     exp->type = target.type;
+    // printf("exp->type = %d\n", exp->type);
   }
 }
 
@@ -295,6 +343,7 @@ void parsePrintStatementv2(struct ast_expression *exp) {
     x = x->r_operand;
   }
 }
+
 /*
  *  This function generates gstal code for a given expression. It goes through
  *  the left and right operands of an expression recursively. In the case that

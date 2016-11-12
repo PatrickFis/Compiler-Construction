@@ -11,5 +11,5 @@ main;
 		#print "Asf", "Asdf";
 		#print "Asdf", N*3, "Asdf", "Asdf2";
 		#print "x+2";
-		N := (N * 2.2) + 2.2;
+		N := (N * 2) + 3;
 end main;
