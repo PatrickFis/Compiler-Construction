@@ -334,7 +334,7 @@ rexp: rexp LESS exp { // Code to parse < booleans, rexp = Relation Expression
     }
 
 exp: exp ADD term {// Code to parse expressions
-                    if(DEBUG) printf("GOT HERE2\n");
+                    if(DEBUG) printf("Got to add\n");
                     $$ = malloc(sizeof(struct ast_expression));
                     $$->kind = KIND_OP;
                     $$->operator = OP_ADD;
@@ -342,7 +342,7 @@ exp: exp ADD term {// Code to parse expressions
                     $$->r_operand = $3;
                   }
     |exp MINUS term {
-                      if(DEBUG) printf("GOT HERE3\n");
+                      if(DEBUG) printf("Got to subtract\n");
                       $$ = malloc(sizeof(struct ast_expression));
                       $$->kind = KIND_OP;
                       $$->operator = OP_SUB;
@@ -360,6 +360,7 @@ exp: exp ADD term {// Code to parse expressions
           ;
 
 term: term MULT factor {
+                          if(DEBUG) printf("Got to mult\n");
                           $$ = malloc(sizeof(struct ast_expression));
                           $$->kind = KIND_OP;
                           $$->operator = OP_MUL;
@@ -367,6 +368,7 @@ term: term MULT factor {
                           $$->r_operand = $3;
                        }
      |term DIV factor {
+                          if(DEBUG) printf("Got to div\n");
                           $$ = malloc(sizeof(struct ast_expression));
                           $$->kind = KIND_OP;
                           $$->operator = OP_DIV;
@@ -480,7 +482,7 @@ printlist: CHARSTRING printlist {
             if(DEBUG) printf("CHARSTRING: %s\n", $1);
             $$ = malloc(sizeof(struct ast_expression));
             $$->r_operand = malloc(sizeof(struct ast_expression));
-            // Temporarily getting get of this comma to see if it makes printing easier
+            // Temporarily getting rid of this comma to see if it makes printing easier
             // char *temp = ",";
             // strncat($1, temp, 1); // Append a comma to this string.
             $$->charString = $1;

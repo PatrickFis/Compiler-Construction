@@ -94,7 +94,7 @@ void checkInstructions(int iBefore, int iAfter) {
   }
   if(seenReal == 1) { // Need to check if any other instructions besides operations end with I.
     for(i = iBefore; i < iAfter; i++) {
-      printf("i = %d\n", i);
+      // printf("i = %d\n", i);
       if(i+1 < iAfter) {
       char *iCopy = malloc(sizeof(strlen(instructionList[i])));
       strcpy(iCopy, instructionList[i]);
@@ -106,8 +106,9 @@ void checkInstructions(int iBefore, int iAfter) {
         char *ptcCheck = strtok(iCopy2, " "); // Checking if this is PTC
         if(strcmp(ptcCheck, "PTC")) {
           // printf("Hi");
-          printf("continue\n");
-          break;
+          // printf("continue\n");
+          i++;
+          continue;
         }
       }
     }
@@ -330,6 +331,32 @@ void parsePrintStatementv2(struct ast_expression *exp) {
 }
 
 /*
+ *  Getting really tired of debugging problems with output of instructions.
+ *  Since all instructions are stored in an array, this instruction will check
+ *  the last instruction for a LLI/LLF or a LOD. If it finds LLI/LLI, it will
+ *  return 0 or 1. If it finds LOD, it will check the previous instruction for
+ *  an address and then check the symbol table for the type.
+ */
+int getPreviousInstructionType(int iCount) {
+  char *iCopy = malloc(sizeof(strlen(instructionList[iCount - 1])));
+  strcpy(iCopy, instructionList[iCount - 1]);
+  char *ins = strtok(iCopy, " "); // Get instruction
+  if(strcmp(ins, "LLI") == 0) {
+    return 0;
+  }
+  else if(strcmp(ins, "LLF") == 0) {
+    return 1;
+  }
+  else if(strcmp(ins, "LOD") == 0) {
+    iCopy = malloc(sizeof(strlen(instructionList[iCount - 2])));
+    strcpy(iCopy, instructionList[iCount - 2]);
+    ins = strtok(iCopy, " ");
+    ins = strtok(NULL, " ");
+    return table->table[atoi(ins)].type;
+  }
+  return -1;
+}
+/*
  *  This function generates gstal code for a given expression. It goes through
  *  the left and right operands of an expression recursively. In the case that
  *  a given expression contains another variable reference (e.g. n := x),
@@ -359,6 +386,7 @@ void exprgen(struct ast_expression *exp) {
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
     if(DEBUG) printf("Got to load int\n");
     // printf("LLI %d\n", exp->value);
+    // printf("exp->type = %d\n", exp->type);
     sprintf(instructionList[instructionCounter++], "LLI %d", exp->value);
   }
   else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
@@ -459,14 +487,20 @@ void exprgen(struct ast_expression *exp) {
     case OP_MUL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("MLI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "MLI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("MLF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "MLF");
       }
+      // if(exp->target->type == TYPE_INT) {
+      //   // printf("MLI\n");
+      //   sprintf(instructionList[instructionCounter++], "MLI");
+      // }
+      // else if(exp->target->type == TYPE_REAL) {
+      //   // printf("MLF\n");
+      //   sprintf(instructionList[instructionCounter++], "MLF");
+      // }
       break;
 
     case OP_DIV:
