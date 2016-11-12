@@ -145,49 +145,76 @@ void parsePrintv3(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
   // if(x->charString == NULL) printf("NULL\n");
   if(x != NULL) {
-    if(x->charString != NULL)printf("%s\n", x->charString);
-    // if(x->l_operand != NULL) {
-    //   printf("l_op not null\n");
-    //   exprgen(x->l_operand);
-    //   // struct ast_expression *xcopy = x->r_operand->r_operand->l_operand;
-    //   // exprgen(xcopy);
-    // }
+    if(x->charString != NULL) {
+      // printf("%s\n", x->charString);
+      int i;
+      // Print a newline character
+      if(strcmp(x->charString, "!,") == 0 || strcmp(x->charString, "!") == 0) {
+        sprintf(instructionList[instructionCounter++], "PTL");
+      }
+      // Print characters enclosed by quotation marks. Will add a check for "" later.
+      for(i = 1; i < strlen(x->charString)-1; i++) {
+        // printf("%d\n", (int)x->charString[i]);
+        sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
+        sprintf(instructionList[instructionCounter++], "PTC");
+      }
+    }
+
+    /*
+     *  Tree is structed like this... exp->r_operand->r_operand->r_operand...
+     *  If r_operand has a charString, then it should be printed.
+     *  If the charString is NULL, then r_operand has a non-NULL l_operand.
+     *  l_operand is a bexp, which should be passed to exprgen for code generation.
+     */
     if(x->charString == NULL) {
       printf("CHARSTRING IS NULL!!!\n");
       x->l_operand->target = &table->table[0];
+      int iCounterBefore = instructionCounter;
       exprgen(x->l_operand);
+      int iCounterAfter = instructionCounter;
+      printf("iB: %d, iA: %d\n", iCounterBefore, iCounterAfter);
+
+      // Get the first instruction inserted by the above call to exprgen and
+      // find the address used by it. May need to change this to scan all
+      // instructions generated between iCounterBefore and iCounterAfter.
+      // Getting the tokens from a copy because apparently using strtok modifies
+      // the target of the function.
+      char *iListCopy = malloc(sizeof(strlen(instructionList[iCounterBefore])));
+      strcpy(iListCopy, instructionList[iCounterBefore]);
+      char *targetToken = strtok(iListCopy, " ");
+      targetToken = strtok(NULL, " ");
+      int tar = atoi(targetToken);
+      int tarType = table->table[tar].type;
+      // printf("tar = %d\n", tar);
+      // printf("tar type = %d\n", table->table[tar].type);
+      // printf("%s\n", targetToken);
+      // This loops replaces instructions with the correct version for their
+      // target's type.
+      for(int i = iCounterBefore; i < iCounterAfter; i++) {
+        if(tarType == 1) {
+          // If the target is a real number
+          if(instructionList[i][2] == 'I') {
+            instructionList[i][2] = 'F';
+          }
+        }
+        else if(tarType == 0) {
+          // If the target is an integer number
+          if(instructionList[i][2] == 'F') {
+            instructionList[i][2] = 'I';
+          }
+        }
+        // printf("%s\n", instructionList[i]);
+      }
+      // printf("\n\n\n\n\n");
+      if(tarType == 1) {
+        sprintf(instructionList[instructionCounter++], "PTF");
+      }
+      else if(tarType == 0) {
+        sprintf(instructionList[instructionCounter++], "PTI");
+      }
     }
     parsePrintv3(x);
   }
-
-  // printf("x->charString: %s\n", x->charString);
-
-  // Maybe on a decent track with this, but I'm going to try commenting it out and doing something from v2.
-  // if(exp->r_operand != NULL) { // r_op will always have charString?
-  //   // printf("r_op not null\n");
-  //   // if(exp->charString != NULL) printf("r_op->charString: %s\n", exp->charString);
-  //   parsePrintv3(exp->r_operand);
-  //   if(exp->l_operand != NULL) {
-  //     printf("l_op not null\n");
-  //     // if(exp->charString == NULL) exprgen(exp->l_operand);
-  //     // parsePrintv3(exp->l_operand);
-  //     // if(exp->l_operand->l_operand != NULL /*&& exp->l_operand->r_operand != NULL*/) {
-  //     //   exprgen(exp->l_operand);
-  //     // }
-  //     // exprgen(exp->l_operand);
-  //   }
-  //   // printf("r_op->charString: %s\n", exp->charString);
-  // }
-  // // if(exp->l_operand != NULL) {
-  // //   printf("l_op not null\n");
-  // //   if(exp->r_operand != NULL) {
-  // //     // if(exp->r_operand->charString != NULL) printf("parse r %s\n", exp->r_operand->charString);
-  // //     parsePrintv3(exp->r_operand);
-  // //   }
-  // //   parsePrintv3(exp->l_operand);
-  // //   // printf("r_op->charString: %s\n", exp->charString);
-  // // }
-  //   printf("charstring: %s\n", exp->charString);
 }
 /*
  *  This is for parsing print statements. Currently it will print instructions
