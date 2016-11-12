@@ -142,21 +142,52 @@ void parsePrintStatement(struct ast_expression *exp) {
 
 
 void parsePrintv3(struct ast_expression *exp) {
-  if(exp->r_operand != NULL) { // r_op will always have charString?
-    // printf("r_op not null\n");
-    if(exp->charString != NULL) printf("r_op->charString: %s\n", exp->charString);
-    parsePrintv3(exp->r_operand);
-    // printf("r_op->charString: %s\n", exp->charString);
-  }
-  if(exp->l_operand != NULL) {
-    printf("l_op not null\n");
-    if(exp->r_operand != NULL) {
-      if(exp->r_operand->charString != NULL) printf("parse r %s\n", exp->r_operand->charString);
-      parsePrintv3(exp->r_operand);
+  struct ast_expression *x = exp->r_operand;
+  // if(x->charString == NULL) printf("NULL\n");
+  if(x != NULL) {
+    if(x->charString != NULL)printf("%s\n", x->charString);
+    // if(x->l_operand != NULL) {
+    //   printf("l_op not null\n");
+    //   exprgen(x->l_operand);
+    //   // struct ast_expression *xcopy = x->r_operand->r_operand->l_operand;
+    //   // exprgen(xcopy);
+    // }
+    if(x->charString == NULL) {
+      printf("CHARSTRING IS NULL!!!\n");
+      x->l_operand->target = &table->table[0];
+      exprgen(x->l_operand);
     }
-    parsePrintv3(exp->l_operand);
-    // printf("r_op->charString: %s\n", exp->charString);
+    parsePrintv3(x);
   }
+
+  // printf("x->charString: %s\n", x->charString);
+
+  // Maybe on a decent track with this, but I'm going to try commenting it out and doing something from v2.
+  // if(exp->r_operand != NULL) { // r_op will always have charString?
+  //   // printf("r_op not null\n");
+  //   // if(exp->charString != NULL) printf("r_op->charString: %s\n", exp->charString);
+  //   parsePrintv3(exp->r_operand);
+  //   if(exp->l_operand != NULL) {
+  //     printf("l_op not null\n");
+  //     // if(exp->charString == NULL) exprgen(exp->l_operand);
+  //     // parsePrintv3(exp->l_operand);
+  //     // if(exp->l_operand->l_operand != NULL /*&& exp->l_operand->r_operand != NULL*/) {
+  //     //   exprgen(exp->l_operand);
+  //     // }
+  //     // exprgen(exp->l_operand);
+  //   }
+  //   // printf("r_op->charString: %s\n", exp->charString);
+  // }
+  // // if(exp->l_operand != NULL) {
+  // //   printf("l_op not null\n");
+  // //   if(exp->r_operand != NULL) {
+  // //     // if(exp->r_operand->charString != NULL) printf("parse r %s\n", exp->r_operand->charString);
+  // //     parsePrintv3(exp->r_operand);
+  // //   }
+  // //   parsePrintv3(exp->l_operand);
+  // //   // printf("r_op->charString: %s\n", exp->charString);
+  // // }
+  //   printf("charstring: %s\n", exp->charString);
 }
 /*
  *  This is for parsing print statements. Currently it will print instructions

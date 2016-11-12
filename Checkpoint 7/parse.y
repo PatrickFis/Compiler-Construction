@@ -509,7 +509,7 @@ printlist: CHARSTRING printlist {
             // $$->charString = $3->charString;
             $$->l_operand = malloc(sizeof(struct ast_expression));
             $$->r_operand = malloc(sizeof(struct ast_expression));
-            $$->r_operand = $1;
+            $$->l_operand = $1;
             $$->r_operand = $3;
           }
           |bexp SEMICOLON{
