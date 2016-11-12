@@ -61,7 +61,7 @@ void printList() {
     int iAfter = instructionCounter;
     // printf("iB = %d, iA = %d\n", iBefore, iAfter);
     // printf("exprgen finished\n"); // Debug
-    checkInstructions(iBefore, iAfter);
+    // checkInstructions(iBefore, iAfter);
     next = next->link;
   }
 
@@ -94,6 +94,23 @@ void checkInstructions(int iBefore, int iAfter) {
   }
   if(seenReal == 1) { // Need to check if any other instructions besides operations end with I.
     for(i = iBefore; i < iAfter; i++) {
+      printf("i = %d\n", i);
+      if(i+1 < iAfter) {
+      char *iCopy = malloc(sizeof(strlen(instructionList[i])));
+      strcpy(iCopy, instructionList[i]);
+      char *inst = strtok(iCopy, " "); // Checking if this is LLI
+      // printf("inst = %s\n", inst);
+      if(strcmp(inst, "LLI")) {
+        char *iCopy2 = malloc(sizeof(strlen(instructionList[i+1])));
+        strcpy(iCopy2, instructionList[i+1]);
+        char *ptcCheck = strtok(iCopy2, " "); // Checking if this is PTC
+        if(strcmp(ptcCheck, "PTC")) {
+          // printf("Hi");
+          printf("continue\n");
+          break;
+        }
+      }
+    }
       if(instructionList[i][2] == 'I') {
         instructionList[i][2] = 'F'; // Change to floating point instructions
         // If the instruction ends with a number, append a .0 to it.
@@ -158,37 +175,6 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
   }
 }
 
-/*
- *  This function will parse print statements and call exprgen when needed
- *  Maybe this should be rewritten to be like exprgen?
- */
-void parsePrintStatement(struct ast_expression *exp) {
-  printf("Got to parse print statement\n");
-  if(exp->r_operand != NULL)
-    parsePrintStatement(exp->r_operand);
-  // if(strlen(exp->charString) > 2) {
-    // exp->charString[0] = "";
-    // exp->charString[strlen(exp->charString)-1] = "";
-  // }
-  // Goes through the string...
-  if(exp->charString == NULL) {
-    printf("FINALLY GOT A NULL\n");
-    // exprgen(exp->r_operand);
-    // exprgen(exp);
-    // printf("exp->address: %d\n", exp->address);
-  }
-  if(exp->charString != NULL) {
-    for(int i = 0; i < strlen(exp->charString); i++) {
-      // Skip over quotes and commas
-      // Will need to add a check for "" in a string, since quotes can be printed
-      if(exp->charString[i] == '\"' || exp->charString[i] == ',') continue;
-      printf("charString[i] = %c\n", exp->charString[i]);
-    }
-    printf("exp->charString: %s\n", exp->charString);
-  }
-}
-
-
 void parsePrintv3(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
   // if(x->charString == NULL) printf("NULL\n");
@@ -215,12 +201,11 @@ void parsePrintv3(struct ast_expression *exp) {
      *  l_operand is a bexp, which should be passed to exprgen for code generation.
      */
     if(x->charString == NULL) {
-      printf("CHARSTRING IS NULL!!!\n");
       x->l_operand->target = &table->table[0];
       int iCounterBefore = instructionCounter;
       exprgen(x->l_operand);
       int iCounterAfter = instructionCounter;
-      printf("iB: %d, iA: %d\n", iCounterBefore, iCounterAfter);
+      if(DEBUG) printf("iB: %d, iA: %d\n", iCounterBefore, iCounterAfter);
 
       // Get the first instruction inserted by the above call to exprgen and
       // find the address used by it. May need to change this to scan all
