@@ -477,6 +477,7 @@ printlist: CHARSTRING printlist {
           }
           |CHARSTRING COMMA printlist {
             if(DEBUG) printf("Got to CHARSTRING COMMA printlist\n");
+            if(DEBUG) printf("CHARSTRING: %s\n", $1);
             $$ = malloc(sizeof(struct ast_expression));
             $$->r_operand = malloc(sizeof(struct ast_expression));
             // Temporarily getting get of this comma to see if it makes printing easier
@@ -503,14 +504,21 @@ printlist: CHARSTRING printlist {
             printf("Got to bexp COMMA printlist\n");
             $$ = malloc(sizeof(struct ast_expression));
             // $$->r_operand = $3;
-            $$ = $1;
-            $$->charString = $3->charString;
+            // What if I set $$->l_operand to $1? Then I could just parse that part for bexp's...
+            // $$ = $1;
+            // $$->charString = $3->charString;
+            $$->l_operand = malloc(sizeof(struct ast_expression));
+            $$->r_operand = malloc(sizeof(struct ast_expression));
+            $$->r_operand = $1;
+            $$->r_operand = $3;
           }
           |bexp SEMICOLON{
             $$ = malloc(sizeof(struct ast_expression));
             printf("Got to bexp SEMICOLON\n");
             // $$->charString = NULL;
-            $$ = $1;
+            // Added for debug...
+            $$->l_operand = malloc(sizeof(struct ast_expression));
+            $$->l_operand = $1;
 
             // $$->r_operand = malloc(sizeof(struct ast_expression));
             // $$->r_operand = $1;

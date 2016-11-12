@@ -140,6 +140,24 @@ void parsePrintStatement(struct ast_expression *exp) {
   }
 }
 
+
+void parsePrintv3(struct ast_expression *exp) {
+  if(exp->r_operand != NULL) { // r_op will always have charString?
+    // printf("r_op not null\n");
+    if(exp->charString != NULL) printf("r_op->charString: %s\n", exp->charString);
+    parsePrintv3(exp->r_operand);
+    // printf("r_op->charString: %s\n", exp->charString);
+  }
+  if(exp->l_operand != NULL) {
+    printf("l_op not null\n");
+    if(exp->r_operand != NULL) {
+      if(exp->r_operand->charString != NULL) printf("parse r %s\n", exp->r_operand->charString);
+      parsePrintv3(exp->r_operand);
+    }
+    parsePrintv3(exp->l_operand);
+    // printf("r_op->charString: %s\n", exp->charString);
+  }
+}
 /*
  *  This is for parsing print statements. Currently it will print instructions
  *  with the same type as the first entry in the symbol table. This may be
@@ -151,10 +169,11 @@ void parsePrintStatement(struct ast_expression *exp) {
  */
 void parsePrintStatementv2(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
+
   // printf("iCounter = %d\n", instructionCounter);
   while(x != NULL) {
     if(x->charString != NULL) {
-      printf("x->charString %s\n", x->charString);
+      printf("not null x->charString %s\n", x->charString);
     }
     if(x->charString == NULL) {
       x->target = &table->table[0];
@@ -241,7 +260,8 @@ void exprgen(struct ast_expression *exp) {
     //   x = x->r_operand;
     // }
     // printf("exp->charString, %s\n", exp->charString);
-    parsePrintStatementv2(exp);
+    // parsePrintStatementv2(exp);
+    parsePrintv3(exp);
     return;
   }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
