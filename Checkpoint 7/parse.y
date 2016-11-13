@@ -19,7 +19,7 @@
 #include "ast.h"
 #include <stdio.h>
 #include <string.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 int entry_count = 0; // Used to keep track of what symbols are being inserted.
@@ -93,6 +93,7 @@ int entry_count = 0; // Used to keep track of what symbols are being inserted.
 %type <stmt> programbody
 %type <expr> outputstmt
 %type <expr> printlist
+%type <expr> inputstmt
 %%
 
 program : headingstmt datasection algsection;
@@ -227,6 +228,22 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               temp->link = NULL;
               $$->link = temp;
               if(DEBUG) printf("Got to outputstmt\n");
+            }
+            |inputstmt programbody {
+              $$ = malloc(sizeof(struct statement));
+              $$->exp = $1;
+              $$->link = $2;
+              if(DEBUG) printf("Got to inputstmt programbody\n");
+            }
+            |inputstmt {
+              $$ = malloc(sizeof(struct statement));
+              $$->exp = $1;
+              // Added the temp struct to insert the last expressions into the linked list.
+              struct statement *temp = malloc(sizeof(struct statement));
+              temp->exp = $$->exp;
+              temp->link = NULL;
+              $$->link = temp;
+              if(DEBUG) printf("Got to inputstmt\n");
             }
             ;
 
@@ -538,6 +555,13 @@ printlist: CHARSTRING printlist {
           }
           ;
 
+inputstmt: RWREAD varref SEMICOLON {
+              if(DEBUG) printf("Got to RWREAD varref SEMICOLON\n");
+              $$ = malloc(sizeof(struct ast_expression));
+              $$->address = table->table[isPresent($2->name)].address;
+              $$->operator = OP_READ;
+           }
+           ;
 endmainstmt: RWEND RWMAIN SEMICOLON;
 
 %%

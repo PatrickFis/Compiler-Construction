@@ -383,6 +383,18 @@ void exprgen(struct ast_expression *exp) {
     parsePrintv3(exp);
     return;
   }
+  if(exp->operator == OP_READ) {
+    sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
+    if(table->table[exp->address].type == 0) {
+      sprintf(instructionList[instructionCounter++], "INI");
+      sprintf(instructionList[instructionCounter++], "STO");
+    }
+    else if(table->table[exp->address].type == 1) {
+      sprintf(instructionList[instructionCounter++], "INF");
+      sprintf(instructionList[instructionCounter++], "STO");
+    }
+    return;
+  }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
     if(DEBUG) printf("Got to load int\n");
     // printf("LLI %d\n", exp->value);
