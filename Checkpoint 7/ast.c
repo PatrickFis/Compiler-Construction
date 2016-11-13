@@ -60,6 +60,7 @@ void printList() {
   // printf("ISP %d\n", table->memorySize);
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
+
     if(next->isCond == 1) {
       exprgen(next->if_stmt->conditional_stmt); // Parse the conditional
       // If the conditional is false we will need to jump to the else statement.
@@ -69,7 +70,7 @@ void printList() {
       struct statement *nextCopy = malloc(sizeof(struct statement));
       nextCopy = next;
       int jumpLocation = instructionCounter; // Store the jump location
-      sprintf(instructionList[instructionCounter++], "JPF");
+      sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
       exprgen(next->if_stmt->body->exp); // Only getting first exp
       if(next->if_stmt->body->link != NULL) { // Check if there is more than one expression in the if statement's body
         nextCopy = nextCopy->if_stmt->body->link; // This structure should traversed using nextCopy = nextCopy->link
@@ -83,6 +84,26 @@ void printList() {
       }
       int iAfter = instructionCounter;
       sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
+      if(next->isIfElse == 1) {
+        // This section of code will parse an else statement. It borrows heavily
+        // from the code used above.
+        int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
+        sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
+        sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
+        printf("It didn't crash! 😶\n");
+        exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
+        struct statement *nextCopy = malloc(sizeof(struct statement));
+        nextCopy = next;
+        if(next->if_stmt->if_link->body->link != NULL) {
+          nextCopy = nextCopy->if_stmt->if_link->body->link; // Can now traverse using nextCopy = nextCopy->link
+          while(nextCopy->link != NULL) {
+            exprgen(nextCopy->exp);
+            nextCopy = nextCopy->link;
+          }
+        }
+        int iAfter = instructionCounter;
+        sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
+      }
       goto label; // THIS WILL BE REMOVED IT IS JUST FOR TESTING...
     }
     int iBefore = instructionCounter;

@@ -210,10 +210,14 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               $$->link = temp;
             }
             |controlstmt programbody { // If/else statements
+              // Note that if else statements will be parsed using this rule...
               $$ = malloc(sizeof(struct statement));
               $$->if_stmt = $1;
               $$->link = $2;
               $$->isCond = 1;
+              if($1->isIfElse == 1) {
+                $$->isIfElse = 1;
+              }
               if(DEBUG) printf("Got to controlstmt programbody\n");
             }
             |controlstmt {
