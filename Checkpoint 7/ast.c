@@ -57,7 +57,7 @@ void printList() {
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
     if(next->isCond == 1) {
-
+      goto label; // THIS WILL BE REMOVED IT IS JUST FOR TESTING...
     }
     int iBefore = instructionCounter;
     exprgen(next->exp);
@@ -65,6 +65,7 @@ void printList() {
     // printf("iB = %d, iA = %d\n", iBefore, iAfter);
     // printf("exprgen finished\n"); // Debug
     // checkInstructions(iBefore, iAfter);
+    label: // REMOVE THE GOTO
     next = next->link;
   }
 

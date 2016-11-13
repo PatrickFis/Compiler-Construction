@@ -579,7 +579,7 @@ inputstmt: RWREAD varref SEMICOLON {
 
 // Kind of surprised that this rule did not produce any shift/reduce conflicts.
 // Would not be a bad plan to keep an eye on it and watch for conflicts.
-controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF {
+controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
              printf("Got to controlstmt\n");
              $$ = malloc(sizeof(struct ast_if_stmt));
              printf("Got here\n");
@@ -588,7 +588,7 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF {
              printf("Got to end of constrolstmt\n");
            }
            ;
-endmainstmt: RWEND RWMAIN SEMICOLON;
+endmainstmt: RWEND RWMAIN SEMICOLON { printf("Got to endmainstmt\n");};
 
 %%
 int yyerror() {
