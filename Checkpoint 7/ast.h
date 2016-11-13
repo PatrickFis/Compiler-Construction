@@ -28,12 +28,20 @@
 struct statement {
     struct statement *link;
     struct ast_expression *exp;
-    //struct symbol_table_entry *target;
+    struct ast_if_stmt *if_stmt;
+    // struct symbol_table_entry *target;
+    int isCond;
 };
 
 struct ast_node { // This portion will probably be used for control structures, etc
     struct ast_node *left;
     struct ast_node *right;
+};
+
+struct ast_if_stmt { // Something I may toy with to see if a solution can be found for if statements
+  struct statement *if_link; // Link multiple if statements together
+  struct statement *body; // Link the body of an if statement to the statement itself
+  struct ast_expression *conditional_stmt; // Need something to hold the conditional the if statement will evaluate
 };
 
 struct ast_expression { // This portion will just be used for expressions(possibly just integer expressions)

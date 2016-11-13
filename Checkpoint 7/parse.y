@@ -34,6 +34,7 @@ int entry_count = 0; // Used to keep track of what symbols are being inserted.
    struct symbol_table_entry *entry;
    struct statement *stmt;
    struct ast_expression *expr;
+   struct ast_if_stmt *ifstmt;
 }
 
 %token        RWMAIN
@@ -94,6 +95,7 @@ int entry_count = 0; // Used to keep track of what symbols are being inserted.
 %type <expr> outputstmt
 %type <expr> printlist
 %type <expr> inputstmt
+%type <ifstmt> controlstmt
 %%
 
 program : headingstmt datasection algsection;
@@ -207,12 +209,24 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               temp->link = NULL;
               $$->link = temp;
             }
-            // |controlstmt programbody { // If/else statements
-            //
-            // }
-            // |controlstmt {
-            //
-            // }
+            |controlstmt programbody { // If/else statements
+              $$ = malloc(sizeof(struct statement));
+              $$->if_stmt = $1;
+              $$->link = $2;
+              $$->isCond = 1;
+              if(DEBUG) printf("Got to controlstmt programbody\n");
+            }
+            |controlstmt {
+              $$ = malloc(sizeof(struct statement));
+              $$->if_stmt = $1;
+              // Added the temp struct to insert the last expressions into the linked list.
+              struct statement *temp = malloc(sizeof(struct statement));
+              temp->if_stmt = $$->if_stmt;
+              temp->link = NULL;
+              $$->link = temp;
+              $$->isCond = 1;
+              if(DEBUG) printf("Got to controlstmt\n");
+            }
             |outputstmt programbody {
               $$ = malloc(sizeof(struct statement));
               $$->exp = $1;
@@ -560,6 +574,18 @@ inputstmt: RWREAD varref SEMICOLON {
               $$ = malloc(sizeof(struct ast_expression));
               $$->address = table->table[isPresent($2->name)].address;
               $$->operator = OP_READ;
+           }
+           ;
+
+// Kind of surprised that this rule did not produce any shift/reduce conflicts.
+// Would not be a bad plan to keep an eye on it and watch for conflicts.
+controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF {
+             printf("Got to controlstmt\n");
+             $$ = malloc(sizeof(struct ast_if_stmt));
+             printf("Got here\n");
+             $$->conditional_stmt = $2;
+             $$->body = $4;
+             printf("Got to end of constrolstmt\n");
            }
            ;
 endmainstmt: RWEND RWMAIN SEMICOLON;

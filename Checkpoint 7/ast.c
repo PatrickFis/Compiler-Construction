@@ -56,6 +56,9 @@ void printList() {
   // printf("ISP %d\n", table->memorySize);
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
+    if(next->isCond == 1) {
+
+    }
     int iBefore = instructionCounter;
     exprgen(next->exp);
     int iAfter = instructionCounter;
