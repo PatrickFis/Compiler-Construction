@@ -57,6 +57,28 @@ void printList() {
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
     if(next->isCond == 1) {
+      exprgen(next->if_stmt->conditional_stmt); // Parse the conditional
+      // If the conditional is false we will need to jump to the else statement.
+      // This means that we will need to insert a JPF to check if the last
+      // conditional is false, and then fill in the line number after parsing
+      // the if statement.
+      struct statement *nextCopy = malloc(sizeof(struct statement));
+      nextCopy = next;
+      int jumpLocation = instructionCounter; // Store the jump location
+      sprintf(instructionList[instructionCounter++], "JPF");
+      exprgen(next->if_stmt->body->exp); // Only getting first exp
+      if(next->if_stmt->body->link != NULL) { // Check if there is more than one expression in the if statement's body
+        nextCopy = nextCopy->if_stmt->body->link; // This structure should traversed using nextCopy = nextCopy->link
+        // exprgen(nextCopy->exp);
+        while(nextCopy->link != NULL) {
+          exprgen(nextCopy->exp);
+          nextCopy = nextCopy->link;
+        }
+        // nextCopy = nextCopy->link;
+        // printf("Finished?\n");
+      }
+      int iAfter = instructionCounter;
+      sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
       goto label; // THIS WILL BE REMOVED IT IS JUST FOR TESTING...
     }
     int iBefore = instructionCounter;
@@ -68,7 +90,7 @@ void printList() {
     label: // REMOVE THE GOTO
     next = next->link;
   }
-
+  sprintf(instructionList[instructionCounter++], "HLT");
   for(int i = 0; i < instructionCounter; i++) {
     printf("%s\n", instructionList[i]);
   }
