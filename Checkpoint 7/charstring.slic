@@ -11,6 +11,6 @@ main;
 		#print "Asf", "Asdf";
 		#print "Asdf", N*3.2, N, "Asdf", "Asdf2";
 		#print "x+2";
-		#nn := (2.2 * 2.2) + 2.2;
+		nn := (2.2 * 2.2) + 2.2;
 		read N;
 end main;

@@ -446,12 +446,10 @@ void exprgen(struct ast_expression *exp) {
 
     case OP_UMIN:
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("NGI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "NGI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("NGF");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "NGF");
       }
       break;
@@ -461,37 +459,21 @@ void exprgen(struct ast_expression *exp) {
       // printf("exp->type: %d\n", exp->type);
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("ADI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "ADI");
       }
-      if(exp->target->type == TYPE_REAL) {
-        // printf("ADF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "ADF");
       }
-      // if(seenReal == 1) {
-      //   printf("ADF\n");
-      // }
-      // else if(seenReal == 0) printf("ADI\n");
-      // if(exp->type == TYPE_VAR) {
-      //   printf("%d\n",exp->l_operand->target->address);
-      //   // printf("%d\n",exp->target->);
-      //   printf("LAA type var ");
-      // }
-      // printf("exp->l_operand->value: %d\n", exp->l_operand->value);
-      // exprgen(exp->l_operand);
-      // exprgen(exp->r_operand);
       break;
 
     case OP_SUB:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("SBI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "SBI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("SBF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "SBF");
       }
       break;
@@ -505,25 +487,15 @@ void exprgen(struct ast_expression *exp) {
       else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "MLF");
       }
-      // if(exp->target->type == TYPE_INT) {
-      //   // printf("MLI\n");
-      //   sprintf(instructionList[instructionCounter++], "MLI");
-      // }
-      // else if(exp->target->type == TYPE_REAL) {
-      //   // printf("MLF\n");
-      //   sprintf(instructionList[instructionCounter++], "MLF");
-      // }
       break;
 
     case OP_DIV:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("DVI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "DVI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("DVF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "DVF");
       }
       break;
@@ -531,12 +503,10 @@ void exprgen(struct ast_expression *exp) {
     case OP_LSTHN:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("LTI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "LTI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("LTF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "LTF");
       }
       break;
@@ -544,12 +514,10 @@ void exprgen(struct ast_expression *exp) {
     case OP_LSTHNEQL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("LEI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "LEI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("LEF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "LEF");
       }
       break;
@@ -557,12 +525,10 @@ void exprgen(struct ast_expression *exp) {
     case OP_GRTHN:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("GTI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "GTI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("GTF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "GTF");
       }
       break;
@@ -570,25 +536,21 @@ void exprgen(struct ast_expression *exp) {
     case OP_GRTHNEQL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("GEI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "GEI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("GEF\n");
-        sprintf(instructionList[instructionCounter++], "GEF");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
+        sprintf(instructionList[instructionCounter++], "GEI");
       }
       break;
 
     case OP_EQUAL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("EQI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "EQI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("EQF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "EQF");
       }
       break;
@@ -596,12 +558,10 @@ void exprgen(struct ast_expression *exp) {
     case OP_NEQUAL:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
-        // printf("NEI\n");
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         sprintf(instructionList[instructionCounter++], "NEI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("NEF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "NEF");
       }
       break;
@@ -609,7 +569,7 @@ void exprgen(struct ast_expression *exp) {
     case OP_AND: // These Boolean instructions require a bit of clever faking
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         // Boolean and = multiplication
         // printf("MLI\n");
         // printf("LLI 1\n");
@@ -618,7 +578,7 @@ void exprgen(struct ast_expression *exp) {
         sprintf(instructionList[instructionCounter++], "LLI 1");
         sprintf(instructionList[instructionCounter++], "EQI");
       }
-      else if(exp->target->type == TYPE_REAL) {
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         // printf("MLF\n");
         // printf("LLF 1.0\n");
         // printf("EQF\n");
@@ -631,19 +591,13 @@ void exprgen(struct ast_expression *exp) {
     case OP_OR:
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(exp->target->type == TYPE_INT) {
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         // Boolean or = addition
-        // printf("ADI\n");
-        // printf("LLI 1\n");
-        // printf("EQI\n");
         sprintf(instructionList[instructionCounter++], "ADI");
         sprintf(instructionList[instructionCounter++], "LLI 1");
         sprintf(instructionList[instructionCounter++], "EQI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("ADF\n");
-        // printf("LLF 1.0\n");
-        // printf("EQF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "ADF");
         sprintf(instructionList[instructionCounter++], "LLF 1.0");
         sprintf(instructionList[instructionCounter++], "EQF");
@@ -654,17 +608,14 @@ void exprgen(struct ast_expression *exp) {
       // if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       // printf("exp->type %d\n", exp->type);
-      if(exp->target->type == TYPE_INT) {
+      if(getPreviousInstructionType(instructionCounter) == 0) {
         // Boolean not = complement
         // printf("LLI 0\n");
         // printf("NEI\n"); // If exp != 0, then exp is true
         sprintf(instructionList[instructionCounter++], "LLI 0");
         sprintf(instructionList[instructionCounter++], "NEI");
       }
-      else if(exp->target->type == TYPE_REAL) {
-        // printf("exp->type: %d\n", exp->value);
-        // printf("LLF 0.0\n");
-        // printf("NEF\n");
+      else if(getPreviousInstructionType(instructionCounter) == 1) {
         sprintf(instructionList[instructionCounter++], "LLF 0.0");
         sprintf(instructionList[instructionCounter++], "NEF");
       }
