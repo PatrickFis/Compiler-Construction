@@ -48,6 +48,10 @@ void insertStmt(struct statement *stmt) {
  *  function on each statement in a linked list. Will probably change these
  *  functions when implementing control structures to utilize arrays for
  *  easy jump locations.
+ *
+ *  It now also will parse if statements, with if else statements being worked on.
+ *  I am considering moving the parsing of if and if else statements to another
+ *  function so that printList is cleaner.
  */
 void printList() {
   struct statement *next;

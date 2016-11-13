@@ -225,6 +225,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               temp->link = NULL;
               $$->link = temp;
               $$->isCond = 1;
+              if($1->isIfElse == 1) {
+                $$->isIfElse = 1;
+              }
               if(DEBUG) printf("Got to controlstmt\n");
             }
             |outputstmt programbody {
@@ -580,12 +583,23 @@ inputstmt: RWREAD varref SEMICOLON {
 // Kind of surprised that this rule did not produce any shift/reduce conflicts.
 // Would not be a bad plan to keep an eye on it and watch for conflicts.
 controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
-             printf("Got to controlstmt\n");
+             printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON\n");
              $$ = malloc(sizeof(struct ast_if_stmt));
              printf("Got here\n");
              $$->conditional_stmt = $2;
              $$->body = $4;
-             printf("Got to end of constrolstmt\n");
+             $$->isIfElse = 0;
+             printf("Got to end of if statement\n");
+           }
+           |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
+             printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON\n");
+             $$ = malloc(sizeof(struct ast_if_stmt));
+             $$->conditional_stmt = $2;
+             $$->body = $4;
+             $$->if_link = malloc(sizeof(struct ast_if_stmt));
+             $$->if_link->body = $7; // Dunno if this will work.
+             $$->isIfElse = 1;
+             printf("Got to end of if else statement\n");
            }
            ;
 endmainstmt: RWEND RWMAIN SEMICOLON { printf("Got to endmainstmt\n");};

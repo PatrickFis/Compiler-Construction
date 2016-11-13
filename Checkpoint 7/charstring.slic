@@ -16,6 +16,8 @@ main;
 		if N<2.2;
 			N := 2.2;
 			nn := 22.3*33.2;
+		else;
+			N := 22.2;
 			end if;
 		N := 22.3;
 end main;
