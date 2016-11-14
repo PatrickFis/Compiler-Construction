@@ -392,12 +392,41 @@ int getPreviousInstructionType(int iCount) {
   char *iCopy = malloc(sizeof(strlen(instructionList[iCount - 1])));
   strcpy(iCopy, instructionList[iCount - 1]);
   char *ins = strtok(iCopy, " "); // Get instruction
-  if(strcmp(ins, "LLI") == 0) {
-    return 0;
-  }
-  else if(strcmp(ins, "LLF") == 0) {
-    return 1;
-  }
+  // String comparisons to get previous type.
+  if(strcmp(ins, "LLI") == 0
+   ||strcmp(ins, "ADI") == 0
+   ||strcmp(ins, "SBI") == 0
+   ||strcmp(ins, "MLI") == 0
+   ||strcmp(ins, "DVI") == 0
+   ||strcmp(ins, "NGI") == 0
+   ||strcmp(ins, "EQI") == 0
+   ||strcmp(ins, "NEI") == 0
+   ||strcmp(ins, "LTI") == 0
+   ||strcmp(ins, "LEI") == 0
+   ||strcmp(ins, "GTI") == 0
+   ||strcmp(ins, "GEI") == 0
+   ||strcmp(ins, "FTI") == 0
+   ||strcmp(ins, "INI") == 0
+     ) {
+          return 0;
+       }
+  else if(strcmp(ins, "LLF") == 0
+        ||strcmp(ins, "ADF") == 0
+        ||strcmp(ins, "SBF") == 0
+        ||strcmp(ins, "MLF") == 0
+        ||strcmp(ins, "DVF") == 0
+        ||strcmp(ins, "NGF") == 0
+        ||strcmp(ins, "EQF") == 0
+        ||strcmp(ins, "NEF") == 0
+        ||strcmp(ins, "LTF") == 0
+        ||strcmp(ins, "LEF") == 0
+        ||strcmp(ins, "GTF") == 0
+        ||strcmp(ins, "GEF") == 0
+        ||strcmp(ins, "ITF") == 0
+        ||strcmp(ins, "INF") == 0
+          ) {
+              return 1;
+            }
   else if(strcmp(ins, "LOD") == 0) {
     iCopy = malloc(sizeof(strlen(instructionList[iCount - 2])));
     strcpy(iCopy, instructionList[iCount - 2]);
