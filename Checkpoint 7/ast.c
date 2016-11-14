@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEBUG 0
+#define DEBUG 1
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
 struct statement *head;
 int count = 0; // Keep track of how many statements we have
@@ -478,6 +478,7 @@ void exprgen(struct ast_expression *exp) {
         // printf("LAA %d\n", exp->address);
         sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
         exprgen(exp->r_operand);
+        // exprgen(exp->l_operand);
       }
       if(exp->l_operand != NULL) {// This check is probably unnecessary
         if(DEBUG) printf("l_operand != NULL\n");
@@ -530,6 +531,7 @@ void exprgen(struct ast_expression *exp) {
       break;
 
     case OP_MUL:
+    if(DEBUG) printf("Got to OP_MUL\n");
       if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgen(exp->r_operand);
       if(getPreviousInstructionType(instructionCounter) == 0) {
