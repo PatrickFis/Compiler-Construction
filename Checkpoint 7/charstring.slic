@@ -22,5 +22,14 @@ main;
 		#	end if;
 		#N := 22.3;
 		#N := 8.2 * (3.1 - 2.1);
-		print "Asd", N * 33.1 + 1.21 - (2.1 * 2.0);
+		#print "Asd ", N * 33.1 + 1.21 - (2.1 * 2.0);
+
+		#IF TEST - Passed, gstal code ran successfully.
+		read N;
+		if N<3.0;
+			N := 4.0;
+		else;
+			N := 1337.0;
+			end if;
+		print N;
 end main;

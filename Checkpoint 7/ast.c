@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEBUG 1
+#define DEBUG 0
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
 struct statement *head;
 int count = 0; // Keep track of how many statements we have
@@ -90,7 +90,6 @@ void printList() {
         int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
         sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
         sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
-        printf("It didn't crash! 😶\n");
         exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
         struct statement *nextCopy = malloc(sizeof(struct statement));
         nextCopy = next;

@@ -554,12 +554,11 @@ printlist: CHARSTRING printlist {
           }
           |bexp SEMICOLON{
             $$ = malloc(sizeof(struct ast_expression));
-            printf("Got to bexp SEMICOLON\n");
+            if(DEBUG) printf("Got to bexp SEMICOLON\n");
             // $$->charString = NULL;
             // Added for debug...
             $$->l_operand = malloc(sizeof(struct ast_expression));
             $$->l_operand = $1;
-
             // $$->r_operand = malloc(sizeof(struct ast_expression));
             // $$->r_operand = $1;
             // Variable references are stored on the l_operand side of an exp
@@ -587,26 +586,25 @@ inputstmt: RWREAD varref SEMICOLON {
 // Kind of surprised that this rule did not produce any shift/reduce conflicts.
 // Would not be a bad plan to keep an eye on it and watch for conflicts.
 controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
-             printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON\n");
+             if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON\n");
              $$ = malloc(sizeof(struct ast_if_stmt));
-             printf("Got here\n");
              $$->conditional_stmt = $2;
              $$->body = $4;
              $$->isIfElse = 0;
-             printf("Got to end of if statement\n");
+             if(DEBUG) printf("Got to end of if statement\n");
            }
            |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
-             printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON\n");
+             if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON\n");
              $$ = malloc(sizeof(struct ast_if_stmt));
              $$->conditional_stmt = $2;
              $$->body = $4;
              $$->if_link = malloc(sizeof(struct ast_if_stmt));
              $$->if_link->body = $7; // Dunno if this will work.
              $$->isIfElse = 1;
-             printf("Got to end of if else statement\n");
+             if(DEBUG) printf("Got to end of if else statement\n");
            }
            ;
-endmainstmt: RWEND RWMAIN SEMICOLON { printf("Got to endmainstmt\n");};
+endmainstmt: RWEND RWMAIN SEMICOLON { if(DEBUG) printf("Got to endmainstmt\n");};
 
 %%
 int yyerror() {
