@@ -103,7 +103,9 @@ void printList() {
       int iAfter = instructionCounter;
       sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
     }
-    goto label; // THIS WILL BE REMOVED IT IS JUST FOR TESTING...
+    // goto label; // THIS WILL BE REMOVED IT IS JUST FOR TESTING...
+    next = next->link;
+    continue;
   }
   int iBefore = instructionCounter;
   exprgen(next->exp);
@@ -111,13 +113,13 @@ void printList() {
   // printf("iB = %d, iA = %d\n", iBefore, iAfter);
   // printf("exprgen finished\n"); // Debug
   // checkInstructions(iBefore, iAfter);
-  label: // REMOVE THE GOTO
+  // label: // REMOVE THE GOTO
   next = next->link;
-}
-sprintf(instructionList[instructionCounter++], "HLT");
-for(int i = 0; i < instructionCounter; i++) {
-  printf("%s\n", instructionList[i]);
-}
+  }
+  sprintf(instructionList[instructionCounter++], "HLT");
+  for(int i = 0; i < instructionCounter; i++) {
+    printf("%s\n", instructionList[i]);
+  }
 }
 
 /*
@@ -417,34 +419,34 @@ int getPreviousInstructionType(int iCount) {
   ||strcmp(ins, "GEI") == 0
   ||strcmp(ins, "FTI") == 0
   ||strcmp(ins, "INI") == 0
-) {
+  ) {
   return 0;
-}
-else if(strcmp(ins, "LLF") == 0
-||strcmp(ins, "ADF") == 0
-||strcmp(ins, "SBF") == 0
-||strcmp(ins, "MLF") == 0
-||strcmp(ins, "DVF") == 0
-||strcmp(ins, "NGF") == 0
-||strcmp(ins, "EQF") == 0
-||strcmp(ins, "NEF") == 0
-||strcmp(ins, "LTF") == 0
-||strcmp(ins, "LEF") == 0
-||strcmp(ins, "GTF") == 0
-||strcmp(ins, "GEF") == 0
-||strcmp(ins, "ITF") == 0
-||strcmp(ins, "INF") == 0
-) {
-  return 1;
-}
-else if(strcmp(ins, "LOD") == 0) {
-  iCopy = malloc(sizeof(strlen(instructionList[iCount - 2])));
-  strcpy(iCopy, instructionList[iCount - 2]);
-  ins = strtok(iCopy, " ");
-  ins = strtok(NULL, " ");
-  return table->table[atoi(ins)].type;
-}
-return -1;
+    }
+  else if(strcmp(ins, "LLF") == 0
+  ||strcmp(ins, "ADF") == 0
+  ||strcmp(ins, "SBF") == 0
+  ||strcmp(ins, "MLF") == 0
+  ||strcmp(ins, "DVF") == 0
+  ||strcmp(ins, "NGF") == 0
+  ||strcmp(ins, "EQF") == 0
+  ||strcmp(ins, "NEF") == 0
+  ||strcmp(ins, "LTF") == 0
+  ||strcmp(ins, "LEF") == 0
+  ||strcmp(ins, "GTF") == 0
+  ||strcmp(ins, "GEF") == 0
+  ||strcmp(ins, "ITF") == 0
+  ||strcmp(ins, "INF") == 0
+    ) {
+    return 1;
+    }
+  else if(strcmp(ins, "LOD") == 0) {
+    iCopy = malloc(sizeof(strlen(instructionList[iCount - 2])));
+    strcpy(iCopy, instructionList[iCount - 2]);
+    ins = strtok(iCopy, " ");
+    ins = strtok(NULL, " ");
+    return table->table[atoi(ins)].type;
+    }
+  return -1;
 }
 /*
 *  This function generates gstal code for a given expression. It goes through

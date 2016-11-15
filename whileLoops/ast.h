@@ -29,6 +29,7 @@ struct statement {
     struct statement *link;
     struct ast_expression *exp;
     struct ast_if_stmt *if_stmt;
+    struct ast_while_stmt *while_stmt;
     // struct symbol_table_entry *target;
     int isCond;
     int isIfElse;
@@ -44,6 +45,12 @@ struct ast_if_stmt { // Something I may toy with to see if a solution can be fou
   struct statement *body; // Link the body of an if statement to the statement itself
   struct ast_expression *conditional_stmt; // Need something to hold the conditional the if statement will evaluate
   int isIfElse;
+};
+
+struct ast_while_stmt {
+  struct ast_while_stmt *while_link;
+  struct statement *body;
+  struct ast_expression *conditional_stmt;
 };
 
 struct ast_expression { // This portion will just be used for expressions(possibly just integer expressions)

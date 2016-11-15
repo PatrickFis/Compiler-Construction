@@ -35,6 +35,7 @@ int entry_count = 0; // Used to keep track of what symbols are being inserted.
    struct statement *stmt;
    struct ast_expression *expr;
    struct ast_if_stmt *ifstmt;
+   struct ast_while_stmt *while_loop;
 }
 
 %token        RWMAIN
@@ -96,6 +97,7 @@ int entry_count = 0; // Used to keep track of what symbols are being inserted.
 %type <expr> printlist
 %type <expr> inputstmt
 %type <ifstmt> controlstmt
+%type <while_loop> whilestmt
 %%
 
 program : headingstmt datasection algsection;
@@ -268,6 +270,13 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               temp->link = NULL;
               $$->link = temp;
               if(DEBUG) printf("Got to inputstmt\n");
+            }
+            |whilestmt programbody {
+              $$ = malloc(sizeof(struct statement));
+
+            }
+            |whilestmt {
+              $$ = malloc(sizeof(struct statement));
             }
             ;
 
@@ -645,6 +654,14 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
              $$->if_link->body = $7; // Dunno if this will work.
              $$->isIfElse = 1;
              if(DEBUG) printf("Got to end of if else statement\n");
+           }
+           ;
+
+whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON {
+              if(DEBUG) printf("Got to whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON\n");
+              $$ = malloc(sizeof(struct ast_while_stmt));
+              $$->conditional_stmt = $2;
+              $$->body = $4;
            }
            ;
 endmainstmt: RWEND RWMAIN SEMICOLON { if(DEBUG) printf("Got to endmainstmt\n");};
