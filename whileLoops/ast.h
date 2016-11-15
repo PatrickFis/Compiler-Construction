@@ -33,6 +33,7 @@ struct statement {
     // struct symbol_table_entry *target;
     int isCond;
     int isIfElse;
+    int isWhile;
 };
 
 struct ast_node { // This portion will probably be used for control structures, etc

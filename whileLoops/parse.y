@@ -19,7 +19,7 @@
 #include "ast.h"
 #include <stdio.h>
 #include <string.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 int entry_count = 0; // Used to keep track of what symbols are being inserted.
@@ -272,11 +272,22 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               if(DEBUG) printf("Got to inputstmt\n");
             }
             |whilestmt programbody {
+              if(DEBUG) printf("Got to whilestmt programbody\n");
               $$ = malloc(sizeof(struct statement));
-
+              $$->while_stmt = $1;
+              $$->link = $2;
+              $$->isWhile = 1;
+              if(DEBUG) printf("Finished whilestmt programbody\n");
             }
             |whilestmt {
+              if(DEBUG) printf("Got to whilestmt \n");
               $$ = malloc(sizeof(struct statement));
+              struct statement *temp = malloc(sizeof(struct statement));
+              temp->while_stmt = $$->while_stmt;
+              temp->link = NULL;
+              $$->link = temp;
+              $$->isWhile = 1;
+              if(DEBUG) printf("Finished whilestmt\n");
             }
             ;
 

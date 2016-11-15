@@ -60,7 +60,7 @@ void printList() {
   // printf("ISP %d\n", table->memorySize);
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
-
+    // Section that generates code for if statements
     if(next->isCond == 1) {
       exprgen(next->if_stmt->conditional_stmt); // Parse the conditional
       // If the conditional is false we will need to jump to the else statement.
@@ -107,6 +107,14 @@ void printList() {
     next = next->link;
     continue;
   }
+  // End if section
+
+  // Section that generates code for while statements
+  if(next->isWhile == 1) {
+    printf("Hi\n");
+    next = next->link;
+    continue;
+  }
   int iBefore = instructionCounter;
   exprgen(next->exp);
   int iAfter = instructionCounter;
@@ -122,6 +130,9 @@ void printList() {
   }
 }
 
+void codeGenIfStmt(struct statement *next) {
+
+}
 /*
 *  This function is called after exprgen in printList. It makes sure that
 *  the correct instruction types are printed. May need to add another check
