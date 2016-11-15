@@ -500,7 +500,7 @@ void exprgen(struct ast_expression *exp) {
     if(DEBUG) printf("Got to variable type\n");
     // printf("LAA %d\n",exp->l_operand->target->address);
     // printf("LOD\n");
-    sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address);
+    sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
     if(DEBUG) printf("Finished variable type\n"); // Debug
     return; // Just stop the recursion when you reach a variable reference

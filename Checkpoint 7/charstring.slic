@@ -1,10 +1,12 @@
 #=================================================================
-#
+#	Collection of tests for my compiler.
 #=================================================================
 
 main;
 	data:
 		real: N, nn;
+		integer: arr[10];
+		integer: x;
 	algorithm:
 		#print !,!,"x+2","x+3";
 		#print N*2;
@@ -33,10 +35,19 @@ main;
 		#	end if;
 		#print N;
 
-		#PRINT TEST - Not passed, need to get quotes to print.
-		#print "This is a test string",!, N * 33.1 + 2.12,!, "This is the end of the string.";
-		print "This is a""test string", !, N * 33.1 + 2.12, !,"Test";
+		#PRINT TEST - Passed
+		N := 2.0;
+		print "This is a test string",!, N * 33.1 + 2.12,!, "This is the end of the string.";
+		print "This is a""test string", !, N * 33.1 + 2.12, !,"Test",!;
 
 		#EXPRESSION DEBUG TEST - Looks like it passed.
-		#N := 8.1*-2.2+1.1111-2.321/32.21*22.2;
+		N := 8.1*-2.2+1.1111-2.321/32.21*22.2;
+
+		#ARRAY REFERENCE TEST - Looks like it passed.
+		arr[5] := (32 - 3) * 29 + 2;
+		x := 22 + arr[5];
+
+		print N, !;
+		print arr[5], !;
+		print x;
 end main;

@@ -39,6 +39,6 @@ int main()
   // struct statement *test = malloc(sizeof(struct statement));
   // test = head;
   // printf("head->exp->kind: %c\n", head->exp->operator);
-  printf("\nyyparse returns %d\n", n);
+  // printf("\nyyparse returns %d\n", n);
   exit(0);
 }

@@ -119,6 +119,7 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
                                     table->table[i].type = TYPE_INT;
                                   }
                                   entry_count = 0;
+                                  if(DEBUG) printf("Finished integer varlist\n");
                                 //$$->type=TYPE_INT;
                                 //$$->name=$3->name;
                                 //$$->kind = $3->kind;
@@ -134,6 +135,7 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
                                   table->table[i].type = TYPE_REAL;
                                 }
                                 entry_count = 0;
+                                if(DEBUG) printf("Finished real varlist\n");
                                 //$$->name=$3->name;
                                 //$$->kind = $3->kind;
                                 //$$->address = $3->address;
@@ -181,6 +183,7 @@ varref: VAR { $$ = malloc(sizeof(struct symbol_table_entry));
               $$->size = 1;
               }
        |VAR LBRACK LITINT RBRACK {
+                                 if(DEBUG) printf("Got to array declaration\n");
                                  $$ = malloc(sizeof(struct symbol_table_entry));
                                  $$->name = $1;
                                  $$->address = 0;
@@ -280,6 +283,19 @@ assignstmt: VAR assign bexp SEMICOLON
               $$->target = &table->table[isPresent($1)]; // Get target from symbol table
               $$->address = $$->target->address;
               if(DEBUG) printf("Address %d\n", $$->address);
+              $$->arrayOffset = 0;
+            }
+            |VAR LBRACK LITINT RBRACK assign bexp SEMICOLON
+            {
+              if(DEBUG) printf("Got to array assignment\n");
+              $$ = malloc(sizeof(struct ast_expression));
+              $$->kind = KIND_OP;
+              $$->operator = OP_ASGN;
+              $$->target = &table->table[isPresent($1)];
+              $$->address = $$->target->address + $3;
+              $$->r_operand = $6;
+              if(DEBUG) printf("Address: %d\n", $$->address);
+              $$->arrayOffset = $$->address;
             };
 
 assign: ASSIGNOP;
@@ -478,6 +494,29 @@ unit: LITINT { // Parses integers
           //  $$->l_operand->kind = KIND_REAL;
            $$->l_operand->type = TYPE_VAR;
            $$->l_operand->target = &table->table[tableLoc];
+         }
+       }
+       |VAR LBRACK LITINT RBRACK {
+         if(DEBUG) printf("Got to VAR LBRACK LITINT RBRACK\n");
+         $$ = malloc(sizeof(struct ast_expression));
+         $$->type = TYPE_VAR;
+         int tableLoc = isPresent($1);
+         if(DEBUG) printf("tableLoc: %d\n", tableLoc);
+         int varType = table->table[tableLoc].type;
+         if(DEBUG) printf("varType: %d\n", varType);
+         if(varType == TYPE_INT) {
+           $$->l_operand = malloc(sizeof(struct ast_expression));
+           $$->l_operand->type = TYPE_VAR;
+           $$->l_operand->target = &table->table[tableLoc];
+          //  $$->l_operand->address = table->table[tableLoc].address + $3;
+           $$->l_operand->arrayOffset = $3;
+         }
+         if(varType == TYPE_REAL) {
+           $$->l_operand = malloc(sizeof(struct ast_expression));
+           $$->l_operand->type = TYPE_VAR;
+           $$->l_operand->target = &table->table[tableLoc];
+          //  $$->l_operand->address = table->table[tableLoc].address + $3;
+           $$->l_operand->arrayOffset = $3;
          }
        }
        ;

@@ -56,6 +56,7 @@ struct ast_expression { // This portion will just be used for expressions(possib
     int value;
     double rvalue;
     int address;
+    int arrayOffset;
     struct symbol_table_entry *target;
 };
 
