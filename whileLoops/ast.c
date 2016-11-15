@@ -100,11 +100,11 @@ void printList() {
       sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
       exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
       struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
-      nextCopy = next->if_stmt;
+      nextCopy = next->if_stmt->if_link;
       if(next->if_stmt->if_link->body->link != NULL) {
-        nextCopy = nextCopy->if_link; // Can now traverse using nextCopy = nextCopy->link
+        // nextCopy = nextCopy->if_link; // Can now traverse using nextCopy = nextCopy->link
         while(nextCopy->if_link != NULL) {
-          exprgen(nextCopy->body->exp);
+          exprgen(nextCopy->if_link->body->exp);
           nextCopy = nextCopy->if_link;
         }
       }
