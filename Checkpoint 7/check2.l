@@ -4,10 +4,14 @@
  * ========================================================================
  *
  * check2.l
+ * This is the flex input file for my compiler.
  *
  * Programmer --- Patrick Fischer
- * Assignment --- Checkpoint 2
- * Due        --- 9/22/16
+ *
+ * Notes:
+ * 11/14/2016: Replaced regular expression for
+ * charstrings(was \"([^\\\"]|\\.)*\"), with a new one to account for quotation
+ * marks in strings.
  * ========================================================================
  */
 
@@ -95,7 +99,7 @@
                                                      return RWPRINT;
                                                    }
 
-\"([^\\\"]|\\.)*\"                                 { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
+\"[^\n]*\"                                 { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
                                                      yylval.sval = strdup(yytext);
                                                      return CHARSTRING;
                                                      free(yylval.sval);

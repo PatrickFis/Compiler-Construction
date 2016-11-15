@@ -44,15 +44,15 @@ void insertStmt(struct statement *stmt) {
 }
 
 /*
- *  This function goes through the abstract syntax tree and calls the exprgen
- *  function on each statement in a linked list. Will probably change these
- *  functions when implementing control structures to utilize arrays for
- *  easy jump locations.
- *
- *  It now also will parse if statements, with if else statements being worked on.
- *  I am considering moving the parsing of if and if else statements to another
- *  function so that printList is cleaner.
- */
+*  This function goes through the abstract syntax tree and calls the exprgen
+*  function on each statement in a linked list. Will probably change these
+*  functions when implementing control structures to utilize arrays for
+*  easy jump locations.
+*
+*  It now also will parse if statements, with if else statements being worked on.
+*  I am considering moving the parsing of if and if else statements to another
+*  function so that printList is cleaner.
+*/
 void printList() {
   struct statement *next;
   next = list;
@@ -73,58 +73,58 @@ void printList() {
       sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
       exprgen(next->if_stmt->body->exp); // Only getting first exp
       if(next->if_stmt->body->link != NULL) { // Check if there is more than one expression in the if statement's body
-        nextCopy = nextCopy->if_stmt->body->link; // This structure should traversed using nextCopy = nextCopy->link
-        // exprgen(nextCopy->exp);
+      nextCopy = nextCopy->if_stmt->body->link; // This structure should traversed using nextCopy = nextCopy->link
+      // exprgen(nextCopy->exp);
+      while(nextCopy->link != NULL) {
+        exprgen(nextCopy->exp);
+        nextCopy = nextCopy->link;
+      }
+      // nextCopy = nextCopy->link;
+      // printf("Finished?\n");
+    }
+    int iAfter = instructionCounter;
+    sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
+    if(next->isIfElse == 1) {
+      // This section of code will parse an else statement. It borrows heavily
+      // from the code used above.
+      int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
+      sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
+      sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
+      exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
+      struct statement *nextCopy = malloc(sizeof(struct statement));
+      nextCopy = next;
+      if(next->if_stmt->if_link->body->link != NULL) {
+        nextCopy = nextCopy->if_stmt->if_link->body->link; // Can now traverse using nextCopy = nextCopy->link
         while(nextCopy->link != NULL) {
           exprgen(nextCopy->exp);
           nextCopy = nextCopy->link;
         }
-        // nextCopy = nextCopy->link;
-        // printf("Finished?\n");
       }
       int iAfter = instructionCounter;
-      sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
-      if(next->isIfElse == 1) {
-        // This section of code will parse an else statement. It borrows heavily
-        // from the code used above.
-        int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
-        sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
-        sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
-        exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
-        struct statement *nextCopy = malloc(sizeof(struct statement));
-        nextCopy = next;
-        if(next->if_stmt->if_link->body->link != NULL) {
-          nextCopy = nextCopy->if_stmt->if_link->body->link; // Can now traverse using nextCopy = nextCopy->link
-          while(nextCopy->link != NULL) {
-            exprgen(nextCopy->exp);
-            nextCopy = nextCopy->link;
-          }
-        }
-        int iAfter = instructionCounter;
-        sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
-      }
-      goto label; // THIS WILL BE REMOVED IT IS JUST FOR TESTING...
+      sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
     }
-    int iBefore = instructionCounter;
-    exprgen(next->exp);
-    int iAfter = instructionCounter;
-    // printf("iB = %d, iA = %d\n", iBefore, iAfter);
-    // printf("exprgen finished\n"); // Debug
-    // checkInstructions(iBefore, iAfter);
-    label: // REMOVE THE GOTO
-    next = next->link;
+    goto label; // THIS WILL BE REMOVED IT IS JUST FOR TESTING...
   }
-  sprintf(instructionList[instructionCounter++], "HLT");
-  for(int i = 0; i < instructionCounter; i++) {
-    printf("%s\n", instructionList[i]);
-  }
+  int iBefore = instructionCounter;
+  exprgen(next->exp);
+  int iAfter = instructionCounter;
+  // printf("iB = %d, iA = %d\n", iBefore, iAfter);
+  // printf("exprgen finished\n"); // Debug
+  // checkInstructions(iBefore, iAfter);
+  label: // REMOVE THE GOTO
+  next = next->link;
+}
+sprintf(instructionList[instructionCounter++], "HLT");
+for(int i = 0; i < instructionCounter; i++) {
+  printf("%s\n", instructionList[i]);
+}
 }
 
 /*
- *  This function is called after exprgen in printList. It makes sure that
- *  the correct instruction types are printed. May need to add another check
- *  to do conversions of loaded variables that are of the wrong type.
- */
+*  This function is called after exprgen in printList. It makes sure that
+*  the correct instruction types are printed. May need to add another check
+*  to do conversions of loaded variables that are of the wrong type.
+*/
 void checkInstructions(int iBefore, int iAfter) {
   int i;
   int seenReal = 0;
@@ -146,22 +146,22 @@ void checkInstructions(int iBefore, int iAfter) {
     for(i = iBefore; i < iAfter; i++) {
       // printf("i = %d\n", i);
       if(i+1 < iAfter) {
-      char *iCopy = malloc(sizeof(strlen(instructionList[i])));
-      strcpy(iCopy, instructionList[i]);
-      char *inst = strtok(iCopy, " "); // Checking if this is LLI
-      // printf("inst = %s\n", inst);
-      if(strcmp(inst, "LLI")) {
-        char *iCopy2 = malloc(sizeof(strlen(instructionList[i+1])));
-        strcpy(iCopy2, instructionList[i+1]);
-        char *ptcCheck = strtok(iCopy2, " "); // Checking if this is PTC
-        if(strcmp(ptcCheck, "PTC")) {
-          // printf("Hi");
-          // printf("continue\n");
-          i++;
-          continue;
+        char *iCopy = malloc(sizeof(strlen(instructionList[i])));
+        strcpy(iCopy, instructionList[i]);
+        char *inst = strtok(iCopy, " "); // Checking if this is LLI
+        // printf("inst = %s\n", inst);
+        if(strcmp(inst, "LLI")) {
+          char *iCopy2 = malloc(sizeof(strlen(instructionList[i+1])));
+          strcpy(iCopy2, instructionList[i+1]);
+          char *ptcCheck = strtok(iCopy2, " "); // Checking if this is PTC
+          if(strcmp(ptcCheck, "PTC")) {
+            // printf("Hi");
+            // printf("continue\n");
+            i++;
+            continue;
+          }
         }
       }
-    }
       if(instructionList[i][2] == 'I') {
         instructionList[i][2] = 'F'; // Change to floating point instructions
         // If the instruction ends with a number, append a .0 to it.
@@ -174,9 +174,9 @@ void checkInstructions(int iBefore, int iAfter) {
 }
 
 /*
- *  This function recursively reassigns types. It is just being kept in case
- *  I need it later.
- */
+*  This function recursively reassigns types. It is just being kept in case
+*  I need it later.
+*/
 void recurseAssign(struct ast_expression *exp, int type) {
   // printf("Got here\n");
   exp->type = type;
@@ -191,12 +191,12 @@ void recurseAssign(struct ast_expression *exp, int type) {
 }
 
 /*
- *  This function recursively assigns targets to expressions, which allows the
- *  code generator to know what kind of instructions to print.
- *  Checkpoint 7 - Found a bug in this that caused expressions with more than one
- *  operation to fail. Fixed by returning from this function if exp->kind
- *  is equal to KIND_OP.
- */
+*  This function recursively assigns targets to expressions, which allows the
+*  code generator to know what kind of instructions to print.
+*  Checkpoint 7 - Found a bug in this that caused expressions with more than one
+*  operation to fail. Fixed by returning from this function if exp->kind
+*  is equal to KIND_OP.
+*/
 void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) {
   if(exp->type == TYPE_VAR) {
     // printf("I returned here\n");
@@ -240,17 +240,26 @@ void parsePrintv3(struct ast_expression *exp) {
       // Print characters enclosed by quotation marks. Will add a check for "" later.
       for(i = 1; i < strlen(x->charString)-1; i++) {
         // printf("%d\n", (int)x->charString[i]);
-        sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
-        sprintf(instructionList[instructionCounter++], "PTC");
+        if((int)x->charString[i] == 34 && (int)x->charString[i+1] == 34) {
+          // This occurs if the character at i and the character at i+1 are both quotation marks.
+          sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
+          sprintf(instructionList[instructionCounter++], "PTC");
+          i++;
+        }
+        else
+        {
+          sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
+          sprintf(instructionList[instructionCounter++], "PTC");
+        }
       }
     }
 
     /*
-     *  Tree is structed like this... exp->r_operand->r_operand->r_operand...
-     *  If r_operand has a charString, then it should be printed.
-     *  If the charString is NULL, then r_operand has a non-NULL l_operand.
-     *  l_operand is a bexp, which should be passed to exprgen for code generation.
-     */
+    *  Tree is structed like this... exp->r_operand->r_operand->r_operand...
+    *  If r_operand has a charString, then it should be printed.
+    *  If the charString is NULL, then r_operand has a non-NULL l_operand.
+    *  l_operand is a bexp, which should be passed to exprgen for code generation.
+    */
     if(x->charString == NULL) {
       x->l_operand->target = &table->table[0];
       int iCounterBefore = instructionCounter;
@@ -301,14 +310,14 @@ void parsePrintv3(struct ast_expression *exp) {
   }
 }
 /*
- *  This is for parsing print statements. Currently it will print instructions
- *  with the same type as the first entry in the symbol table. This may be
- *  fixable by storing our instructions in an array and doing some backtracing.
- *  Can possible do a check to see if the previous instruction was a LOD, and
- *  if it was go back to the instruction before the LOD and use it's target.
- *  I suppose this can keep track of if an integer type or real type has been
- *  seen and assign it to every x expression in case only one LOD is found.
- */
+*  This is for parsing print statements. Currently it will print instructions
+*  with the same type as the first entry in the symbol table. This may be
+*  fixable by storing our instructions in an array and doing some backtracing.
+*  Can possible do a check to see if the previous instruction was a LOD, and
+*  if it was go back to the instruction before the LOD and use it's target.
+*  I suppose this can keep track of if an integer type or real type has been
+*  seen and assign it to every x expression in case only one LOD is found.
+*/
 void parsePrintStatementv2(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
 
@@ -381,66 +390,66 @@ void parsePrintStatementv2(struct ast_expression *exp) {
 }
 
 /*
- *  Getting really tired of debugging problems with output of instructions.
- *  Since all instructions are stored in an array, this instruction will check
- *  the last instruction for a LLI/LLF or a LOD. If it finds LLI/LLI, it will
- *  return 0 or 1. If it finds LOD, it will check the previous instruction for
- *  an address and then check the symbol table for the type.
- */
+*  Getting really tired of debugging problems with output of instructions.
+*  Since all instructions are stored in an array, this instruction will check
+*  the last instruction for a LLI/LLF or a LOD. If it finds LLI/LLI, it will
+*  return 0 or 1. If it finds LOD, it will check the previous instruction for
+*  an address and then check the symbol table for the type.
+*/
 int getPreviousInstructionType(int iCount) {
   char *iCopy = malloc(sizeof(strlen(instructionList[iCount - 1])));
   strcpy(iCopy, instructionList[iCount - 1]);
   char *ins = strtok(iCopy, " "); // Get instruction
   // String comparisons to get previous type.
   if(strcmp(ins, "LLI") == 0
-   ||strcmp(ins, "ADI") == 0
-   ||strcmp(ins, "SBI") == 0
-   ||strcmp(ins, "MLI") == 0
-   ||strcmp(ins, "DVI") == 0
-   ||strcmp(ins, "NGI") == 0
-   ||strcmp(ins, "EQI") == 0
-   ||strcmp(ins, "NEI") == 0
-   ||strcmp(ins, "LTI") == 0
-   ||strcmp(ins, "LEI") == 0
-   ||strcmp(ins, "GTI") == 0
-   ||strcmp(ins, "GEI") == 0
-   ||strcmp(ins, "FTI") == 0
-   ||strcmp(ins, "INI") == 0
-     ) {
-          return 0;
-       }
-  else if(strcmp(ins, "LLF") == 0
-        ||strcmp(ins, "ADF") == 0
-        ||strcmp(ins, "SBF") == 0
-        ||strcmp(ins, "MLF") == 0
-        ||strcmp(ins, "DVF") == 0
-        ||strcmp(ins, "NGF") == 0
-        ||strcmp(ins, "EQF") == 0
-        ||strcmp(ins, "NEF") == 0
-        ||strcmp(ins, "LTF") == 0
-        ||strcmp(ins, "LEF") == 0
-        ||strcmp(ins, "GTF") == 0
-        ||strcmp(ins, "GEF") == 0
-        ||strcmp(ins, "ITF") == 0
-        ||strcmp(ins, "INF") == 0
-          ) {
-              return 1;
-            }
-  else if(strcmp(ins, "LOD") == 0) {
-    iCopy = malloc(sizeof(strlen(instructionList[iCount - 2])));
-    strcpy(iCopy, instructionList[iCount - 2]);
-    ins = strtok(iCopy, " ");
-    ins = strtok(NULL, " ");
-    return table->table[atoi(ins)].type;
-  }
-  return -1;
+  ||strcmp(ins, "ADI") == 0
+  ||strcmp(ins, "SBI") == 0
+  ||strcmp(ins, "MLI") == 0
+  ||strcmp(ins, "DVI") == 0
+  ||strcmp(ins, "NGI") == 0
+  ||strcmp(ins, "EQI") == 0
+  ||strcmp(ins, "NEI") == 0
+  ||strcmp(ins, "LTI") == 0
+  ||strcmp(ins, "LEI") == 0
+  ||strcmp(ins, "GTI") == 0
+  ||strcmp(ins, "GEI") == 0
+  ||strcmp(ins, "FTI") == 0
+  ||strcmp(ins, "INI") == 0
+) {
+  return 0;
+}
+else if(strcmp(ins, "LLF") == 0
+||strcmp(ins, "ADF") == 0
+||strcmp(ins, "SBF") == 0
+||strcmp(ins, "MLF") == 0
+||strcmp(ins, "DVF") == 0
+||strcmp(ins, "NGF") == 0
+||strcmp(ins, "EQF") == 0
+||strcmp(ins, "NEF") == 0
+||strcmp(ins, "LTF") == 0
+||strcmp(ins, "LEF") == 0
+||strcmp(ins, "GTF") == 0
+||strcmp(ins, "GEF") == 0
+||strcmp(ins, "ITF") == 0
+||strcmp(ins, "INF") == 0
+) {
+  return 1;
+}
+else if(strcmp(ins, "LOD") == 0) {
+  iCopy = malloc(sizeof(strlen(instructionList[iCount - 2])));
+  strcpy(iCopy, instructionList[iCount - 2]);
+  ins = strtok(iCopy, " ");
+  ins = strtok(NULL, " ");
+  return table->table[atoi(ins)].type;
+}
+return -1;
 }
 /*
- *  This function generates gstal code for a given expression. It goes through
- *  the left and right operands of an expression recursively. In the case that
- *  a given expression contains another variable reference (e.g. n := x),
- *  recursion will halt after loading the variable.
- */
+*  This function generates gstal code for a given expression. It goes through
+*  the left and right operands of an expression recursively. In the case that
+*  a given expression contains another variable reference (e.g. n := x),
+*  recursion will halt after loading the variable.
+*/
 
 void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
@@ -497,210 +506,210 @@ void exprgen(struct ast_expression *exp) {
   if(DEBUG) printf("Got to switch statement\n");
   switch(exp->operator) {
     case OP_ASGN:
-      if(DEBUG) printf("Got to OP_ASGN\n");
-      assignTarget(exp, *exp->target);
-      // Load values
-      // printf("OP_ASGN FOUND\n");
-      if(exp->r_operand != NULL) {// Load the address used for assignment
-        if(DEBUG) printf("r_operand != NULL\n");
-        // printf("LAA %d\n", exp->address);
-        sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
-        exprgen(exp->r_operand);
-        // exprgen(exp->l_operand);
-      }
-      if(exp->l_operand != NULL) {// This check is probably unnecessary
-        if(DEBUG) printf("l_operand != NULL\n");
-        exprgen(exp->l_operand);
-      }
-      // if(exp->r_operand != NULL) // Why is this check here?
-      //   exprgen(exp->r_operand);
-      if(exp->l_operand == NULL && exp->r_operand != NULL) {
-        if(DEBUG) printf("Got to STO\n");
-        // Surprisingly, checking if r_operand is not NULL seems to have fixed
-        // an issue where the STO instruction was being printed more than
-        // once.
-        // printf("STO\n");
-        sprintf(instructionList[instructionCounter++], "STO");
-      }
-      break;
+    if(DEBUG) printf("Got to OP_ASGN\n");
+    assignTarget(exp, *exp->target);
+    // Load values
+    // printf("OP_ASGN FOUND\n");
+    if(exp->r_operand != NULL) {// Load the address used for assignment
+      if(DEBUG) printf("r_operand != NULL\n");
+      // printf("LAA %d\n", exp->address);
+      sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
+      exprgen(exp->r_operand);
+      // exprgen(exp->l_operand);
+    }
+    if(exp->l_operand != NULL) {// This check is probably unnecessary
+      if(DEBUG) printf("l_operand != NULL\n");
+      exprgen(exp->l_operand);
+    }
+    // if(exp->r_operand != NULL) // Why is this check here?
+    //   exprgen(exp->r_operand);
+    if(exp->l_operand == NULL && exp->r_operand != NULL) {
+      if(DEBUG) printf("Got to STO\n");
+      // Surprisingly, checking if r_operand is not NULL seems to have fixed
+      // an issue where the STO instruction was being printed more than
+      // once.
+      // printf("STO\n");
+      sprintf(instructionList[instructionCounter++], "STO");
+    }
+    break;
 
     case OP_UMIN:
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "NGI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "NGF");
-      }
-      break;
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "NGI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "NGF");
+    }
+    break;
 
     case OP_ADD:
-      // printf("GOT TO OP_ADD PORTION!!!\n");
-      // printf("exp->type: %d\n", exp->type);
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "ADI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "ADF");
-      }
-      break;
+    // printf("GOT TO OP_ADD PORTION!!!\n");
+    // printf("exp->type: %d\n", exp->type);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "ADI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "ADF");
+    }
+    break;
 
     case OP_SUB:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "SBI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "SBF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "SBI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "SBF");
+    }
+    break;
 
     case OP_MUL:
     if(DEBUG) printf("Got to OP_MUL\n");
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "MLI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "MLF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "MLI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "MLF");
+    }
+    break;
 
     case OP_DIV:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "DVI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "DVF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "DVI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "DVF");
+    }
+    break;
 
     case OP_LSTHN:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "LTI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "LTF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "LTI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "LTF");
+    }
+    break;
 
     case OP_LSTHNEQL:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "LEI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "LEF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "LEI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "LEF");
+    }
+    break;
 
     case OP_GRTHN:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "GTI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "GTF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "GTI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "GTF");
+    }
+    break;
 
     case OP_GRTHNEQL:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "GEI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "GEI");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "GEI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "GEI");
+    }
+    break;
 
     case OP_EQUAL:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "EQI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "EQF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "EQI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "EQF");
+    }
+    break;
 
     case OP_NEQUAL:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        sprintf(instructionList[instructionCounter++], "NEI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "NEF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      sprintf(instructionList[instructionCounter++], "NEI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "NEF");
+    }
+    break;
 
     case OP_AND: // These Boolean instructions require a bit of clever faking
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        // Boolean and = multiplication
-        // printf("MLI\n");
-        // printf("LLI 1\n");
-        // printf("EQI\n"); // Check if l_op * r_op = 1
-        sprintf(instructionList[instructionCounter++], "MLI");
-        sprintf(instructionList[instructionCounter++], "LLI 1");
-        sprintf(instructionList[instructionCounter++], "EQI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        // printf("MLF\n");
-        // printf("LLF 1.0\n");
-        // printf("EQF\n");
-        sprintf(instructionList[instructionCounter++], "MLF");
-        sprintf(instructionList[instructionCounter++], "LLF 1.0");
-        sprintf(instructionList[instructionCounter++], "EQF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      // Boolean and = multiplication
+      // printf("MLI\n");
+      // printf("LLI 1\n");
+      // printf("EQI\n"); // Check if l_op * r_op = 1
+      sprintf(instructionList[instructionCounter++], "MLI");
+      sprintf(instructionList[instructionCounter++], "LLI 1");
+      sprintf(instructionList[instructionCounter++], "EQI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      // printf("MLF\n");
+      // printf("LLF 1.0\n");
+      // printf("EQF\n");
+      sprintf(instructionList[instructionCounter++], "MLF");
+      sprintf(instructionList[instructionCounter++], "LLF 1.0");
+      sprintf(instructionList[instructionCounter++], "EQF");
+    }
+    break;
 
     case OP_OR:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        // Boolean or = addition
-        sprintf(instructionList[instructionCounter++], "ADI");
-        sprintf(instructionList[instructionCounter++], "LLI 1");
-        sprintf(instructionList[instructionCounter++], "EQI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "ADF");
-        sprintf(instructionList[instructionCounter++], "LLF 1.0");
-        sprintf(instructionList[instructionCounter++], "EQF");
-      }
-      break;
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      // Boolean or = addition
+      sprintf(instructionList[instructionCounter++], "ADI");
+      sprintf(instructionList[instructionCounter++], "LLI 1");
+      sprintf(instructionList[instructionCounter++], "EQI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "ADF");
+      sprintf(instructionList[instructionCounter++], "LLF 1.0");
+      sprintf(instructionList[instructionCounter++], "EQF");
+    }
+    break;
 
     case OP_NOT:
-      // if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
-      // printf("exp->type %d\n", exp->type);
-      if(getPreviousInstructionType(instructionCounter) == 0) {
-        // Boolean not = complement
-        // printf("LLI 0\n");
-        // printf("NEI\n"); // If exp != 0, then exp is true
-        sprintf(instructionList[instructionCounter++], "LLI 0");
-        sprintf(instructionList[instructionCounter++], "NEI");
-      }
-      else if(getPreviousInstructionType(instructionCounter) == 1) {
-        sprintf(instructionList[instructionCounter++], "LLF 0.0");
-        sprintf(instructionList[instructionCounter++], "NEF");
-      }
-      break;
+    // if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    // printf("exp->type %d\n", exp->type);
+    if(getPreviousInstructionType(instructionCounter) == 0) {
+      // Boolean not = complement
+      // printf("LLI 0\n");
+      // printf("NEI\n"); // If exp != 0, then exp is true
+      sprintf(instructionList[instructionCounter++], "LLI 0");
+      sprintf(instructionList[instructionCounter++], "NEI");
+    }
+    else if(getPreviousInstructionType(instructionCounter) == 1) {
+      sprintf(instructionList[instructionCounter++], "LLF 0.0");
+      sprintf(instructionList[instructionCounter++], "NEF");
+    }
+    break;
 
   }
   if(DEBUG) printf("Finished exprgen\n");

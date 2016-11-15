@@ -24,12 +24,16 @@ main;
 		#N := 8.2 * (3.1 - 2.1);
 		#print "Asd ", N * 33.1 + 1.21 - (2.1 * 2.0);
 
-		#IF TEST - Passed, gstal code ran successfully.
-		read N;
-		if N<3.0;
-			N := 4.0;
-		else;
-			N := 1337.0;
-			end if;
-		print N;
+		#IF TEST - Passed, gstal code ran successfully. Also read works fine.
+		#read N;
+		#if N<3.0;
+		#	N := 4.0;
+		#else;
+		#	N := 1337.0;
+		#	end if;
+		#print N;
+
+		#PRINT TEST - Not passed, need to get quotes to print.
+		#print "This is a test string""", N * 33.1 + 2.12, "This is the end of the string.";
+		print "Asdf asdf""";
 end main;
