@@ -52,6 +52,7 @@ void insertStmt(struct statement *stmt) {
 *  It now also will parse if statements, with if else statements being worked on.
 *  I am considering moving the parsing of if and if else statements to another
 *  function so that printList is cleaner.
+*  A nested if statement can be found at next->link->if_stmt->if_link->body->link...
 */
 void printList() {
   struct statement *next;
@@ -84,6 +85,10 @@ void printList() {
       // exprgen(nextCopy->exp);
       while(nextCopy->if_link != NULL) {
         exprgen(nextCopy->body->exp);
+        if(nextCopy->body->link->if_stmt != NULL) {
+          printf("This structure should be reworked.\n");
+
+        }
         nextCopy = nextCopy->if_link;
       }
       // nextCopy = nextCopy->link;
@@ -102,8 +107,10 @@ void printList() {
       struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
       nextCopy = next->if_stmt->if_link;
       if(next->if_stmt->if_link->body->link != NULL) {
+        printf("Got here != NULL\n");
         // nextCopy = nextCopy->if_link; // Can now traverse using nextCopy = nextCopy->link
         while(nextCopy->if_link != NULL) {
+          printf("Got to while != NULL\n");
           exprgen(nextCopy->if_link->body->exp);
           nextCopy = nextCopy->if_link;
         }
@@ -139,6 +146,8 @@ void printList() {
 }
 
 void codeGenIfStmt(struct statement *next) {
+  struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
+  nextCopy = next->if_stmt->if_link;
 
 }
 /*
