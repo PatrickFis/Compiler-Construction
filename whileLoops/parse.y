@@ -19,7 +19,7 @@
 #include "ast.h"
 #include <stdio.h>
 #include <string.h>
-#define DEBUG 1
+#define DEBUG 0
 struct symbol_table *table;
 struct statement *list;
 int entry_count = 0; // Used to keep track of what symbols are being inserted.
@@ -651,19 +651,30 @@ inputstmt: RWREAD varref SEMICOLON {
 controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
              if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON\n");
              $$ = malloc(sizeof(struct ast_if_stmt));
-             $$->conditional_stmt = $2;
-             $$->body = $4;
-             $$->isIfElse = 0;
+             // Testing something to fix nested if statements
+             $$->if_link = malloc(sizeof(struct ast_if_stmt));
+             $$->if_link->conditional_stmt = $2;
+             $$->if_link->body = $4;
+             $$->if_link->isIfElse = 0;
+            //  $$->conditional_stmt = $2;
+            //  $$->body = $4;
+            //  $$->isIfElse = 0;
              if(DEBUG) printf("Got to end of if statement\n");
            }
            |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
              if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON\n");
              $$ = malloc(sizeof(struct ast_if_stmt));
-             $$->conditional_stmt = $2;
-             $$->body = $4;
              $$->if_link = malloc(sizeof(struct ast_if_stmt));
-             $$->if_link->body = $7; // Dunno if this will work.
-             $$->isIfElse = 1;
+             $$->if_link->conditional_stmt = $2;
+             $$->if_link->body = $4;
+             $$->if_link->if_link = malloc(sizeof(struct ast_if_stmt));
+             $$->if_link->if_link->body = $7;
+             $$->if_link->isIfElse = 1;
+            //  $$->conditional_stmt = $2;
+            //  $$->body = $4;
+            //  $$->if_link = malloc(sizeof(struct ast_if_stmt));
+            //  $$->if_link->body = $7; // Dunno if this will work.
+            //  $$->isIfElse = 1;
              if(DEBUG) printf("Got to end of if else statement\n");
            }
            ;

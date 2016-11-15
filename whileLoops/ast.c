@@ -62,42 +62,50 @@ void printList() {
     // printf("Calling exprgen\n"); // Debug
     // Section that generates code for if statements
     if(next->isCond == 1) {
-      exprgen(next->if_stmt->conditional_stmt); // Parse the conditional
+      // next->if_stmt->if_link->conditional_stmt->
+      printf("Got here\n");
+      exprgen(next->if_stmt->if_link->conditional_stmt); // Parse the conditional
+      printf("Got here\n");
       // If the conditional is false we will need to jump to the else statement.
       // This means that we will need to insert a JPF to check if the last
       // conditional is false, and then fill in the line number after parsing
       // the if statement.
-      struct statement *nextCopy = malloc(sizeof(struct statement));
-      nextCopy = next;
+      struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
+      nextCopy = next->if_stmt;
       int jumpLocation = instructionCounter; // Store the jump location
       sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
-      exprgen(next->if_stmt->body->exp); // Only getting first exp
-      if(next->if_stmt->body->link != NULL) { // Check if there is more than one expression in the if statement's body
-      nextCopy = nextCopy->if_stmt->body->link; // This structure should traversed using nextCopy = nextCopy->link
+      printf("Got here\n");
+      exprgen(next->if_stmt->if_link->body->exp); // Only getting first exp
+      printf("Got here\n");
+      if(next->if_stmt->if_link != NULL) { // Check if there is more than one expression in the if statement's body
+      printf("Got here\n");
+      nextCopy = nextCopy->if_link; // This structure should traversed using nextCopy = nextCopy->link
+      printf("Got here\n");
       // exprgen(nextCopy->exp);
-      while(nextCopy->link != NULL) {
-        exprgen(nextCopy->exp);
-        nextCopy = nextCopy->link;
+      while(nextCopy->if_link != NULL) {
+        exprgen(nextCopy->body->exp);
+        nextCopy = nextCopy->if_link;
       }
       // nextCopy = nextCopy->link;
       // printf("Finished?\n");
     }
     int iAfter = instructionCounter;
     sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
-    if(next->isIfElse == 1) {
+    if(next->if_stmt->if_link->isIfElse == 1) {
       // This section of code will parse an else statement. It borrows heavily
       // from the code used above.
+      printf("Got to else\n");
       int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
       sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
       sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
       exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
-      struct statement *nextCopy = malloc(sizeof(struct statement));
-      nextCopy = next;
+      struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
+      nextCopy = next->if_stmt;
       if(next->if_stmt->if_link->body->link != NULL) {
-        nextCopy = nextCopy->if_stmt->if_link->body->link; // Can now traverse using nextCopy = nextCopy->link
-        while(nextCopy->link != NULL) {
-          exprgen(nextCopy->exp);
-          nextCopy = nextCopy->link;
+        nextCopy = nextCopy->if_link; // Can now traverse using nextCopy = nextCopy->link
+        while(nextCopy->if_link != NULL) {
+          exprgen(nextCopy->body->exp);
+          nextCopy = nextCopy->if_link;
         }
       }
       int iAfter = instructionCounter;
