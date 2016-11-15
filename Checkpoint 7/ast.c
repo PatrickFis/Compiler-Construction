@@ -229,6 +229,7 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
 void parsePrintv3(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
   // if(x->charString == NULL) printf("NULL\n");
+  // char *giantString = malloc(sizeof(char));
   if(x != NULL) {
     if(x->charString != NULL) {
       // printf("%s\n", x->charString);
@@ -240,20 +241,21 @@ void parsePrintv3(struct ast_expression *exp) {
       // Print characters enclosed by quotation marks. Will add a check for "" later.
       for(i = 1; i < strlen(x->charString)-1; i++) {
         // printf("%d\n", (int)x->charString[i]);
-        if((int)x->charString[i] == 34 && (int)x->charString[i+1] == 34) {
-          // This occurs if the character at i and the character at i+1 are both quotation marks.
-          sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
-          sprintf(instructionList[instructionCounter++], "PTC");
+        sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
+        sprintf(instructionList[instructionCounter++], "PTC");
+        if(strcmp(instructionList[instructionCounter-2], "LLI 34") == 0) {
+          // If a quotation mark was just printed, skip over the next character
+          // in the input.
           i++;
-        }
-        else
-        {
-          sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
-          sprintf(instructionList[instructionCounter++], "PTC");
         }
       }
     }
-
+    // if(x->r_operand != NULL) {
+    //   if(strcmp(instructionList[instructionCounter-1], "PTL") == 0) {
+    //     sprintf(instructionList[instructionCounter++], "LLI 34");
+    //     sprintf(instructionList[instructionCounter++], "PTC");
+    //   }
+    // }
     /*
     *  Tree is structed like this... exp->r_operand->r_operand->r_operand...
     *  If r_operand has a charString, then it should be printed.

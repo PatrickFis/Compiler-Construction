@@ -492,16 +492,20 @@ outputstmt: RWPRINT printlist {
               $$ = malloc(sizeof(struct ast_expression));
               $$->operator = OP_PRINT;
               $$->r_operand = $2;
-            //   // printf("%d\n",strlen($$->charString));
-            //   char buf[1024];
-            //   struct ast_expression *tempExp = $$->r_operand;
-            //   while(tempExp != NULL) {
-            //     // Parse the entire charstring
-            //     // printf("GOT HERE\n");
-            //     strncat(buf, tempExp->charString, sizeof(tempExp->charString));
-            //     // printf("%s\n",buf);
-            //     tempExp = tempExp->r_operand;
-            //   }
+              // printf("%d\n",strlen($$->charString));
+              // char buf[1024];
+              // struct ast_expression *tempExp = $$->r_operand;
+              // while(tempExp != NULL) {
+              //   // Parse the entire charstring
+              //   // printf("GOT HERE\n");
+              //   if(tempExp->l_operand != NULL) {
+              //     tempExp = tempExp->r_operand;
+              //     continue;
+              //   }
+              //   strcat(buf, tempExp->charString);
+              //   printf("%s\n",buf);
+              //   tempExp = tempExp->r_operand;
+              // }
             // if(DEBUG) printf("buf = %s\n", buf);
             //   $$->charString = strdup(buf);
             // if(DEBUG) printf("Got out of loop\n");
@@ -541,7 +545,7 @@ printlist: CHARSTRING printlist {
             if(DEBUG) printf("Got to CARRETURN COMMA printlist\n");
           }
           |bexp COMMA printlist {
-            printf("Got to bexp COMMA printlist\n");
+            if(DEBUG) printf("Got to bexp COMMA printlist\n");
             $$ = malloc(sizeof(struct ast_expression));
             // $$->r_operand = $3;
             // What if I set $$->l_operand to $1? Then I could just parse that part for bexp's...

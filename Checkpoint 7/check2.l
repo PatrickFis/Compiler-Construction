@@ -11,7 +11,10 @@
  * Notes:
  * 11/14/2016: Replaced regular expression for
  * charstrings(was \"([^\\\"]|\\.)*\"), with a new one to account for quotation
- * marks in strings.
+ * marks in strings. Solution may be to use the regular expression
+ * \"([^\\,]|\\.)*\" <- Which I am not entirely sure why is working.
+ * Also removed the -+ sign that could be in front of litints and litreals.
+ * This was causing some issues with parsing certain expressions.
  * ========================================================================
  */
 
@@ -61,12 +64,12 @@
                                                      return RWALG;
                                                    }
 
-[-+]?[0-9]+                                        { if(DEBUG) printf("LITINT: %s\n", yytext);
+[0-9]+                                         { if(DEBUG) printf("LITINT: %s\n", yytext);
                                                      yylval.ival = atoi(yytext);
                                                      return LITINT;
                                                    }
 
-[-+]?([0-9]*\.?[0-9]+|[0-9]+\.)((e|E)[-+]?[0-9]+)? { if(DEBUG) printf("LITREAL: %s\n", yytext);
+([0-9]*\.?[0-9]+|[0-9]+\.)((e|E)[-+]?[0-9]+)?  { if(DEBUG) printf("LITREAL: %s\n", yytext);
                                                      yylval.rval = atof(yytext);
                                                      return LITREAL;
                                                    }
@@ -99,8 +102,9 @@
                                                      return RWPRINT;
                                                    }
 
-\"[^\n]*\"                                 { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
+\"([^\\,]|\\.)*\"                                 { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
                                                      yylval.sval = strdup(yytext);
+                                                     //printf("yytext = %s\n", yytext);
                                                      return CHARSTRING;
                                                      free(yylval.sval);
                                                    }

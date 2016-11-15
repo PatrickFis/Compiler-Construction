@@ -34,6 +34,9 @@ main;
 		#print N;
 
 		#PRINT TEST - Not passed, need to get quotes to print.
-		#print "This is a test string""", N * 33.1 + 2.12, "This is the end of the string.";
-		print "Asdf asdf""";
+		#print "This is a test string",!, N * 33.1 + 2.12,!, "This is the end of the string.";
+		print "This is a""test string", !, N * 33.1 + 2.12, !,"Test";
+
+		#EXPRESSION DEBUG TEST - Looks like it passed.
+		#N := 8.1*-2.2+1.1111-2.321/32.21*22.2;
 end main;
