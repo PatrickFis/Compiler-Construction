@@ -1,0 +1,43 @@
+#=================================================================
+# File--------root.slic
+# Programmer--Bryan Crawley
+# Project-----Square root
+#
+# This program computes and displays the square root of a
+# floating-point number. The result is an estimate with
+# about two decimal places of precision.
+#=================================================================
+
+main;
+	data:
+		real: N, nn;
+		real: X;
+		real: Estimate;
+		real: NewEst;
+		real: Diff;
+		integer: int;
+		real: test;
+		integer: test2;
+		real: test3;
+		integer: test4;
+	algorithm:
+		N := 12;
+		X := 24;
+		int := 12 + 21;
+		Estimate := 36;
+		NewEst := 77.2;
+		N := 12.21 + 12.2;
+		X := 24 - 24;
+		NewEst := 24*22;
+		N := (12);
+		Diff := -213;
+		N := 12 < 1;
+		X := 1 <= 2;
+		nn := (22);
+		Estimate := 44 > 22;
+		NewEst := 44 >= 23;
+		Diff := 12 = 12;
+		N := 62 <> 62;
+		int := ~1;
+		N := X + 2;
+end main;

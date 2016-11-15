@@ -1,0 +1,7 @@
+a.out: parse.y check2.l main.c
+	/usr/local/Cellar/bison/3.0.4/bin/bison -y -d parse.y
+	/usr/local/Cellar/flex/2.6.2/bin/flex check2.l
+	/usr/local/Cellar/gcc/6.2.0/bin/gcc-6 -Wall -g lex.yy.c y.tab.c main.c stable.c stable.h ast.c ast.h -ll
+
+clean:
+	rm -f a.exe a.out lex.yy.c y.tab.c y.tab.h stable.h.gch ast.h.gch
