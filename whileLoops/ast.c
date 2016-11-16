@@ -155,28 +155,33 @@ void codeGenIfStmt(struct statement *next) {
   nextCopy = nextCopy->if_link;
   int jumpLocation = instructionCounter; // Store the jump location
   sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
+  if(nextCopy->if_link == NULL) {
+    exprgen(nextCopy->body->exp);
+  }
   while(nextCopy->if_link != NULL) {
+    printf("Made it to loop\n");
     exprgen(nextCopy->body->exp);
     if(next->if_stmt->if_link->body->link != NULL && next->if_stmt->if_link->body->link->isCond == 1) {
       // This means that there is a nested if statement...
       printf("Hi, I made it here\n");
       struct ast_if_stmt *nestedIf = malloc(sizeof(struct ast_if_stmt));
       nestedIf = next->if_stmt->if_link->body->link->if_stmt;
+      // exprgen(nestedIf->if_link->conditional_stmt);
       codeGenIfStmt(next->if_stmt->if_link->body->link);
-      printf("Hi, I made it here\n");
-      exprgen(nestedIf->if_link->conditional_stmt); // Parse conditional statement of nested if
-      int jumpLocationNested = instructionCounter; // Store the jump location
-      sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
-      // nestedIf = nestedIf->if_link;
-      printf("Hi, I made it here\n");
-      while(nestedIf->if_link != NULL) {
-        printf("Got into while loop\n");
-        nestedIf = nestedIf->if_link;
-        exprgen(nestedIf->body->exp);
-      }
-      printf("Hi, I made it here\n");
-      int iAfter = instructionCounter;
-      sprintf(instructionList[jumpLocationNested], "JPF %d", iAfter+1);
+      // printf("Hi, I made it here\n");
+      // exprgen(nestedIf->if_link->conditional_stmt); // Parse conditional statement of nested if
+      // int jumpLocationNested = instructionCounter; // Store the jump location
+      // sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
+      // // nestedIf = nestedIf->if_link;
+      // printf("Hi, I made it here\n");
+      // while(nestedIf->if_link != NULL) {
+      //   printf("Got into while loop\n");
+      //   nestedIf = nestedIf->if_link;
+      //   exprgen(nestedIf->body->exp);
+      // }
+      // printf("Hi, I made it here\n");
+      // int iAfter = instructionCounter;
+      // sprintf(instructionList[jumpLocationNested], "JPF %d", iAfter+1);
     }
     nextCopy = nextCopy->if_link;
   }
@@ -204,7 +209,7 @@ void codeGenIfStmt(struct statement *next) {
     int iAfter = instructionCounter;
     sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
   }
-  printf("Success");
+  printf("Success\n");
 
 }
 /*
