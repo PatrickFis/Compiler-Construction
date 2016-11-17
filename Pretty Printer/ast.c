@@ -494,6 +494,9 @@ void exprgen(struct ast_expression *exp) {
   else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
     if(DEBUG) printf("Got to load real\n");
     // printf("LLF %f\n", exp->rvalue);
+
+    // Print the number plus a space.
+    printf("%f ", exp->rvalue);
     sprintf(instructionList[instructionCounter++], "LLF %f", exp->rvalue);
   }
   if(exp->type == TYPE_VAR) {
@@ -510,6 +513,9 @@ void exprgen(struct ast_expression *exp) {
     case OP_ASGN:
     if(DEBUG) printf("Got to OP_ASGN\n");
     assignTarget(exp, *exp->target);
+
+    // 8 Spaces for assignment statements
+    printf("        %s := ", exp->target->name);
     // Load values
     // printf("OP_ASGN FOUND\n");
     if(exp->r_operand != NULL) {// Load the address used for assignment
@@ -532,6 +538,10 @@ void exprgen(struct ast_expression *exp) {
       // once.
       // printf("STO\n");
       sprintf(instructionList[instructionCounter++], "STO");
+
+      // Remove the last space from an assignment statement, and then append a
+      // semicolon to it. Then print a newline character.
+      printf("\b;\n");
     }
     break;
 
