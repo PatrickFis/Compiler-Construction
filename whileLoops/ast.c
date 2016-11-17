@@ -44,6 +44,7 @@ void insertStmt(struct statement *stmt) {
 }
 
 void codeGenIfStmt(struct statement *next);
+void codeGenIfv2(struct statement *next);
 /*
 *  This function goes through the abstract syntax tree and calls the exprgen
 *  function on each statement in a linked list. Will probably change these
@@ -64,7 +65,7 @@ void printList() {
     // printf("Calling exprgen\n"); // Debug
     // Section that generates code for if statements
     if(next->isCond == 1) {
-      codeGenIfStmt(next);
+      codeGenIfv2(next);
     //   printf("Got here\n");
     //   exprgen(next->if_stmt->if_link->conditional_stmt); // Parse the conditional
     //   printf("Got here\n");
@@ -147,70 +148,97 @@ void printList() {
 }
 
 // A nested if statement can be found at next->if_stmt->if_link->body->link...
-void codeGenIfStmt(struct statement *next) {
-  printf("Got to code gen\n");
+// void codeGenIfStmt(struct statement *next) {
+//   printf("Got to code gen\n");
+//   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
+//   nextCopy = next->if_stmt;
+//   exprgen(nextCopy->if_link->conditional_stmt); // Parse conditional statement at start of if statement
+//   nextCopy = nextCopy->if_link;
+//   int jumpLocation = instructionCounter; // Store the jump location
+//   sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
+//   if(nextCopy->if_link == NULL) {
+//     exprgen(nextCopy->body->exp);
+//   }
+//   while(nextCopy->if_link != NULL) {
+//     printf("Made it to loop\n");
+//     exprgen(nextCopy->body->exp);
+//     if(next->if_stmt->if_link->body->link != NULL && next->if_stmt->if_link->body->link->isCond == 1) {
+//       // This means that there is a nested if statement...
+//       printf("Hi, I made it here\n");
+//       struct ast_if_stmt *nestedIf = malloc(sizeof(struct ast_if_stmt));
+//       nestedIf = next->if_stmt->if_link->body->link->if_stmt;
+//       // exprgen(nestedIf->if_link->conditional_stmt);
+//       codeGenIfStmt(next->if_stmt->if_link->body->link);
+//       // printf("Hi, I made it here\n");
+//       // exprgen(nestedIf->if_link->conditional_stmt); // Parse conditional statement of nested if
+//       // int jumpLocationNested = instructionCounter; // Store the jump location
+//       // sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
+//       // // nestedIf = nestedIf->if_link;
+//       // printf("Hi, I made it here\n");
+//       // while(nestedIf->if_link != NULL) {
+//       //   printf("Got into while loop\n");
+//       //   nestedIf = nestedIf->if_link;
+//       //   exprgen(nestedIf->body->exp);
+//       // }
+//       // printf("Hi, I made it here\n");
+//       // int iAfter = instructionCounter;
+//       // sprintf(instructionList[jumpLocationNested], "JPF %d", iAfter+1);
+//     }
+//     nextCopy = nextCopy->if_link;
+//   }
+//   int iAfter = instructionCounter;
+//   sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
+//   if(next->if_stmt->if_link->isIfElse == 1) {
+//     // This section of code will parse an else statement. It borrows heavily
+//     // from the code used above.
+//     printf("Got to else\n");
+//     int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
+//     sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
+//     sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
+//     exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
+//     struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
+//     nextCopy = next->if_stmt->if_link;
+//     if(next->if_stmt->if_link->body->link != NULL) {
+//       printf("Got here != NULL\n");
+//       // nextCopy = nextCopy->if_link; // Can now traverse using nextCopy = nextCopy->link
+//       while(nextCopy->if_link != NULL) {
+//         printf("Got to while != NULL\n");
+//         exprgen(nextCopy->if_link->body->exp);
+//         nextCopy = nextCopy->if_link;
+//       }
+//     }
+//     int iAfter = instructionCounter;
+//     sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
+//   }
+//   printf("Success\n");
+//
+// }
+
+void codeGenIfv2(struct statement *next) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
-  exprgen(nextCopy->if_link->conditional_stmt); // Parse conditional statement at start of if statement
-  nextCopy = nextCopy->if_link;
-  int jumpLocation = instructionCounter; // Store the jump location
-  sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
-  if(nextCopy->if_link == NULL) {
-    exprgen(nextCopy->body->exp);
-  }
-  while(nextCopy->if_link != NULL) {
-    printf("Made it to loop\n");
-    exprgen(nextCopy->body->exp);
-    if(next->if_stmt->if_link->body->link != NULL && next->if_stmt->if_link->body->link->isCond == 1) {
-      // This means that there is a nested if statement...
-      printf("Hi, I made it here\n");
-      struct ast_if_stmt *nestedIf = malloc(sizeof(struct ast_if_stmt));
-      nestedIf = next->if_stmt->if_link->body->link->if_stmt;
-      // exprgen(nestedIf->if_link->conditional_stmt);
-      codeGenIfStmt(next->if_stmt->if_link->body->link);
-      // printf("Hi, I made it here\n");
-      // exprgen(nestedIf->if_link->conditional_stmt); // Parse conditional statement of nested if
-      // int jumpLocationNested = instructionCounter; // Store the jump location
-      // sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
-      // // nestedIf = nestedIf->if_link;
-      // printf("Hi, I made it here\n");
-      // while(nestedIf->if_link != NULL) {
-      //   printf("Got into while loop\n");
-      //   nestedIf = nestedIf->if_link;
-      //   exprgen(nestedIf->body->exp);
-      // }
-      // printf("Hi, I made it here\n");
-      // int iAfter = instructionCounter;
-      // sprintf(instructionList[jumpLocationNested], "JPF %d", iAfter+1);
-    }
-    nextCopy = nextCopy->if_link;
-  }
-  int iAfter = instructionCounter;
-  sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
-  if(next->if_stmt->if_link->isIfElse == 1) {
-    // This section of code will parse an else statement. It borrows heavily
-    // from the code used above.
-    printf("Got to else\n");
-    int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
-    sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
-    sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
-    exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
-    struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
-    nextCopy = next->if_stmt->if_link;
-    if(next->if_stmt->if_link->body->link != NULL) {
-      printf("Got here != NULL\n");
-      // nextCopy = nextCopy->if_link; // Can now traverse using nextCopy = nextCopy->link
-      while(nextCopy->if_link != NULL) {
-        printf("Got to while != NULL\n");
-        exprgen(nextCopy->if_link->body->exp);
-        nextCopy = nextCopy->if_link;
-      }
-    }
-    int iAfter = instructionCounter;
-    sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
-  }
-  printf("Success\n");
 
+  // Parse the conditional statement
+  exprgen(nextCopy->conditional_stmt);
+  int jumpLocation = instructionCounter;
+  sprintf(instructionList[instructionCounter++], "JPF"); // Replace this
+
+  // Need a structure to parse the body statement
+  struct statement *bodyCopy = malloc(sizeof(struct statement));
+  bodyCopy = nextCopy->body;
+  while(bodyCopy->link != NULL) {
+    // Parse this like a regular statement!
+    printf("Hi from bodyCopy\n");
+    if(bodyCopy->isCond == 1) {
+      printf("Hi from bodyCopy!\n");
+      codeGenIfv2(bodyCopy);
+      bodyCopy = bodyCopy->link;
+      continue;
+    }
+
+    exprgen(bodyCopy->exp);
+    bodyCopy = bodyCopy->link;
+  }
 }
 /*
 *  This function is called after exprgen in printList. It makes sure that

@@ -220,9 +220,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               $$->if_stmt = $1;
               $$->link = $2;
               $$->isCond = 1;
-              if($1->isIfElse == 1) {
-                $$->isIfElse = 1;
-              }
+              // if($1->isIfElse == 1) {
+              //   $$->isIfElse = 1;
+              // }
               if(DEBUG) printf("Got to controlstmt programbody\n");
             }
             |controlstmt {
@@ -234,9 +234,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               temp->link = NULL;
               $$->link = temp;
               $$->isCond = 1;
-              if($1->isIfElse == 1) {
-                $$->isIfElse = 1;
-              }
+              // if($1->isIfElse == 1) {
+              //   $$->isIfElse = 1;
+              // }
               if(DEBUG) printf("Got to controlstmt\n");
             }
             |outputstmt programbody {
@@ -648,37 +648,52 @@ inputstmt: RWREAD varref SEMICOLON {
 
 // Kind of surprised that this rule did not produce any shift/reduce conflicts.
 // Would not be a bad plan to keep an eye on it and watch for conflicts.
+// controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
+//              if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON\n");
+//              $$ = malloc(sizeof(struct ast_if_stmt));
+//              // Testing something to fix nested if statements
+//              $$->if_link = malloc(sizeof(struct ast_if_stmt));
+//              $$->if_link->conditional_stmt = $2;
+//              $$->if_link->body = $4;
+//              $$->if_link->isIfElse = 0;
+//             //  $$->conditional_stmt = $2;
+//             //  $$->body = $4;
+//             //  $$->isIfElse = 0;
+//              if(DEBUG) printf("Got to end of if statement\n");
+//            }
+//            |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
+//              if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON\n");
+//              $$ = malloc(sizeof(struct ast_if_stmt));
+//              $$->if_link = malloc(sizeof(struct ast_if_stmt));
+//              $$->if_link->conditional_stmt = $2;
+//              $$->if_link->body = $4;
+//              $$->if_link->if_link = malloc(sizeof(struct ast_if_stmt));
+//              $$->if_link->if_link->body = $7;
+//              $$->if_link->isIfElse = 1;
+//             //  $$->conditional_stmt = $2;
+//             //  $$->body = $4;
+//             //  $$->if_link = malloc(sizeof(struct ast_if_stmt));
+//             //  $$->if_link->body = $7; // Dunno if this will work.
+//             //  $$->isIfElse = 1;
+//              if(DEBUG) printf("Got to end of if else statement\n");
+//            }
+//            ;
+
 controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
-             if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON\n");
-             $$ = malloc(sizeof(struct ast_if_stmt));
-             // Testing something to fix nested if statements
-             $$->if_link = malloc(sizeof(struct ast_if_stmt));
-             $$->if_link->conditional_stmt = $2;
-             $$->if_link->body = $4;
-             $$->if_link->isIfElse = 0;
-            //  $$->conditional_stmt = $2;
-            //  $$->body = $4;
-            //  $$->isIfElse = 0;
-             if(DEBUG) printf("Got to end of if statement\n");
-           }
-           |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
-             if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON\n");
-             $$ = malloc(sizeof(struct ast_if_stmt));
-             $$->if_link = malloc(sizeof(struct ast_if_stmt));
-             $$->if_link->conditional_stmt = $2;
-             $$->if_link->body = $4;
-             $$->if_link->if_link = malloc(sizeof(struct ast_if_stmt));
-             $$->if_link->if_link->body = $7;
-             $$->if_link->isIfElse = 1;
-            //  $$->conditional_stmt = $2;
-            //  $$->body = $4;
-            //  $$->if_link = malloc(sizeof(struct ast_if_stmt));
-            //  $$->if_link->body = $7; // Dunno if this will work.
-            //  $$->isIfElse = 1;
-             if(DEBUG) printf("Got to end of if else statement\n");
-           }
-           ;
-           
+              printf("Found an if\n");
+              $$ = malloc(sizeof(struct ast_if_stmt));
+              $$->conditional_stmt = $2;
+              $$->body = $4;
+             }
+             |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
+               printf("Found an if else\n");
+               $$ = malloc(sizeof(struct ast_if_stmt));
+               $$->conditional_stmt = $2;
+               $$->body = $4;
+               $$->body->link = malloc(sizeof(struct statement));
+               $$->body->link = $7;
+              //  $$->body->link->isCond = 1;
+             }
 whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON {
               if(DEBUG) printf("Got to whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON\n");
               $$ = malloc(sizeof(struct ast_while_stmt));
