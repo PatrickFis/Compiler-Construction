@@ -489,6 +489,7 @@ void exprgen(struct ast_expression *exp) {
     if(DEBUG) printf("Got to load int\n");
     // printf("LLI %d\n", exp->value);
     // printf("exp->type = %d\n", exp->type);
+    printf("%d ", exp->value);
     sprintf(instructionList[instructionCounter++], "LLI %d", exp->value);
   }
   else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
@@ -558,8 +559,17 @@ void exprgen(struct ast_expression *exp) {
     case OP_ADD:
     // printf("GOT TO OP_ADD PORTION!!!\n");
     // printf("exp->type: %d\n", exp->type);
+
+    // Wrap this expression in parentheses. Space added so the \b doesn't mess
+    // up the parentheses.
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    // Print a plus sign and a space.
+    printf("+ ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    // Wrap this expression in parentheses. Space added so the \b doesn't mess
+    // up the parentheses.
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "ADI");
     }
