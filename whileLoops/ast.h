@@ -48,6 +48,7 @@ struct ast_if_stmt { // Something I may toy with to see if a solution can be fou
   // int isIfElse;
   struct ast_expression *conditional_stmt;
   struct statement *body; // This is weird, but I might be able to make it work...
+  int isIfElse;
 };
 
 struct ast_while_stmt {

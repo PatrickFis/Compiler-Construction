@@ -214,6 +214,8 @@ void printList() {
 //
 // }
 
+// So this actually finds nested if statements, but if there's an else block it
+// skips over the nested statements.
 void codeGenIfv2(struct statement *next) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
@@ -235,9 +237,11 @@ void codeGenIfv2(struct statement *next) {
       bodyCopy = bodyCopy->link;
       continue;
     }
-
     exprgen(bodyCopy->exp);
     bodyCopy = bodyCopy->link;
+  }
+  if(nextCopy->isIfElse == 1) {
+    printf("Houston, we have an else statement\n");
   }
 }
 /*

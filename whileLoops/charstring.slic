@@ -32,12 +32,18 @@ main;
 			N := 2.0;
 			if N < 4.0;
 				N := 5.0;
+				if N < 22.12;
+					N := 212.1;
+					end if;
 				end if;
 			if N < 22.1;
 				N := 22.1;
 				end if;
 		else;
 			N := 1337.0;
+			if N = 1337.0;
+				print "Asdf";
+				end if;
 			end if;
 		print N;
 

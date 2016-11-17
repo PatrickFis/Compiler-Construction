@@ -220,9 +220,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               $$->if_stmt = $1;
               $$->link = $2;
               $$->isCond = 1;
-              // if($1->isIfElse == 1) {
-              //   $$->isIfElse = 1;
-              // }
+              if($1->isIfElse == 1) {
+                $$->isIfElse = 1;
+              }
               if(DEBUG) printf("Got to controlstmt programbody\n");
             }
             |controlstmt {
@@ -234,9 +234,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               temp->link = NULL;
               $$->link = temp;
               $$->isCond = 1;
-              // if($1->isIfElse == 1) {
-              //   $$->isIfElse = 1;
-              // }
+              if($1->isIfElse == 1) {
+                $$->isIfElse = 1;
+              }
               if(DEBUG) printf("Got to controlstmt\n");
             }
             |outputstmt programbody {
@@ -684,6 +684,7 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
               $$ = malloc(sizeof(struct ast_if_stmt));
               $$->conditional_stmt = $2;
               $$->body = $4;
+              $$->isIfElse = 0;
              }
              |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
                printf("Found an if else\n");
@@ -693,6 +694,7 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
                $$->body->link = malloc(sizeof(struct statement));
                $$->body->link = $7;
               //  $$->body->link->isCond = 1;
+              $$->isIfElse = 1;
              }
 whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON {
               if(DEBUG) printf("Got to whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON\n");
