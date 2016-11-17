@@ -710,6 +710,7 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
                $$ = malloc(sizeof(struct ast_if_stmt));
                $$->conditional_stmt = $2;
                $$->body = $4;
+               // Added the tempLink structure to actually get nested if statements to work when else statements are present.
                $$->tempLink = malloc(sizeof(struct statement));
                $$->tempLink = $7;
               //  $$->body->link = malloc(sizeof(struct statement));
