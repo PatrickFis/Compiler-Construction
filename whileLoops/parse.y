@@ -678,7 +678,7 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
              if(DEBUG) printf("Got to end of if else statement\n");
            }
            ;
-
+           
 whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON {
               if(DEBUG) printf("Got to whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON\n");
               $$ = malloc(sizeof(struct ast_while_stmt));
