@@ -43,7 +43,6 @@ void insertStmt(struct statement *stmt) {
   }
 }
 
-void codeGenIfStmt(struct statement *next);
 void codeGenIfv2(struct statement *next);
 /*
 *  This function goes through the abstract syntax tree and calls the exprgen
@@ -60,7 +59,24 @@ void printList() {
   struct statement *next;
   next = list;
   sprintf(instructionList[instructionCounter++], "ISP %d", table->memorySize);
-  // printf("ISP %d\n", table->memorySize);
+
+  printf("main;\n"); // Start of program.
+  // Print the symbol table:
+  int i;
+  // Four spaces for data section.
+  printf("    data:\n");
+  for(i = 0; i < table->count; i++) {
+    // Four more spaces for each variable reference.
+    if(table->table[i].type == TYPE_INT) {
+      printf("        integer: %s;\n", table->table[i].name);
+    }
+    else if(table->table[i].type == TYPE_REAL) {
+      printf("        real: %s;\n", table->table[i].name);
+    }
+  }
+
+  // Four spaces for the algorithm section.
+  printf("    algorithm:\n");
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
     // Section that generates code for if statements
@@ -147,72 +163,6 @@ void printList() {
   }
 }
 
-// A nested if statement can be found at next->if_stmt->if_link->body->link...
-// void codeGenIfStmt(struct statement *next) {
-//   printf("Got to code gen\n");
-//   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
-//   nextCopy = next->if_stmt;
-//   exprgen(nextCopy->if_link->conditional_stmt); // Parse conditional statement at start of if statement
-//   nextCopy = nextCopy->if_link;
-//   int jumpLocation = instructionCounter; // Store the jump location
-//   sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
-//   if(nextCopy->if_link == NULL) {
-//     exprgen(nextCopy->body->exp);
-//   }
-//   while(nextCopy->if_link != NULL) {
-//     printf("Made it to loop\n");
-//     exprgen(nextCopy->body->exp);
-//     if(next->if_stmt->if_link->body->link != NULL && next->if_stmt->if_link->body->link->isCond == 1) {
-//       // This means that there is a nested if statement...
-//       printf("Hi, I made it here\n");
-//       struct ast_if_stmt *nestedIf = malloc(sizeof(struct ast_if_stmt));
-//       nestedIf = next->if_stmt->if_link->body->link->if_stmt;
-//       // exprgen(nestedIf->if_link->conditional_stmt);
-//       codeGenIfStmt(next->if_stmt->if_link->body->link);
-//       // printf("Hi, I made it here\n");
-//       // exprgen(nestedIf->if_link->conditional_stmt); // Parse conditional statement of nested if
-//       // int jumpLocationNested = instructionCounter; // Store the jump location
-//       // sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
-//       // // nestedIf = nestedIf->if_link;
-//       // printf("Hi, I made it here\n");
-//       // while(nestedIf->if_link != NULL) {
-//       //   printf("Got into while loop\n");
-//       //   nestedIf = nestedIf->if_link;
-//       //   exprgen(nestedIf->body->exp);
-//       // }
-//       // printf("Hi, I made it here\n");
-//       // int iAfter = instructionCounter;
-//       // sprintf(instructionList[jumpLocationNested], "JPF %d", iAfter+1);
-//     }
-//     nextCopy = nextCopy->if_link;
-//   }
-//   int iAfter = instructionCounter;
-//   sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
-//   if(next->if_stmt->if_link->isIfElse == 1) {
-//     // This section of code will parse an else statement. It borrows heavily
-//     // from the code used above.
-//     printf("Got to else\n");
-//     int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
-//     sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
-//     sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
-//     exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
-//     struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
-//     nextCopy = next->if_stmt->if_link;
-//     if(next->if_stmt->if_link->body->link != NULL) {
-//       printf("Got here != NULL\n");
-//       // nextCopy = nextCopy->if_link; // Can now traverse using nextCopy = nextCopy->link
-//       while(nextCopy->if_link != NULL) {
-//         printf("Got to while != NULL\n");
-//         exprgen(nextCopy->if_link->body->exp);
-//         nextCopy = nextCopy->if_link;
-//       }
-//     }
-//     int iAfter = instructionCounter;
-//     sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
-//   }
-//   printf("Success\n");
-//
-// }
 
 // So this actually finds nested if statements, but if there's an else block it
 // skips over the nested statements. So the problem is from assigning $$->body->link
@@ -351,6 +301,10 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
   }
 }
 
+/*
+ *  Parses print statements and prints out instructions. Currently it does some
+ *  backtracking to correct instructions, but more checks will be needed in the future.
+ */
 void parsePrintv3(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
   // if(x->charString == NULL) printf("NULL\n");
@@ -434,85 +388,6 @@ void parsePrintv3(struct ast_expression *exp) {
       }
     }
     parsePrintv3(x);
-  }
-}
-/*
-*  This is for parsing print statements. Currently it will print instructions
-*  with the same type as the first entry in the symbol table. This may be
-*  fixable by storing our instructions in an array and doing some backtracing.
-*  Can possible do a check to see if the previous instruction was a LOD, and
-*  if it was go back to the instruction before the LOD and use it's target.
-*  I suppose this can keep track of if an integer type or real type has been
-*  seen and assign it to every x expression in case only one LOD is found.
-*/
-void parsePrintStatementv2(struct ast_expression *exp) {
-  struct ast_expression *x = exp->r_operand;
-
-  // printf("iCounter = %d\n", instructionCounter);
-  while(x != NULL) {
-    if(x->charString != NULL) {
-      printf("not null x->charString %s\n", x->charString);
-    }
-    if(x->charString == NULL) {
-      x->target = &table->table[0];
-      // This, and iCounterAfter, will be used to determine if the correct instructions were printed
-      int iCounterBefore = instructionCounter;
-      exprgen(x);
-      int iCounterAfter = instructionCounter;
-      // printf("iB %d iA %d\n", iCounterBefore, iCounterAfter);
-      // Get the first instruction inserted by the above call to exprgen and
-      // find the address used by it. May need to change this to scan all
-      // instructions generated between iCounterBefore and iCounterAfter.
-      // Getting the tokens from a copy because apparently using strtok modifies
-      // the target of the function.
-      char *iListCopy = malloc(sizeof(strlen(instructionList[iCounterBefore])));
-      strcpy(iListCopy, instructionList[iCounterBefore]);
-      char *targetToken = strtok(iListCopy, " ");
-      targetToken = strtok(NULL, " ");
-      int tar = atoi(targetToken);
-      int tarType = table->table[tar].type;
-      // printf("tar = %d\n", tar);
-      // printf("tar type = %d\n", table->table[tar].type);
-      // printf("%s\n", targetToken);
-      // This loops replaces instructions with the correct version for their
-      // target's type.
-      for(int i = iCounterBefore; i < iCounterAfter; i++) {
-        if(tarType == 1) {
-          // If the target is a real number
-          if(instructionList[i][2] == 'I') {
-            instructionList[i][2] = 'F';
-          }
-        }
-        else if(tarType == 0) {
-          // If the target is an integer number
-          if(instructionList[i][2] == 'F') {
-            instructionList[i][2] = 'I';
-          }
-        }
-        // printf("%s\n", instructionList[i]);
-      }
-      // printf("\n\n\n\n\n");
-      if(tarType == 1) {
-        sprintf(instructionList[instructionCounter++], "PTF");
-      }
-      else if(tarType == 0) {
-        sprintf(instructionList[instructionCounter++], "PTI");
-      }
-      break;
-    }
-    // printf("x->charString, %s\n", x->charString);
-    int i;
-    // Print a newline character
-    if(strcmp(x->charString, "!,") == 0 || strcmp(x->charString, "!") == 0) {
-      sprintf(instructionList[instructionCounter++], "PTL");
-    }
-    // Print characters enclosed by quotation marks. Will add a check for "" later.
-    for(i = 1; i < strlen(x->charString)-1; i++) {
-      // printf("%d\n", (int)x->charString[i]);
-      sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
-      sprintf(instructionList[instructionCounter++], "PTC");
-    }
-    x = x->r_operand;
   }
 }
 

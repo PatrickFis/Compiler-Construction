@@ -10,7 +10,8 @@
 
 main;
 	data:
-		real: N;
+		real: N, nn, abc;
+		integer: x, xy, xyz;
 	algorithm:
 		N := 1;
 end main;
