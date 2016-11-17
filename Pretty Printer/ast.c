@@ -312,9 +312,16 @@ void parsePrintv3(struct ast_expression *exp) {
   if(x != NULL) {
     if(x->charString != NULL) {
       // printf("%s\n", x->charString);
+      printf("%s", x->charString);
       int i;
       // Print a newline character
       if(strcmp(x->charString, "!,") == 0 || strcmp(x->charString, "!") == 0) {
+        if(strcmp(x->charString, "!,") == 0) {
+          // printf("!,");
+        }
+        else if(strcmp(x->charString, "!") == 0) {
+          // printf("! ");
+        }
         sprintf(instructionList[instructionCounter++], "PTL");
       }
       // Print characters enclosed by quotation marks. Will add a check for "" later.
@@ -329,12 +336,7 @@ void parsePrintv3(struct ast_expression *exp) {
         }
       }
     }
-    // if(x->r_operand != NULL) {
-    //   if(strcmp(instructionList[instructionCounter-1], "PTL") == 0) {
-    //     sprintf(instructionList[instructionCounter++], "LLI 34");
-    //     sprintf(instructionList[instructionCounter++], "PTC");
-    //   }
-    // }
+
     /*
     *  Tree is structed like this... exp->r_operand->r_operand->r_operand...
     *  If r_operand has a charString, then it should be printed.
@@ -470,7 +472,9 @@ void exprgen(struct ast_expression *exp) {
     // }
     // printf("exp->charString, %s\n", exp->charString);
     // parsePrintStatementv2(exp);
+    printf("        print ");
     parsePrintv3(exp);
+    printf(";\n");
     return;
   }
   if(exp->operator == OP_READ) {
@@ -504,6 +508,7 @@ void exprgen(struct ast_expression *exp) {
     if(DEBUG) printf("Got to variable type\n");
     // printf("LAA %d\n",exp->l_operand->target->address);
     // printf("LOD\n");
+    printf("%s ", exp->l_operand->target->name);
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
     if(DEBUG) printf("Finished variable type\n"); // Debug
@@ -547,7 +552,9 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_UMIN:
+    printf("( -");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "NGI");
     }
@@ -579,8 +586,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_SUB:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("- ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "SBI");
     }
@@ -591,8 +601,11 @@ void exprgen(struct ast_expression *exp) {
 
     case OP_MUL:
     if(DEBUG) printf("Got to OP_MUL\n");
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("* ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "MLI");
     }
@@ -602,8 +615,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_DIV:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("/ ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "DVI");
     }
@@ -613,8 +629,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_LSTHN:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("< ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "LTI");
     }
@@ -624,8 +643,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_LSTHNEQL:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("<= ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "LEI");
     }
@@ -635,8 +657,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_GRTHN:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("> ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "GTI");
     }
@@ -646,8 +671,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_GRTHNEQL:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf(">= ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "GEI");
     }
@@ -657,8 +685,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_EQUAL:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("= ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "EQI");
     }
@@ -668,8 +699,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_NEQUAL:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("<> ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "NEI");
     }
@@ -679,8 +713,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_AND: // These Boolean instructions require a bit of clever faking
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("& ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       // Boolean and = multiplication
       // printf("MLI\n");
@@ -701,8 +738,11 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_OR:
+    printf("( ");
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    printf("| ");
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       // Boolean or = addition
       sprintf(instructionList[instructionCounter++], "ADI");
@@ -717,8 +757,10 @@ void exprgen(struct ast_expression *exp) {
     break;
 
     case OP_NOT:
+    printf("( ~");
     // if(exp->l_operand != NULL) exprgen(exp->l_operand);
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    printf(") ");
     // printf("exp->type %d\n", exp->type);
     if(getPreviousInstructionType(instructionCounter) == 0) {
       // Boolean not = complement

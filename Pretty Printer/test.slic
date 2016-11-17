@@ -10,11 +10,19 @@
 
 main;
 	data:
-		real: N, nn, abc;
-		integer: x, xy, xyz;
+		real: N, nn,
+						abc;
+		integer:			 x, xy,     xyz;
 	algorithm:
-		N := 1.2;
+		N := 1.2		;
 		nn := 2.21;
-		abc := 2.1 + 2.2 + 2.11 + 21.2;
+		abc := 2.1 + 2.2 + 2.11 + 21.2 * 22.1;
 		x := 2 + 21;
+		xy := x + 2;
+		x := -2;
+		xyz := ~22;
+		x := 2|1|22;
+		xy := 23 <> 21 + -2;
+		nn := 82.11 & 56.12;
+		print !, !,"x", !,x;
 end main;
