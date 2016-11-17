@@ -103,7 +103,7 @@
                                                      return RWPRINT;
                                                    }
 
-\"([^\\,\n]|\\.)*\"                                  { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
+\"([^\\*\n]|\\.)*\"                                  { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
                                                      yylval.sval = strdup(yytext);
                                                      return CHARSTRING;
                                                      free(yylval.sval);
