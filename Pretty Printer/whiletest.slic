@@ -1,0 +1,9 @@
+main;
+  data:
+    integer: N, nn;
+  algorithm:
+    N := 2;
+    while N < 3;
+      N := N + 1;
+      end while;
+end main;
