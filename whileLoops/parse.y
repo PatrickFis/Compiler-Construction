@@ -218,11 +218,19 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               // Note that if else statements will be parsed using this rule...
               $$ = malloc(sizeof(struct statement));
               $$->if_stmt = $1;
+              // if($2->link != NULL) {
+              //   $$->link = $2->link;
+              //   printf("MADE IT HERE\n");
+              // }
+              // else {
+              //   $$->link = $2;
+              // }
               $$->link = $2;
               $$->isCond = 1;
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
+              printf("Controlstmt\n");
               if(DEBUG) printf("Got to controlstmt programbody\n");
             }
             |controlstmt {
@@ -231,12 +239,20 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               // Added the temp struct to insert the last expressions into the linked list.
               struct statement *temp = malloc(sizeof(struct statement));
               temp->if_stmt = $$->if_stmt;
-              temp->link = NULL;
+              // if($1->body->link != NULL) {
+              //   printf("Got here temp link\n");
+              //   temp->link = $1->body->link;
+              // }
+              // else {
+              //   temp->link = NULL;
+              // }
+              // temp->link = NULL;
               $$->link = temp;
               $$->isCond = 1;
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
+              printf("Controlstmt2\n");
               if(DEBUG) printf("Got to controlstmt\n");
             }
             |outputstmt programbody {
@@ -691,11 +707,12 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
                $$ = malloc(sizeof(struct ast_if_stmt));
                $$->conditional_stmt = $2;
                $$->body = $4;
-               $$->body->link = malloc(sizeof(struct statement));
-               $$->body->link = $7;
+              //  $$->body->link = malloc(sizeof(struct statement));
+              //  $$->body->link = $7;
               //  $$->body->link->isCond = 1;
               $$->isIfElse = 1;
              }
+             ;
 whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON {
               if(DEBUG) printf("Got to whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON\n");
               $$ = malloc(sizeof(struct ast_while_stmt));

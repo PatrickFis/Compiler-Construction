@@ -215,7 +215,8 @@ void printList() {
 // }
 
 // So this actually finds nested if statements, but if there's an else block it
-// skips over the nested statements.
+// skips over the nested statements. So the problem is from assigning $$->body->link
+// in the parser. This will be overwritten by the programbody portion of rules.
 void codeGenIfv2(struct statement *next) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
