@@ -46,6 +46,7 @@ struct ast_if_stmt { // Something I may toy with to see if a solution can be fou
   // struct statement *body; // Link the body of an if statement to the statement itself
   // struct ast_expression *conditional_stmt; // Need something to hold the conditional the if statement will evaluate
   // int isIfElse;
+  struct statement *tempLink;
   struct ast_expression *conditional_stmt;
   struct statement *body; // This is weird, but I might be able to make it work...
   int isIfElse;

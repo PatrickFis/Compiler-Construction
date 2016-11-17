@@ -227,6 +227,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               // }
               $$->link = $2;
               $$->isCond = 1;
+              if($$->if_stmt->tempLink != NULL) {
+                $$->link->link = $$->if_stmt->tempLink;
+              }
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
@@ -707,6 +710,8 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
                $$ = malloc(sizeof(struct ast_if_stmt));
                $$->conditional_stmt = $2;
                $$->body = $4;
+               $$->tempLink = malloc(sizeof(struct statement));
+               $$->tempLink = $7;
               //  $$->body->link = malloc(sizeof(struct statement));
               //  $$->body->link = $7;
               //  $$->body->link->isCond = 1;
