@@ -233,7 +233,7 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
-              printf("Controlstmt\n");
+              // printf("Controlstmt\n");
               if(DEBUG) printf("Got to controlstmt programbody\n");
             }
             |controlstmt {
@@ -258,7 +258,6 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
-              printf("Controlstmt2\n");
               if(DEBUG) printf("Got to controlstmt\n");
             }
             |outputstmt programbody {
@@ -702,14 +701,14 @@ inputstmt: RWREAD varref SEMICOLON {
 //            ;
 
 controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
-              printf("Found an if\n");
+              if(DEBUG) printf("Found an if\n");
               $$ = malloc(sizeof(struct ast_if_stmt));
               $$->conditional_stmt = $2;
               $$->body = $4;
               $$->isIfElse = 0;
              }
              |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
-               printf("Found an if else\n");
+               if(DEBUG) printf("Found an if else\n");
                $$ = malloc(sizeof(struct ast_if_stmt));
                $$->conditional_stmt = $2;
                $$->body = $4;

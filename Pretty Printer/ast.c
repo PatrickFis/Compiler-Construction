@@ -534,7 +534,7 @@ void exprgen(struct ast_expression *exp) {
     return;
   }
   if(exp->operator == OP_READ) {
-    printf("        read %s;\n", table->table[exp->address].name);
+    printf("read %s;\n", table->table[exp->address].name);
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
     if(table->table[exp->address].type == 0) {
       sprintf(instructionList[instructionCounter++], "INI");
