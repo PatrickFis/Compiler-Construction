@@ -82,12 +82,15 @@ void printList() {
     // Section that generates code for if statements
     if(next->isCond == 1) {
       codeGenIfv2(next, 1);
+      if(next->link == NULL) printf("Maybe solution\n");
       if(next->isIfElse == 1) {
         next = next->link;
         // printf("Found an if else...\n");
         goto label;
       }
     next = next->link;
+    // Added this next check because end if's were not being printed for some reason. This basically means there is an if statement followed by nothing else.
+    if(next->link == NULL || next->link->isCond != 1) printf("        end if;\n");
     continue;
   }
   if(next->isIfElse == 1) {
@@ -140,7 +143,7 @@ void codeGenIfv2(struct statement *next, int nested) {
     // Parse this like a regular statement!
     if(bodyCopy->isCond == 1) {
       nested++;
-      codeGenIfv2(bodyCopy, nested);
+      if(bodyCopy->if_stmt != NULL)codeGenIfv2(bodyCopy, nested);
       for(i = 0; i < nested+1; i++) {
         printf("    ");
       }

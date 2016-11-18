@@ -2,9 +2,8 @@ main;
 data:
 integer: x;
 algorithm:
-if x < 2;
-x := 22;
-else;
-x := 21;
+if x > 1000;
+print x;
 end if;
+#print x;
 end main;
