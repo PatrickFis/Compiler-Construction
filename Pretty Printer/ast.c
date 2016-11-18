@@ -89,7 +89,7 @@ void printList() {
 
   // Section that generates code for while statements
   if(next->isWhile == 1) {
-    printf("Hi\n");
+    // printf("Hi\n");
     next = next->link;
     continue;
   }
@@ -102,6 +102,7 @@ void printList() {
   // label: // REMOVE THE GOTO
   next = next->link;
   }
+  printf("end main;\n");
   sprintf(instructionList[instructionCounter++], "HLT");
   for(int i = 0; i < instructionCounter; i++) {
     printf("%s\n", instructionList[i]);
@@ -115,29 +116,31 @@ void printList() {
 void codeGenIfv2(struct statement *next) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
-
+  printf("        ");
+  printf("if");
   // Parse the conditional statement
   exprgen(nextCopy->conditional_stmt);
+  printf("\b;\n");
   int jumpLocation = instructionCounter;
   sprintf(instructionList[instructionCounter++], "JPF"); // Replace this
-
   // Need a structure to parse the body statement
   struct statement *bodyCopy = malloc(sizeof(struct statement));
   bodyCopy = nextCopy->body;
   while(bodyCopy->link != NULL) {
     // Parse this like a regular statement!
-    printf("Hi from bodyCopy\n");
+    // printf("Hi from bodyCopy\n");
     if(bodyCopy->isCond == 1) {
-      printf("Hi from bodyCopy!\n");
+      // printf("Hi from bodyCopy!\n");
       codeGenIfv2(bodyCopy);
       bodyCopy = bodyCopy->link;
       continue;
     }
+    printf("    ");
     exprgen(bodyCopy->exp);
     bodyCopy = bodyCopy->link;
   }
   if(nextCopy->isIfElse == 1) {
-    printf("Houston, we have an else statement\n");
+    // printf("Houston, we have an else statement\n");
   }
 }
 /*
