@@ -103,7 +103,8 @@ void printList() {
   }
 
   int iBefore = instructionCounter;
-  label: printf("        ");
+  label: if(next->exp == NULL) break; // Break if there is nothing after an if statement...
+  printf("        ");
   /*label:*/ exprgen(next->exp);
   int iAfter = instructionCounter;
   next = next->link;
@@ -155,6 +156,7 @@ void codeGenIfv2(struct statement *next, int nested) {
   }
   nested--;
   if(nextCopy->tempLink != NULL) {
+    if(nextCopy->tempLink->link->link == NULL) nested++;
     for(i = 0; i < nested+1; i++) {
       printf("    ");
     }

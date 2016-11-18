@@ -156,6 +156,7 @@ void codeGenIfv2(struct statement *next, int nested) {
   }
   nested--;
   if(nextCopy->tempLink != NULL) {
+    if(nextCopy->tempLink->link->link == NULL) nested++;
     for(i = 0; i < nested+1; i++) {
       printf("    ");
     }
