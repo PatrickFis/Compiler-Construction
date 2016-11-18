@@ -1,8 +1,9 @@
 main;
 data:
 integer: x;
+real: y;
 algorithm:
-if x > 1000;
+if y > 1000.2;
 print x;
 end if;
 #print x;
