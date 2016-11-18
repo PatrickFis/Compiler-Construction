@@ -250,6 +250,11 @@ void codeGenIfv2(struct statement *next) {
     while(tempCopy->link != NULL) {
       exprgen(tempCopy->exp);
       tempCopy = tempCopy->link;
+      if(tempCopy->isCond == 1) {
+        codeGenIfv2(tempCopy);
+        tempCopy = tempCopy->link;
+        continue;
+      }
     }
   }
 }
