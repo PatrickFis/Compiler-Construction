@@ -81,7 +81,7 @@ void printList() {
     // printf("Calling exprgen\n"); // Debug
     // Section that generates code for if statements
     if(next->isCond == 1) {
-      codeGenIfv2(next, 2);
+      codeGenIfv2(next, 1);
       if(next->isIfElse == 1) {
         next = next->link;
         // printf("Found an if else...\n");
@@ -127,12 +127,15 @@ void codeGenIfv2(struct statement *next, int nested) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
   // printf("        ");
-  char *ifSpace = malloc(sizeof(4*nested));
+  // char *ifSpace = malloc(sizeof(4*nested));
   int i;
-  for(i = 0; i < 4*nested; i++) {
-    strcat(ifSpace, " ");
-  }
+  // for(i = 0; i < 4*nested; i++) {
+  //   strcat(ifSpace, " ");
+  // }
   // printf("%s", ifSpace);
+  for(i = 0; i < nested+1; i++) {
+    printf("    ");
+  }
   printf("if");
   // Parse the conditional statement
   exprgen(nextCopy->conditional_stmt);
@@ -145,51 +148,72 @@ void codeGenIfv2(struct statement *next, int nested) {
   while(bodyCopy->link != NULL) {
     // Parse this like a regular statement!
     // printf("Hi from bodyCopy\n");
-    char *spaces = malloc(sizeof(char));
+    // char *spaces = malloc(sizeof(char));
     // int i;
-    for(i = 0; i < 4*nested; i++) {
-      strcat(spaces, " ");
-    }
+    // for(i = 0; i < 4*(nested+1); i++) {
+    //   strcat(spaces, " ");
+    // }
     // printf("%s", spaces);
     if(bodyCopy->isCond == 1) {
       // printf("Hi from bodyCopy!\n");
-      // nested++;
-      codeGenIfv2(bodyCopy, nested);
       nested++;
+      // printf("%s", ifSpace);
+      codeGenIfv2(bodyCopy, nested);
+      // nested++;
+      // nested--;
       bodyCopy = bodyCopy->link;
       continue;
     }
     // printf("        ");
+    // printf("%s", ifSpace);
+    // printf("    ");
+    for(i = 0; i < nested+2; i++) {
+      printf("    ");
+    }
     exprgen(bodyCopy->exp);
     bodyCopy = bodyCopy->link;
   }
+  nested--;
+  // nested--; // Test
   // printf("%s", ifSpace);
-  for(i = 0; i < 4*nested; i++) {
-    ifSpace[i] = ' ';
+  // for(i = 0; i < 4*(nested+1); i++) {
+  //   ifSpace[i] = ' ';
+  // }
+  // ifSpace[4*(nested+1)] = '\0';
+  // printf("%s", ifSpace);
+  if(nextCopy->tempLink == NULL)
+  {
+    for(i = 0; i < nested+2; i++) {
+      printf("    ");
+    }
+    printf("end if;\n");
   }
-  ifSpace[4*nested] = '\0';
-  // printf("%s", ifSpace);
-  printf("end if;\n");
   if(nextCopy->tempLink != NULL) {
     // printf("%s", ifSpace);
+    for(i = 0; i < nested+1; i++) {
+      printf("    ");
+    }
     printf("else;\n");
     struct statement *tempCopy = nextCopy->tempLink;
-
+    nested++;
     while(tempCopy->link != NULL) {
+      // printf("   ");
       // printf("%s", ifSpace);
+      // printf("    ");
       exprgen(tempCopy->exp);
       tempCopy = tempCopy->link;
       if(tempCopy->isCond == 1) {
-        nested++;
+        // nested++;
+        // printf("    ");
         codeGenIfv2(tempCopy, nested);
         tempCopy = tempCopy->link;
         continue;
       }
-      nested--;
+      // nested--;
     }
-    for(i = 0; i < strlen(ifSpace); i++) {
-      ifSpace[i] = ' ';
-    }
+    // for(i = 0; i < strlen(ifSpace); i++) {
+    //   ifSpace[i] = ' ';
+    // }
     // printf("%s", ifSpace);
     printf("end if;\n");
   }
