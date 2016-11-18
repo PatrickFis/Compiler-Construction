@@ -103,7 +103,8 @@ void printList() {
   }
 
   int iBefore = instructionCounter;
-  label: exprgen(next->exp);
+  label: printf("        ");
+  /*label:*/ exprgen(next->exp);
   int iAfter = instructionCounter;
   // printf("iB = %d, iA = %d\n", iBefore, iAfter);
   // printf("exprgen finished\n"); // Debug
@@ -131,7 +132,7 @@ void codeGenIfv2(struct statement *next, int nested) {
   for(i = 0; i < 4*nested; i++) {
     strcat(ifSpace, " ");
   }
-  printf("%s", ifSpace);
+  // printf("%s", ifSpace);
   printf("if");
   // Parse the conditional statement
   exprgen(nextCopy->conditional_stmt);
@@ -149,7 +150,7 @@ void codeGenIfv2(struct statement *next, int nested) {
     for(i = 0; i < 4*nested; i++) {
       strcat(spaces, " ");
     }
-    printf("%s", spaces);
+    // printf("%s", spaces);
     if(bodyCopy->isCond == 1) {
       // printf("Hi from bodyCopy!\n");
       // nested++;
@@ -167,15 +168,15 @@ void codeGenIfv2(struct statement *next, int nested) {
     ifSpace[i] = ' ';
   }
   ifSpace[4*nested] = '\0';
-  printf("%s", ifSpace);
+  // printf("%s", ifSpace);
   printf("end if;\n");
   if(nextCopy->tempLink != NULL) {
-    printf("%s", ifSpace);
+    // printf("%s", ifSpace);
     printf("else;\n");
     struct statement *tempCopy = nextCopy->tempLink;
 
     while(tempCopy->link != NULL) {
-      printf("%s", ifSpace);
+      // printf("%s", ifSpace);
       exprgen(tempCopy->exp);
       tempCopy = tempCopy->link;
       if(tempCopy->isCond == 1) {
@@ -189,7 +190,7 @@ void codeGenIfv2(struct statement *next, int nested) {
     for(i = 0; i < strlen(ifSpace); i++) {
       ifSpace[i] = ' ';
     }
-    printf("%s", ifSpace);
+    // printf("%s", ifSpace);
     printf("end if;\n");
   }
   // printf("        end if;\n");
@@ -479,7 +480,9 @@ void exprgen(struct ast_expression *exp) {
     // }
     // printf("exp->charString, %s\n", exp->charString);
     // parsePrintStatementv2(exp);
-    printf("        print ");
+    // printf("        print ");
+    // Testing another way to print spaces...
+    printf("print ");
     // Why not just put each part of the string into a character array and use
     // strcat to put them together? A check could happen after the function
     // call to fix any comma issues.
@@ -533,7 +536,9 @@ void exprgen(struct ast_expression *exp) {
     assignTarget(exp, *exp->target);
 
     // 8 Spaces for assignment statements
-    printf("        %s := ", exp->target->name);
+    // printf("        %s := ", exp->target->name);
+    // Testing another method for spaces
+    printf("%s := ", exp->target->name);
     // Load values
     // printf("OP_ASGN FOUND\n");
     if(exp->r_operand != NULL) {// Load the address used for assignment

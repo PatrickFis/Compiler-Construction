@@ -25,4 +25,6 @@ main;
     # N := X;
     N := (12 + 12);
     N := (X);
+		print N;
+		print X;
 end main;
