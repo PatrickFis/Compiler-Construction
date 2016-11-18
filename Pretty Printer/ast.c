@@ -82,61 +82,6 @@ void printList() {
     // Section that generates code for if statements
     if(next->isCond == 1) {
       codeGenIfv2(next);
-    //   printf("Got here\n");
-    //   exprgen(next->if_stmt->if_link->conditional_stmt); // Parse the conditional
-    //   printf("Got here\n");
-    //   // If the conditional is false we will need to jump to the else statement.
-    //   // This means that we will need to insert a JPF to check if the last
-    //   // conditional is false, and then fill in the line number after parsing
-    //   // the if statement.
-    //   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
-    //   nextCopy = next->if_stmt;
-    //   int jumpLocation = instructionCounter; // Store the jump location
-    //   sprintf(instructionList[instructionCounter++], "JPF"); // Going to replace this
-    //   printf("Got here\n");
-    //   exprgen(next->if_stmt->if_link->body->exp); // Only getting first exp
-    //   printf("Got here\n");
-    //   if(next->if_stmt->if_link != NULL) { // Check if there is more than one expression in the if statement's body
-    //   printf("Got here\n");
-    //   nextCopy = nextCopy->if_link; // This structure should traversed using nextCopy = nextCopy->link
-    //   printf("Got here\n");
-    //   // exprgen(nextCopy->exp);
-    //   while(nextCopy->if_link != NULL) {
-    //     exprgen(nextCopy->body->exp);
-    //     if(nextCopy->body->link->if_stmt != NULL) {
-    //       printf("This structure should be reworked.\n");
-    //
-    //     }
-    //     nextCopy = nextCopy->if_link;
-    //   }
-    //   // nextCopy = nextCopy->link;
-    //   // printf("Finished?\n");
-    // }
-    // int iAfter = instructionCounter;
-    // sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
-    // if(next->if_stmt->if_link->isIfElse == 1) {
-    //   // This section of code will parse an else statement. It borrows heavily
-    //   // from the code used above.
-    //   printf("Got to else\n");
-    //   int jumpLocation2 = instructionCounter; // Store the jump location for getting out of the else statement
-    //   sprintf(instructionList[instructionCounter++], "JMP"); // Jump out of the else statement if the conditional was true, will replace this later
-    //   sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter); // Jump here if the conditional was false
-    //   exprgen(next->if_stmt->if_link->body->exp); // Only getting first expression
-    //   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
-    //   nextCopy = next->if_stmt->if_link;
-    //   if(next->if_stmt->if_link->body->link != NULL) {
-    //     printf("Got here != NULL\n");
-    //     // nextCopy = nextCopy->if_link; // Can now traverse using nextCopy = nextCopy->link
-    //     while(nextCopy->if_link != NULL) {
-    //       printf("Got to while != NULL\n");
-    //       exprgen(nextCopy->if_link->body->exp);
-    //       nextCopy = nextCopy->if_link;
-    //     }
-    //   }
-    //   int iAfter = instructionCounter;
-    //   sprintf(instructionList[jumpLocation2], "JMP %d", instructionCounter);
-    // }
-    // // goto label; // THIS WILL BE REMOVED IT IS JUST FOR TESTING...
     next = next->link;
     continue;
   }
@@ -312,7 +257,11 @@ void parsePrintv3(struct ast_expression *exp) {
   if(x != NULL) {
     if(x->charString != NULL) {
       // printf("%s\n", x->charString);
-      printf("%s", x->charString);
+      printf("%s ", x->charString);
+      if(strcmp(x->charString, "!,") != 0 && strcmp(x->charString, "!") != 0) printf("\b, ");
+      // strcat(buffer, " ");
+
+      // sprintf(buffer, "%s", x->charString);
       int i;
       // Print a newline character
       if(strcmp(x->charString, "!,") == 0 || strcmp(x->charString, "!") == 0) {
@@ -347,6 +296,8 @@ void parsePrintv3(struct ast_expression *exp) {
       x->l_operand->target = &table->table[0];
       int iCounterBefore = instructionCounter;
       exprgen(x->l_operand);
+      if(x->r_operand != NULL) printf("\b, "); // Places a comma after an expression
+      else printf("\b"); // Gets rid of space after expression
       int iCounterAfter = instructionCounter;
       if(DEBUG) printf("iB: %d, iA: %d\n", iCounterBefore, iCounterAfter);
 
@@ -448,6 +399,8 @@ int getPreviousInstructionType(int iCount) {
     }
   return -1;
 }
+
+
 /*
 *  This function generates gstal code for a given expression. It goes through
 *  the left and right operands of an expression recursively. In the case that
@@ -473,6 +426,10 @@ void exprgen(struct ast_expression *exp) {
     // printf("exp->charString, %s\n", exp->charString);
     // parsePrintStatementv2(exp);
     printf("        print ");
+    // Why not just put each part of the string into a character array and use
+    // strcat to put them together? A check could happen after the function
+    // call to fix any comma issues.
+    // Looks like I found a different way to fix the issue.
     parsePrintv3(exp);
     printf(";\n");
     return;
