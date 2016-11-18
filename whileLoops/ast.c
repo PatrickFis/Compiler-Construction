@@ -244,6 +244,14 @@ void codeGenIfv2(struct statement *next) {
   if(nextCopy->isIfElse == 1) {
     printf("Houston, we have an else statement\n");
   }
+  if(nextCopy->tempLink != NULL) {
+    struct statement *tempCopy = nextCopy->tempLink;
+
+    while(tempCopy->link != NULL) {
+      exprgen(tempCopy->exp);
+      tempCopy = tempCopy->link;
+    }
+  }
 }
 /*
 *  This function is called after exprgen in printList. It makes sure that

@@ -39,9 +39,9 @@ main;
 		#	end if;
 		else;
 			N := 1337.0;
-			if N = 1337.0;
-				print "Asdf";
-				end if;
+			#if N = 1337.0;
+			#	print "Asdf";
+			#	end if;
 			end if;
 		print N;
 
