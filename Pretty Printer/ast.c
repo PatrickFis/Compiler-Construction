@@ -14,9 +14,6 @@ char instructionList[10000][100]; // Instructions will be stored in this array..
 // This will be incremented to determine where instructions need to go in the array
 int instructionCounter = 0;
 
-char prettyPrintList[10000][1000]; // Holds the programs lines...
-int prettyCounter = 0;
-int instructionDepth[10000]; // Holds the amount of spacing needed...
 void insertStmt(struct statement *stmt) {
   count++;
   // printf("stmt->exp->kind: %d\n", stmt->exp->operator);
@@ -64,31 +61,21 @@ void printList() {
   sprintf(instructionList[instructionCounter++], "ISP %d", table->memorySize);
 
   printf("main;\n"); // Start of program.
-  instructionDepth[prettyCounter] = 0;
-  sprintf(prettyPrintList[prettyCounter++], "main");
   // Print the symbol table:
   int i;
   // Four spaces for data section.
-  instructionDepth[prettyCounter] = 1;
-  sprintf(prettyPrintList[prettyCounter++], "data");
   printf("    data:\n");
   for(i = 0; i < table->count; i++) {
     // Four more spaces for each variable reference.
     if(table->table[i].type == TYPE_INT) {
-      instructionDepth[prettyCounter] = 2;
-      sprintf(prettyPrintList[prettyCounter++], "integer: %s;", table->table[i].name);
       printf("        integer: %s;\n", table->table[i].name);
     }
     else if(table->table[i].type == TYPE_REAL) {
-      instructionDepth[prettyCounter] = 2;
-      sprintf(prettyPrintList[prettyCounter++], "real: %s;", table->table[i].name);
       printf("        real: %s;\n", table->table[i].name);
     }
   }
 
   // Four spaces for the algorithm section.
-  instructionDepth[prettyCounter] = 1;
-  sprintf(prettyPrintList[prettyCounter++], "algorithm:");
   printf("    algorithm:\n");
   while(next->link != NULL) {
     // printf("Calling exprgen\n"); // Debug
@@ -116,7 +103,7 @@ void printList() {
   }
 
   int iBefore = instructionCounter;
-  label: exprgen(next->exp, 2);
+  label: exprgen(next->exp);
   int iAfter = instructionCounter;
   // printf("iB = %d, iA = %d\n", iBefore, iAfter);
   // printf("exprgen finished\n"); // Debug
@@ -124,16 +111,11 @@ void printList() {
   // label: // REMOVE THE GOTO
   next = next->link;
   }
-  instructionDepth[prettyCounter] = 0;
-  sprintf(prettyPrintList[prettyCounter++], "end main;");
   printf("end main;\n");
   sprintf(instructionList[instructionCounter++], "HLT");
   // for(int i = 0; i < instructionCounter; i++) {
   //   printf("%s\n", instructionList[i]);
   // }
-  for(int i = 0; i < prettyCounter; i++) {
-    printf("%s %d\n", prettyPrintList[i], instructionDepth[i]);
-  }
 }
 
 
@@ -143,7 +125,6 @@ void printList() {
 void codeGenIfv2(struct statement *next, int nested) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
-  // printf("nesting = %d\n", nested);
   // printf("        ");
   char *ifSpace = malloc(sizeof(4*nested));
   int i;
@@ -153,7 +134,7 @@ void codeGenIfv2(struct statement *next, int nested) {
   printf("%s", ifSpace);
   printf("if");
   // Parse the conditional statement
-  exprgen(nextCopy->conditional_stmt, 0);
+  exprgen(nextCopy->conditional_stmt);
   printf("\b;\n");
   int jumpLocation = instructionCounter;
   sprintf(instructionList[instructionCounter++], "JPF"); // Replace this
@@ -168,18 +149,17 @@ void codeGenIfv2(struct statement *next, int nested) {
     for(i = 0; i < 4*nested; i++) {
       strcat(spaces, " ");
     }
-    // printf("%s", spaces);
+    printf("%s", spaces);
     if(bodyCopy->isCond == 1) {
       // printf("Hi from bodyCopy!\n");
       // nested++;
-      nested++;
       codeGenIfv2(bodyCopy, nested);
       nested++;
       bodyCopy = bodyCopy->link;
       continue;
     }
     // printf("        ");
-    exprgen(bodyCopy->exp, 0);
+    exprgen(bodyCopy->exp);
     bodyCopy = bodyCopy->link;
   }
   // printf("%s", ifSpace);
@@ -189,7 +169,6 @@ void codeGenIfv2(struct statement *next, int nested) {
   ifSpace[4*nested] = '\0';
   printf("%s", ifSpace);
   printf("end if;\n");
-  nested--;
   if(nextCopy->tempLink != NULL) {
     printf("%s", ifSpace);
     printf("else;\n");
@@ -197,7 +176,7 @@ void codeGenIfv2(struct statement *next, int nested) {
 
     while(tempCopy->link != NULL) {
       printf("%s", ifSpace);
-      exprgen(tempCopy->exp, 0);
+      exprgen(tempCopy->exp);
       tempCopy = tempCopy->link;
       if(tempCopy->isCond == 1) {
         nested++;
@@ -370,7 +349,7 @@ void parsePrintv3(struct ast_expression *exp) {
     if(x->charString == NULL) {
       x->l_operand->target = &table->table[0];
       int iCounterBefore = instructionCounter;
-      exprgen(x->l_operand, 0);
+      exprgen(x->l_operand);
       if(x->r_operand != NULL) printf("\b, "); // Places a comma after an expression
       else printf("\b"); // Gets rid of space after expression
       int iCounterAfter = instructionCounter;
@@ -483,7 +462,7 @@ int getPreviousInstructionType(int iCount) {
 *  recursion will halt after loading the variable.
 */
 
-void exprgen(struct ast_expression *exp, int currentDepth) {
+void exprgen(struct ast_expression *exp) {
   // printf("exp->value = %d\n", exp->value);
   // printf("Got here");
   if(DEBUG) printf("Got to exprgen\n");
@@ -492,7 +471,7 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
   // if(exp->target != NULL) printf("%s\n", exp->target->name);
   if(exp->operator == OP_PRINT) { // This occurs if an expression is a print statement
     // printf("Got to OP_PRINT\n");
-    // if(exp->r_operand != NULL)exprgen(exp->r_operand, currentDepth);
+    // if(exp->r_operand != NULL)exprgen(exp->r_operand);
     // struct ast_expression *x = exp->r_operand;
     // while(x != NULL) {
     //   printf("x->charString, %s\n", x->charString);
@@ -526,8 +505,6 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
     if(DEBUG) printf("Got to load int\n");
     // printf("LLI %d\n", exp->value);
     // printf("exp->type = %d\n", exp->type);
-    instructionDepth[prettyCounter] = currentDepth;
-    sprintf(prettyPrintList[prettyCounter++], "%d ", exp->value);
     printf("%d ", exp->value);
     sprintf(instructionList[instructionCounter++], "LLI %d", exp->value);
   }
@@ -536,8 +513,6 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
     // printf("LLF %f\n", exp->rvalue);
 
     // Print the number plus a space.
-    instructionDepth[prettyCounter] = currentDepth;
-    sprintf(prettyPrintList[prettyCounter++], "%f ", exp->rvalue);
     printf("%f ", exp->rvalue);
     sprintf(instructionList[instructionCounter++], "LLF %f", exp->rvalue);
   }
@@ -545,8 +520,6 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
     if(DEBUG) printf("Got to variable type\n");
     // printf("LAA %d\n",exp->l_operand->target->address);
     // printf("LOD\n");
-    instructionDepth[prettyCounter] = currentDepth;
-    sprintf(prettyPrintList[prettyCounter++], "%s ", exp->l_operand->target->name);
     printf("%s ", exp->l_operand->target->name);
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
@@ -560,8 +533,6 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
     assignTarget(exp, *exp->target);
 
     // 8 Spaces for assignment statements
-    instructionDepth[prettyCounter] = currentDepth;
-    sprintf(prettyPrintList[prettyCounter++], "%s := ", exp->target->name);
     printf("        %s := ", exp->target->name);
     // Load values
     // printf("OP_ASGN FOUND\n");
@@ -569,15 +540,15 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
       if(DEBUG) printf("r_operand != NULL\n");
       // printf("LAA %d\n", exp->address);
       sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
-      exprgen(exp->r_operand, currentDepth);
-      // exprgen(exp->l_operand, currentDepth);
+      exprgen(exp->r_operand);
+      // exprgen(exp->l_operand);
     }
     if(exp->l_operand != NULL) {// This check is probably unnecessary
       if(DEBUG) printf("l_operand != NULL\n");
-      exprgen(exp->l_operand, currentDepth);
+      exprgen(exp->l_operand);
     }
     // if(exp->r_operand != NULL) // Why is this check here?
-    //   exprgen(exp->r_operand, currentDepth);
+    //   exprgen(exp->r_operand);
     if(exp->l_operand == NULL && exp->r_operand != NULL) {
       if(DEBUG) printf("Got to STO\n");
       // Surprisingly, checking if r_operand is not NULL seems to have fixed
@@ -594,7 +565,7 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_UMIN:
     printf("( -");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "NGI");
@@ -610,13 +581,11 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     // Wrap this expression in parentheses. Space added so the \b doesn't mess
     // up the parentheses.
-    // instructionDepth[prettyCounter] = currentDepth;
-    // sprintf(prettyPrintList[prettyCounter++], "%d ", exp->rvalue);
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     // Print a plus sign and a space.
     printf("+ ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     // Wrap this expression in parentheses. Space added so the \b doesn't mess
     // up the parentheses.
     printf(") ");
@@ -630,9 +599,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_SUB:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("- ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "SBI");
@@ -645,9 +614,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
     case OP_MUL:
     if(DEBUG) printf("Got to OP_MUL\n");
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("* ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "MLI");
@@ -659,9 +628,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_DIV:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("/ ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "DVI");
@@ -673,9 +642,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_LSTHN:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("< ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "LTI");
@@ -687,9 +656,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_LSTHNEQL:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("<= ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "LEI");
@@ -701,9 +670,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_GRTHN:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("> ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "GTI");
@@ -715,9 +684,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_GRTHNEQL:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf(">= ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "GEI");
@@ -729,9 +698,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_EQUAL:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("= ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "EQI");
@@ -743,9 +712,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_NEQUAL:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("<> ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "NEI");
@@ -757,9 +726,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_AND: // These Boolean instructions require a bit of clever faking
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("& ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       // Boolean and = multiplication
@@ -782,9 +751,9 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_OR:
     printf("( ");
-    if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
+    if(exp->l_operand != NULL) exprgen(exp->l_operand);
     printf("| ");
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     if(getPreviousInstructionType(instructionCounter) == 0) {
       // Boolean or = addition
@@ -801,8 +770,8 @@ void exprgen(struct ast_expression *exp, int currentDepth) {
 
     case OP_NOT:
     printf("( ~");
-    // if(exp->l_operand != NULL) exprgen(exp->l_operand, currentDepth);
-    if(exp->r_operand != NULL) exprgen(exp->r_operand, currentDepth);
+    // if(exp->l_operand != NULL) exprgen(exp->l_operand);
+    if(exp->r_operand != NULL) exprgen(exp->r_operand);
     printf(") ");
     // printf("exp->type %d\n", exp->type);
     if(getPreviousInstructionType(instructionCounter) == 0) {
