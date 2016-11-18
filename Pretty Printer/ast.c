@@ -161,6 +161,10 @@ void codeGenIfv2(struct statement *next, int nested) {
       codeGenIfv2(bodyCopy, nested);
       // nested++;
       // nested--;
+      for(i = 0; i < nested+1; i++) {
+        printf("    ");
+      }
+      printf("end if;\n");
       bodyCopy = bodyCopy->link;
       continue;
     }
@@ -181,13 +185,17 @@ void codeGenIfv2(struct statement *next, int nested) {
   // }
   // ifSpace[4*(nested+1)] = '\0';
   // printf("%s", ifSpace);
-  if(nextCopy->tempLink == NULL)
-  {
-    for(i = 0; i < nested+2; i++) {
-      printf("    ");
-    }
-    printf("end if;\n");
-  }
+  // if(nextCopy->tempLink == NULL)
+  // {
+  //   // nested--;
+  //   for(i = 0; i < nested+2; i++) {
+  //     printf("   %d",i);
+  //     // printf("%d", i);
+  //   }
+  //   // nested--;
+  //   printf("end if;\n");
+  //   // nested--;
+  // }
   if(nextCopy->tempLink != NULL) {
     // printf("%s", ifSpace);
     for(i = 0; i < nested+1; i++) {
@@ -200,6 +208,9 @@ void codeGenIfv2(struct statement *next, int nested) {
       // printf("   ");
       // printf("%s", ifSpace);
       // printf("    ");
+      for(i = 0; i < nested+1; i++) {
+        printf("    ");
+      }
       exprgen(tempCopy->exp);
       tempCopy = tempCopy->link;
       if(tempCopy->isCond == 1) {
@@ -207,6 +218,10 @@ void codeGenIfv2(struct statement *next, int nested) {
         // printf("    ");
         codeGenIfv2(tempCopy, nested);
         tempCopy = tempCopy->link;
+        for(i = 0; i < nested+1; i++) {
+          printf("    ");
+        }
+        printf("end if;\n");
         continue;
       }
       // nested--;
@@ -215,6 +230,9 @@ void codeGenIfv2(struct statement *next, int nested) {
     //   ifSpace[i] = ' ';
     // }
     // printf("%s", ifSpace);
+    for(i = 0; i < nested; i++) {
+      printf("    ");
+    }
     printf("end if;\n");
   }
   // printf("        end if;\n");
