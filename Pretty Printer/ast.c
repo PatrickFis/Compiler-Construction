@@ -103,7 +103,8 @@ void printList() {
   }
 
   int iBefore = instructionCounter;
-  label: printf("        ");
+  label: if(next->exp == NULL) break; // Break if there is nothing after an if statement...
+  printf("        ");
   /*label:*/ exprgen(next->exp);
   int iAfter = instructionCounter;
   next = next->link;
