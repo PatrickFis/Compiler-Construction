@@ -82,8 +82,16 @@ void printList() {
     // Section that generates code for if statements
     if(next->isCond == 1) {
       codeGenIfv2(next);
+      if(next->isIfElse == 1) {
+        next = next->link;
+        // printf("Found an if else...\n");
+        goto label;
+      }
     next = next->link;
     continue;
+  }
+  if(next->isIfElse == 1) {
+    // printf("isIfElse = 1\n");
   }
   // End if section
 
@@ -93,8 +101,9 @@ void printList() {
     next = next->link;
     continue;
   }
+
   int iBefore = instructionCounter;
-  exprgen(next->exp);
+  label: exprgen(next->exp);
   int iAfter = instructionCounter;
   // printf("iB = %d, iA = %d\n", iBefore, iAfter);
   // printf("exprgen finished\n"); // Debug
@@ -104,9 +113,9 @@ void printList() {
   }
   printf("end main;\n");
   sprintf(instructionList[instructionCounter++], "HLT");
-  for(int i = 0; i < instructionCounter; i++) {
-    printf("%s\n", instructionList[i]);
-  }
+  // for(int i = 0; i < instructionCounter; i++) {
+  //   printf("%s\n", instructionList[i]);
+  // }
 }
 
 
@@ -129,7 +138,10 @@ void codeGenIfv2(struct statement *next) {
   while(bodyCopy->link != NULL) {
     // Parse this like a regular statement!
     // printf("Hi from bodyCopy\n");
-    if(bodyCopy->isCond == 1) {
+    if(bodyCopy->isIfElse == 1) {
+      printf("HIHIHI\n");
+    }
+    if(bodyCopy->isCond == 1 ) {
       printf("Hi from bodyCopy!\n");
       codeGenIfv2(bodyCopy);
       bodyCopy = bodyCopy->link;
@@ -139,10 +151,21 @@ void codeGenIfv2(struct statement *next) {
     exprgen(bodyCopy->exp);
     bodyCopy = bodyCopy->link;
   }
+  printf("        end if;\n");
   if(nextCopy->isIfElse == 1) {
+    next = next->link;
+    printf("HIHIHI\n");
     printf("        else;\n");
+    // struct statement *elseCopy = malloc(sizeof(struct statement));
+    // elseCopy = nextCopy->body;
+    // while(elseCopy->link != NULL) {
+    //   exprgen(elseCopy->exp);
+    //   elseCopy = elseCopy->link;
+    // }
+    // exprgen(bodyCopy->exp);
     // printf("Houston, we have an else statement\n");
   }
+  printf("end if\n");
 }
 /*
 *  This function is called after exprgen in printList. It makes sure that

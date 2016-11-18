@@ -250,6 +250,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               //   temp->link = NULL;
               // }
               // temp->link = NULL;
+              if($$->if_stmt->tempLink != NULL) {
+                temp->
+              }
               $$->link = temp;
               $$->isCond = 1;
               if($1->isIfElse == 1) {
