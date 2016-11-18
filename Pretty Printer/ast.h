@@ -76,7 +76,7 @@ void insertStmt(struct statement *stmt);
 //struct ast_expression createExp(char kind, char operator, struct ast_expression l_operand, struct ast_expression r_operand, int value);
 struct ast_expression createExp(char kind, char operator, int value);
 void printList();
-void exprgen(struct ast_expression *exp);
+void exprgen(struct ast_expression *exp, int currentDepth);
 void checkInstructions(int iBefore, int iAfter);
 extern struct statement *list;
 extern struct statement *head; // Pointer to head of the list
