@@ -43,7 +43,7 @@ void insertStmt(struct statement *stmt) {
   }
 }
 
-void codeGenIfv2(struct statement *next);
+void codeGenIfv2(struct statement *next, int nested);
 /*
 *  This function goes through the abstract syntax tree and calls the exprgen
 *  function on each statement in a linked list. Will probably change these
@@ -81,7 +81,7 @@ void printList() {
     // printf("Calling exprgen\n"); // Debug
     // Section that generates code for if statements
     if(next->isCond == 1) {
-      codeGenIfv2(next);
+      codeGenIfv2(next, 2);
       if(next->isIfElse == 1) {
         next = next->link;
         // printf("Found an if else...\n");
@@ -122,10 +122,16 @@ void printList() {
 // So this actually finds nested if statements, but if there's an else block it
 // skips over the nested statements. So the problem is from assigning $$->body->link
 // in the parser. This will be overwritten by the programbody portion of rules.
-void codeGenIfv2(struct statement *next) {
+void codeGenIfv2(struct statement *next, int nested) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
-  printf("        ");
+  // printf("        ");
+  char *ifSpace = malloc(sizeof(char));
+  int i;
+  for(i = 0; i < 1*nested; i++) {
+    strcat(ifSpace, " ");
+  }
+  printf("%s", ifSpace);
   printf("if");
   // Parse the conditional statement
   exprgen(nextCopy->conditional_stmt);
@@ -138,24 +144,33 @@ void codeGenIfv2(struct statement *next) {
   while(bodyCopy->link != NULL) {
     // Parse this like a regular statement!
     // printf("Hi from bodyCopy\n");
+    char *spaces = malloc(sizeof(char));
+    // int i;
+    for(i = 0; i < 1*nested; i++) {
+      strcat(spaces, " ");
+    }
+    printf("%s", spaces);
     if(bodyCopy->isIfElse == 1) {
-      printf("HIHIHI\n");
+
     }
     if(bodyCopy->isCond == 1 ) {
-      printf("Hi from bodyCopy!\n");
-      codeGenIfv2(bodyCopy);
+      // printf("Hi from bodyCopy!\n");
+      nested++;
+      codeGenIfv2(bodyCopy, nested);
       bodyCopy = bodyCopy->link;
       continue;
     }
-    printf("    ");
+    // printf("        ");
     exprgen(bodyCopy->exp);
     bodyCopy = bodyCopy->link;
   }
-  printf("        end if;\n");
+  // printf("%s", ifSpace);
+  printf("%s", ifSpace);
+  printf("end if;\n");
   if(nextCopy->isIfElse == 1) {
     next = next->link;
-    printf("HIHIHI\n");
-    printf("        else;\n");
+    printf("%s", ifSpace);
+    printf("else;\n");
     // struct statement *elseCopy = malloc(sizeof(struct statement));
     // elseCopy = nextCopy->body;
     // while(elseCopy->link != NULL) {
@@ -165,7 +180,7 @@ void codeGenIfv2(struct statement *next) {
     // exprgen(bodyCopy->exp);
     // printf("Houston, we have an else statement\n");
   }
-  printf("end if\n");
+  // printf("        end if;\n");
 }
 /*
 *  This function is called after exprgen in printList. It makes sure that
