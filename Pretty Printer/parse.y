@@ -227,9 +227,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               // }
               $$->link = $2;
               $$->isCond = 1;
-              if($$->if_stmt->tempLink != NULL) {
-                $$->link->link = $$->if_stmt->tempLink;
-              }
+              // if($$->if_stmt->tempLink != NULL) {
+              //   $$->link->link = $$->if_stmt->tempLink;
+              // }
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
@@ -250,9 +250,9 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               //   temp->link = NULL;
               // }
               // temp->link = NULL;
-              if($$->if_stmt->tempLink != NULL) {
-                temp->link->link = $$->if_stmt->tempLink;
-              }
+              // if($$->if_stmt->tempLink != NULL) {
+              //   temp->link->link = $$->if_stmt->tempLink;
+              // }
               $$->link = temp;
               $$->isCond = 1;
               if($1->isIfElse == 1) {

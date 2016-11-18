@@ -45,4 +45,5 @@ main;
 			end if;
 		print xy;
 		print N;
+		read N;
 end main;

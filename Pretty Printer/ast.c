@@ -150,9 +150,6 @@ void codeGenIfv2(struct statement *next, int nested) {
       strcat(spaces, " ");
     }
     printf("%s", spaces);
-    if(bodyCopy->isIfElse == 1) {
-
-    }
     if(bodyCopy->isCond == 1 ) {
       // printf("Hi from bodyCopy!\n");
       nested++;
@@ -167,18 +164,22 @@ void codeGenIfv2(struct statement *next, int nested) {
   // printf("%s", ifSpace);
   printf("%s", ifSpace);
   printf("end if;\n");
-  if(nextCopy->isIfElse == 1) {
-    next = next->link;
+  if(nextCopy->tempLink != NULL) {
     printf("%s", ifSpace);
     printf("else;\n");
-    // struct statement *elseCopy = malloc(sizeof(struct statement));
-    // elseCopy = nextCopy->body;
-    // while(elseCopy->link != NULL) {
-    //   exprgen(elseCopy->exp);
-    //   elseCopy = elseCopy->link;
-    // }
-    // exprgen(bodyCopy->exp);
-    // printf("Houston, we have an else statement\n");
+    struct statement *tempCopy = nextCopy->tempLink;
+
+    while(tempCopy->link != NULL) {
+      exprgen(tempCopy->exp);
+      tempCopy = tempCopy->link;
+      if(tempCopy->isCond == 1) {
+        codeGenIfv2(tempCopy, nested);
+        tempCopy = tempCopy->link;
+        continue;
+      }
+    }
+    printf("%s", ifSpace);
+    printf("end if;\n");
   }
   // printf("        end if;\n");
 }
@@ -477,6 +478,7 @@ void exprgen(struct ast_expression *exp) {
     return;
   }
   if(exp->operator == OP_READ) {
+    printf("        read %s;\n", table->table[exp->address].name);
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
     if(table->table[exp->address].type == 0) {
       sprintf(instructionList[instructionCounter++], "INI");
