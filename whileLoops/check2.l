@@ -14,6 +14,10 @@
  * marks in strings. Solution may be to use the regular expression
  * \"([^\\,]|\\.)*\" <- Which I am not entirely sure why is working.
  *
+ * 11/17/2016: Replaced regular expression for charstrings again with
+ * \"([^\\*\n]|\\.)*\" <- This does not have an issue with parsing a string
+ * between quotation marks that has a comma in it.
+ *
  * Also removed the -+ sign that could be in front of litints and litreals.
  * This was causing some issues with parsing certain expressions.
  * ========================================================================
@@ -103,7 +107,7 @@
                                                      return RWPRINT;
                                                    }
 
-\"([^\\,\n]|\\.)*\"                                  { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
+\"([^\\*\n]|\\.)*\"                                  { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
                                                      yylval.sval = strdup(yytext);
                                                      return CHARSTRING;
                                                      free(yylval.sval);
