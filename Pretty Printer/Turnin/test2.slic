@@ -1,0 +1,16 @@
+main;
+data:
+integer: x, y, z, abcdefg;
+algorithm:
+x := 22 * 3 - -1;
+y := 78 * 32 + 2;
+x := x + y;
+z := x + y * 2;
+abcdefg := ~1 <> 45 > 2;
+print abcdefg;
+print !,"Enter abcdefg:";
+read abcdefg;
+print "Asdf", x+2, !, "Asd",!;
+print "Asdf2";
+print 1 + 2 * 3 / 4 & -2;
+end main;

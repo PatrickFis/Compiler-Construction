@@ -1,0 +1,52 @@
+main;
+	data:
+		real: N, nn,
+						abc;
+		integer:			 x, xy,     xyz;
+	algorithm:
+		N := 1.2		;
+		nn := 2.21;
+		abc := (2.1 + 2.2 + 2.11 + 21.2)
+		 *
+		 		 22.1;
+		x := 2 		+ 21;
+		xy := x + 									2;
+		x := -       2;
+		xyz := ~					22;
+		x :=               2|1|22;
+		xy := 23 <> 									21 + -2;
+		nn := 82.11 &
+
+		56.12;
+
+		print !, !,"x, asdf",
+		    !,x+2;
+
+
+
+
+
+
+
+
+
+		if x < 2;
+			x := 3;
+			if x = 3;
+				print xy;
+				x := 42;
+				if x = 4;
+					print x;
+					end if;
+				end if;
+		else;
+			x := 4;
+			if x > 4;
+				#print x;
+				x := 69;
+				end if;
+			end if;
+		print xy;
+		print N;
+		read N;
+end main;

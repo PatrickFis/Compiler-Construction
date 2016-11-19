@@ -1,0 +1,10 @@
+main;
+data:
+integer: x;
+algorithm:
+if x < 2;
+x := 22;
+else;
+x := 21;
+end if;
+end main;
