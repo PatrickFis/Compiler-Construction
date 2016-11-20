@@ -15,4 +15,4 @@ windows: parse.y check2.l main.c
 clean:
 	rm -f a.exe a.out lex.yy.c y.tab.c y.tab.h stable.h.gch ast.h.gch
 cleanDebug:
-	rm -f -r a.out.dSYM a.exe a.out lex.yy.c y.tab.c y.tab.h y.output stable.h.gch ast.h.gch
+	rm -f -r a.out.dSYM a.exe a.out lex.yy.c y.tab.c y.tab.h y.output stable.h.gch ast.h.gch bisonHelper.h.gch

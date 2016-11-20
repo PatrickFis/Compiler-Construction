@@ -845,6 +845,16 @@ void exprgenv2(struct ast_expression *exp) {
       }
       break;
 
+    case OP_UMIN:
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
+      if(exp->target->type == 0) {
+        sprintf(instructionList[instructionCounter++], "NGI");
+      }
+      else if(exp->target->type == 1) {
+        sprintf(instructionList[instructionCounter++], "NGF");
+      }
+      break;
+
     case OP_ADD:
       // printf("GOT TO OP_ADD PORTION!!!\n");
       // printf("exp->type: %d\n", exp->type);
@@ -857,6 +867,41 @@ void exprgenv2(struct ast_expression *exp) {
         sprintf(instructionList[instructionCounter++], "ADF");
       }
       break;
+
+    case OP_SUB:
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
+      if(exp->target->type == 0) {
+        sprintf(instructionList[instructionCounter++], "SBI");
+      }
+      else if(exp->target->type == 1) {
+        sprintf(instructionList[instructionCounter++], "SBF");
+      }
+      break;
+
+    case OP_MUL:
+      if(DEBUG) printf("Got to OP_MUL\n");
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
+      if(exp->target->type == 0) {
+        sprintf(instructionList[instructionCounter++], "MLI");
+      }
+      else if(exp->target->type == 1) {
+        sprintf(instructionList[instructionCounter++], "MLF");
+      }
+      break;
+
+    case OP_DIV:
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
+      if(exp->target->type == 0) {
+        sprintf(instructionList[instructionCounter++], "DVI");
+      }
+      else if(exp->target->type == 1) {
+        sprintf(instructionList[instructionCounter++], "DVF");
+      }
+      break;
+
   }
 }
 
