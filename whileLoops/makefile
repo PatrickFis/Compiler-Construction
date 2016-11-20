@@ -6,7 +6,7 @@ a.out: parse.y check2.l main.c
 debug: parse.y check2.l main.c
 	bison --debug --verbose -y -d parse.y
 	flex check2.l
-	gcc -g lex.yy.c y.tab.c main.c stable.c stable.h ast.c ast.h -ll
+	gcc -g lex.yy.c y.tab.c main.c stable.c stable.h ast.c ast.h bisonHelper.c bisonHelper.h -ll
 
 windows: parse.y check2.l main.c
 	bison -y -d parse.y

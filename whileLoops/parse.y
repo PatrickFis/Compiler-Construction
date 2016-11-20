@@ -17,6 +17,7 @@
 
 #include "stable.h"
 #include "ast.h"
+#include "bisonHelper.h"
 #include <stdio.h>
 #include <string.h>
 #define DEBUG 0
@@ -321,6 +322,7 @@ assignstmt: VAR assign bexp SEMICOLON
               $$->r_operand = $3;
               $$->target = &table->table[isPresent($1)]; // Get target from symbol table
               $$->address = $$->target->address;
+              assignStmtTargets($$, $$->target);
               if(DEBUG) printf("Address %d\n", $$->address);
               $$->arrayOffset = 0;
             }

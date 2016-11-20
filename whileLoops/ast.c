@@ -76,9 +76,10 @@ void printList() {
     continue;
   }
   int iBefore = instructionCounter;
-  exprgen(next->exp);
+  // exprgen(next->exp);
+  exprgenv2(next->exp);
   int iAfter = instructionCounter;
-  checkInstructionsv2(iBefore, iAfter);
+  // checkInstructionsv2(iBefore, iAfter);
   next = next->link;
   }
   sprintf(instructionList[instructionCounter++], "HLT");
@@ -785,7 +786,78 @@ void exprgen(struct ast_expression *exp) {
 }
 
 void exprgenv2(struct ast_expression *exp) {
+  if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
+    if(DEBUG) printf("Got to load int\n");
+    // printf("LLI %d\n", exp->value);
+    // printf("exp->type = %d\n", exp->type);
+    sprintf(instructionList[instructionCounter++], "LLI %d", exp->value);
+    if(exp->target->type == 1) sprintf(instructionList[instructionCounter++], "ITF");
+  }
+  else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
+    if(DEBUG) printf("Got to load real\n");
+    sprintf(instructionList[instructionCounter++], "LLF %f", exp->rvalue);
+    if(exp->target->type == 0) sprintf(instructionList[instructionCounter++], "FTI");
+  }
+  if(exp->type == TYPE_VAR) {
+    if(DEBUG) printf("Got to variable type\n");
+    // printf("LAA %d\n",exp->l_operand->target->address);
+    // printf("LOD\n");
+    sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
+    sprintf(instructionList[instructionCounter++], "LOD");
+    if(exp->l_operand->target->type != exp->target->type) {
+      if(exp->target->type == 0) { // Real to integer
+        sprintf(instructionList[instructionCounter++], "FTI");
+      }
+      else if(exp->target->type == 1) { // Integer to real
+        sprintf(instructionList[instructionCounter++], "ITF");
+      }
+    }
+    if(DEBUG) printf("Finished variable type\n"); // Debug
+    return; // Just stop the recursion when you reach a variable reference
+  }
+  if(DEBUG) printf("Got to switch statement\n");
+  switch(exp->operator) {
+    case OP_ASGN:
+      if(DEBUG) printf("Got to OP_ASGN\n");
+      // assignTarget(exp, *exp->target);
+      // Load values
+      // printf("OP_ASGN FOUND\n");
+      if(exp->r_operand != NULL) {// Load the address used for assignment
+        if(DEBUG) printf("r_operand != NULL\n");
+        // printf("LAA %d\n", exp->address);
+        sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
+        exprgenv2(exp->r_operand);
+        // exprgen(exp->l_operand);
+      }
+      if(exp->l_operand != NULL) {// This check is probably unnecessary
+        if(DEBUG) printf("l_operand != NULL\n");
+        exprgenv2(exp->l_operand);
+      }
+      // if(exp->r_operand != NULL) // Why is this check here?
+      //   exprgen(exp->r_operand);
+      if(exp->l_operand == NULL && exp->r_operand != NULL) {
+        if(DEBUG) printf("Got to STO\n");
+        // Surprisingly, checking if r_operand is not NULL seems to have fixed
+        // an issue where the STO instruction was being printed more than
+        // once.
+        // printf("STO\n");
+        sprintf(instructionList[instructionCounter++], "STO");
+      }
+      break;
 
+    case OP_ADD:
+      // printf("GOT TO OP_ADD PORTION!!!\n");
+      // printf("exp->type: %d\n", exp->type);
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
+      if(exp->target->type == 0) {
+        sprintf(instructionList[instructionCounter++], "ADI");
+      }
+      else if(exp->target->type == 1) {
+        sprintf(instructionList[instructionCounter++], "ADF");
+      }
+      break;
+  }
 }
 
 struct ast_expression createExp(char kind, char operator, int value) {
