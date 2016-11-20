@@ -1,0 +1,7 @@
+main;
+  data:
+    integer: x, y, z;
+    real: a, b, c;
+  algorithm:
+    x := 12.2;
+end main;
