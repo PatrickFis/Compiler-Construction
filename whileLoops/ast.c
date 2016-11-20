@@ -71,7 +71,7 @@ void printList() {
 
   // Section that generates code for while statements
   if(next->isWhile == 1) {
-    printf("Hi\n");
+    codeGenWhile(next);
     next = next->link;
     continue;
   }
@@ -88,9 +88,7 @@ void printList() {
   }
 }
 
-// So this actually finds nested if statements, but if there's an else block it
-// skips over the nested statements. So the problem is from assigning $$->body->link
-// in the parser. This will be overwritten by the programbody portion of rules.
+// So this seems to be working.
 void codeGenIfv2(struct statement *next) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
@@ -141,6 +139,24 @@ void codeGenIfv2(struct statement *next) {
   sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
 }
 
+void codeGenWhile(struct statement *next) {
+  struct ast_while_stmt *whileCopy = malloc(sizeof(struct ast_while_stmt));
+  whileCopy = next->while_stmt; // Copy the while_stmt into whileCopy, handle it like if statements.
+  int conditional_location = instructionCounter; // This is the location of the conditional
+  exprgen(whileCopy->conditional_stmt); // Parse the conditional statement
+  int JPF_location = instructionCounter; // Location of jump statement
+  sprintf(instructionList[instructionCounter++], "JPF"); // Replace this with the instruction after the while loop
+
+  struct statement *bodyCopy = malloc(sizeof(struct statement)); // Copy the body of the while loop
+  bodyCopy = whileCopy->body;
+  while(bodyCopy->link != NULL) {
+    // Generate code for the body of the loop
+    exprgen(bodyCopy->exp);
+    bodyCopy = bodyCopy->link;
+  }
+  sprintf(instructionList[JPF_location], "JPF %d", instructionCounter+1); // Put location in JPF
+  sprintf(instructionList[instructionCounter++], "JMP %d", conditional_location); // Jump back to conditional
+}
 void checkInstructionsv2(int iBefore, int iAfter) {
   int i;
   int seenReal = 0;

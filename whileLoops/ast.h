@@ -81,6 +81,7 @@ void exprgenv2(struct ast_expression *exp);
 void checkInstructions(int iBefore, int iAfter);
 void codeGenIfv2(struct statement *next);
 void checkInstructionsv2(int iBefore, int iAfter);
+void codeGenWhile(struct statement *next);
 extern struct statement *list;
 extern struct statement *head; // Pointer to head of the list
 
