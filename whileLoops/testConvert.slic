@@ -4,4 +4,6 @@ main;
     real: a, b, c;
   algorithm:
     x := 12.2;
+    x := 12.2 + a;
+    x := 12.2 + 2.1 + 23.2;
 end main;

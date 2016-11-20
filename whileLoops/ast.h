@@ -77,6 +77,7 @@ void insertStmt(struct statement *stmt);
 struct ast_expression createExp(char kind, char operator, int value);
 void printList();
 void exprgen(struct ast_expression *exp);
+void exprgenv2(struct ast_expression *exp);
 void checkInstructions(int iBefore, int iAfter);
 void codeGenIfv2(struct statement *next);
 void checkInstructionsv2(int iBefore, int iAfter);

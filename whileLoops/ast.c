@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEBUG 1
+#define DEBUG 0
 struct statement *list; // Extern struct declared in ast.h. Used as a linked list.
 struct statement *head;
 int count = 0; // Keep track of how many statements we have
@@ -64,8 +64,8 @@ void printList() {
     // Section that generates code for if statements
     if(next->isCond == 1) {
       codeGenIfv2(next);
-    next = next->link;
-    continue;
+      next = next->link;
+      continue;
   }
   // End if section
 
@@ -78,7 +78,7 @@ void printList() {
   int iBefore = instructionCounter;
   exprgen(next->exp);
   int iAfter = instructionCounter;
-  checkInstructions(iBefore, iAfter);
+  checkInstructionsv2(iBefore, iAfter);
   next = next->link;
   }
   sprintf(instructionList[instructionCounter++], "HLT");
@@ -130,6 +130,54 @@ void codeGenIfv2(struct statement *next) {
       }
     }
   }
+}
+
+void checkInstructionsv2(int iBefore, int iAfter) {
+  int i;
+  int seenReal = 0;
+  // This portion will check the first instruction for a load and the last
+  // instruction for a store.
+  char *beforeCopy = malloc(sizeof(strlen(instructionList[iBefore])));
+  strcpy(beforeCopy, instructionList[iBefore]);
+  char *instBefore = strtok(beforeCopy, " ");
+  if(strcmp(instBefore, "LAA") == 0) {
+    // First instruction is a load, so grab address and check last instruction
+    char *tar = strtok(NULL, " "); // This is the address
+    int type = table->table[atoi(tar)].type; // Get the type from the symbol table
+    char *lastCopy = malloc(sizeof(strlen(instructionList[iAfter-1]))); // Last instruction
+    strcpy(lastCopy, instructionList[iAfter-1]);
+    char *instAfter = strtok(lastCopy, " ");
+    if(strcmp(instAfter, "STO") == 0) {
+      printf("Target name: %s, target type: %d, tar variable: %s\n", table->table[atoi(tar)].name, table->table[atoi(tar)].type, tar);
+      printf("This is an assignment statement. Check the instructions and do conversions.\n");
+      if(type == 0) {
+        // Integer conversions, don't need to check first or last instruction
+        for(i = iBefore+1; i < iAfter-1; i++) {
+          char *iCopy = malloc(sizeof(strlen(instructionList[i])));
+          strcpy(iCopy, instructionList[i]);
+          char *tokens = strtok(iCopy, " "); // Instruction
+          if(strcmp(tokens, "LLF") == 0) { // If this is a real number being loaded
+            strcat(instructionList[i], "\nFTI");
+          }
+          if(strcmp(tokens, "LAA") == 0) { // If a load is about to be performed
+            tokens = strtok(NULL, " "); // Address of load
+            if(table->table[atoi(tokens)].type == 1) { // Loading a real
+              strcat(instructionList[i+1], "\nFTI");
+            }
+          }
+        }
+      }
+    }
+  }
+  // for(i = iBefore; i < iAfter; i++) {
+  //   // Copy the instruction at i into iCopy so that strtok doesn't modify
+  //   // the original instruction.
+  //   char *iCopy = malloc(sizeof(strlen(instructionList[i])));
+  //   strcpy(iCopy, instructionList[i]);
+  //   // tar will hold the instruction
+  //   char *tar = strtok(iCopy, " "); // This is the instruction
+  //   if()
+  // }
 }
 /*
 *  This function is called after exprgen in printList. It makes sure that
@@ -505,7 +553,9 @@ void exprgen(struct ast_expression *exp) {
   else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
     if(DEBUG) printf("Got to load real\n");
     // printf("LLF %f\n", exp->rvalue);
+    // printf("target = %s type = %d\n", exp->target->name, exp->target->type);
     sprintf(instructionList[instructionCounter++], "LLF %f", exp->rvalue);
+    // if(exp->target->type == 0) sprintf(instructionList[instructionCounter++], "FTI");
   }
   if(exp->type == TYPE_VAR) {
     if(DEBUG) printf("Got to variable type\n");
@@ -561,6 +611,12 @@ void exprgen(struct ast_expression *exp) {
     // printf("exp->type: %d\n", exp->type);
     if(exp->l_operand != NULL) exprgen(exp->l_operand);
     if(exp->r_operand != NULL) exprgen(exp->r_operand);
+    // if(exp->target->type == 0) {
+    //   sprintf(instructionList[instructionCounter++], "ADI");
+    // }
+    // else if(exp->target->type == 1) {
+    //   sprintf(instructionList[instructionCounter++], "ADF");
+    // }
     if(getPreviousInstructionType(instructionCounter) == 0) {
       sprintf(instructionList[instructionCounter++], "ADI");
     }
@@ -726,6 +782,10 @@ void exprgen(struct ast_expression *exp) {
 
   }
   if(DEBUG) printf("Finished exprgen\n");
+}
+
+void exprgenv2(struct ast_expression *exp) {
+
 }
 
 struct ast_expression createExp(char kind, char operator, int value) {
