@@ -94,7 +94,7 @@ void printList() {
 void codeGenIfv2(struct statement *next) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
-
+  int sawElse = 0;
   // Parse the conditional statement
   exprgen(nextCopy->conditional_stmt);
   int jumpLocation = instructionCounter;
@@ -119,8 +119,11 @@ void codeGenIfv2(struct statement *next) {
     printf("Houston, we have an else statement\n");
   }
   if(nextCopy->tempLink != NULL) {
+    sawElse = 1;
+    sprintf(instructionList[jumpLocation], "JPF %d", instructionCounter+1);
     struct statement *tempCopy = nextCopy->tempLink;
-
+    int elseJump = instructionCounter;
+    sprintf(instructionList[instructionCounter++], "JMP"); // Replace this
     while(tempCopy->link != NULL) {
       exprgen(tempCopy->exp);
       tempCopy = tempCopy->link;
@@ -130,7 +133,12 @@ void codeGenIfv2(struct statement *next) {
         continue;
       }
     }
+    int elseAfter = instructionCounter;
+    sprintf(instructionList[elseJump], "JMP %d", instructionCounter);
   }
+  int iAfter = instructionCounter;
+  if(!sawElse)
+  sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
 }
 
 void checkInstructionsv2(int iBefore, int iAfter) {
@@ -786,6 +794,19 @@ void exprgen(struct ast_expression *exp) {
 }
 
 void exprgenv2(struct ast_expression *exp) {
+  if(exp->operator == OP_PRINT) { // This occurs if an expression is a print statement
+    // printf("Got to OP_PRINT\n");
+    // if(exp->r_operand != NULL)exprgen(exp->r_operand);
+    // struct ast_expression *x = exp->r_operand;
+    // while(x != NULL) {
+    //   printf("x->charString, %s\n", x->charString);
+    //   x = x->r_operand;
+    // }
+    // printf("exp->charString, %s\n", exp->charString);
+    // parsePrintStatementv2(exp);
+    parsePrintv3(exp);
+    return;
+  }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
     if(DEBUG) printf("Got to load int\n");
     // printf("LLI %d\n", exp->value);
@@ -969,8 +990,8 @@ void exprgenv2(struct ast_expression *exp) {
       break;
 
     case OP_AND: // These Boolean instructions require a bit of clever faking
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
       if(exp->target->type == 0) {
         // Boolean and = multiplication
         // If the result is != 0, then the result is true.
@@ -1009,7 +1030,7 @@ void exprgenv2(struct ast_expression *exp) {
 
     case OP_NOT:
       // if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
       // printf("exp->type %d\n", exp->type);
       if(exp->target->type == 0) {
         // Boolean not = complement
