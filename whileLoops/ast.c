@@ -103,9 +103,9 @@ void codeGenIfv2(struct statement *next) {
   bodyCopy = nextCopy->body;
   while(bodyCopy->link != NULL) {
     // Parse this like a regular statement!
-    printf("Hi from bodyCopy\n");
+    // printf("Hi from bodyCopy\n");
     if(bodyCopy->isCond == 1) {
-      printf("Hi from bodyCopy!\n");
+      //printf("Hi from bodyCopy!\n");
       codeGenIfv2(bodyCopy);
       bodyCopy = bodyCopy->link;
       continue;

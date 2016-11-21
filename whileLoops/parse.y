@@ -234,7 +234,7 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
-              printf("Controlstmt\n");
+              // printf("Controlstmt\n");
               if(DEBUG) printf("Got to controlstmt programbody\n");
             }
             |controlstmt {
@@ -256,7 +256,7 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
-              printf("Controlstmt2\n");
+              // printf("Controlstmt2\n");
               if(DEBUG) printf("Got to controlstmt\n");
             }
             |outputstmt programbody {
@@ -300,13 +300,21 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               if(DEBUG) printf("Finished whilestmt programbody\n");
             }
             |whilestmt {
-              if(DEBUG) printf("Got to whilestmt \n");
+              if(DEBUG) printf("Got to whilestmt\n");
               $$ = malloc(sizeof(struct statement));
+              $$->while_stmt = $1;
               struct statement *temp = malloc(sizeof(struct statement));
               temp->while_stmt = $$->while_stmt;
-              temp->link = NULL;
               $$->link = temp;
               $$->isWhile = 1;
+              // $$ = malloc(sizeof(struct statement));
+              // struct statement *temp = malloc(sizeof(struct statement));
+              // temp->while_stmt = $1;
+              // temp->link = NULL;
+              // $$->link = temp;
+              // // $$->link->while_stmt = temp->while_stmt;
+              // $$->isWhile = 1;
+
               if(DEBUG) printf("Finished whilestmt\n");
             }
             ;
@@ -701,7 +709,7 @@ inputstmt: RWREAD varref SEMICOLON {
 //            ;
 
 controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
-              printf("Found an if\n");
+              if(DEBUG) printf("Found an if\n");
               $$ = malloc(sizeof(struct ast_if_stmt));
               $$->conditional_stmt = $2;
               $$->body = $4;
