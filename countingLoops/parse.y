@@ -773,6 +773,24 @@ countingstmt: RWCOUNTING VAR RWUPWARD bexp RWTO bexp SEMICOLON programbody RWEND
                 $$->body = $8;
                 $$->direction = 1;
             }
+            |RWCOUNTING VAR RWDOWNWARD bexp RWTO bexp SEMICOLON programbody RWEND RWCOUNTING SEMICOLON {
+              if(DEBUG) printf("Got to first counting downward statement\n");
+              $$ = malloc(sizeof(struct ast_counting_stmt));
+              // Change the target into an assignment
+              $$->target_assignment = malloc(sizeof(struct ast_expression));
+              $$->target_assignment->kind = KIND_OP;
+              $$->target_assignment->operator = OP_ASGN;
+              $$->target_assignment->r_operand = $4;
+              $$->target_assignment->target = &table->table[isPresent($2)]; // Get target from symbol table
+              $$->target_assignment->address = $$->target_assignment->target->address;
+              assignStmtTargets($$->target_assignment, $$->target_assignment->target);
+              $$->target_assignment->arrayOffset = 0;
+
+              $$->startexpr = $4;
+              $$->endexpr = $6;
+              $$->body = $8;
+              $$->direction = 0;
+            }
             ;
 endmainstmt: RWEND RWMAIN SEMICOLON { if(DEBUG) printf("Got to endmainstmt\n");};
 
