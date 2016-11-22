@@ -3,11 +3,18 @@ main;
     integer: x, y;
   algorithm:
     y := 0;
+    #Counting if else test
     counting x upward 0 to 10;
       y := y + x;
+      if x > 5;
+        print x, !;
+        #end if;
+      else;
+        print "x < 5";
+        end if;
       end counting;
-    print y, !;
-    counting y downward 10 to 0;
-      print y, !;
-      end counting;
+    #print y, !;
+    #counting y downward 10 to 0;
+    #  print y, !;
+    #  end counting;
 end main;

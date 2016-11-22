@@ -756,7 +756,7 @@ whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON {
            ;
 
 countingstmt: RWCOUNTING VAR RWUPWARD bexp RWTO bexp SEMICOLON programbody RWEND RWCOUNTING SEMICOLON {
-                if(DEBUG) printf("Got to first counting upward statement\n");
+                if(DEBUG) printf("Got to counting upward statement\n");
                 $$ = malloc(sizeof(struct ast_counting_stmt));
                 // Change the target into an assignment
                 $$->target_assignment = malloc(sizeof(struct ast_expression));
@@ -774,7 +774,7 @@ countingstmt: RWCOUNTING VAR RWUPWARD bexp RWTO bexp SEMICOLON programbody RWEND
                 $$->direction = 1;
             }
             |RWCOUNTING VAR RWDOWNWARD bexp RWTO bexp SEMICOLON programbody RWEND RWCOUNTING SEMICOLON {
-              if(DEBUG) printf("Got to first counting downward statement\n");
+              if(DEBUG) printf("Got to counting downward statement\n");
               $$ = malloc(sizeof(struct ast_counting_stmt));
               // Change the target into an assignment
               $$->target_assignment = malloc(sizeof(struct ast_expression));

@@ -190,8 +190,14 @@ void codeGenCount(struct statement *next) {
   bodyCopy = countCopy->body;
   while(bodyCopy->link != NULL) {
     // Generate code for the body of the loop
-    exprgenv2(bodyCopy->exp);
-    bodyCopy = bodyCopy->link;
+    if(bodyCopy->isCond == 1) {
+      codeGenIfv2(bodyCopy);
+      bodyCopy = bodyCopy->link;
+    }
+    else {
+      exprgenv2(bodyCopy->exp);
+      bodyCopy = bodyCopy->link;
+    }
   }
   if(countCopy->direction == 1) {
     // Add one to the target variable
