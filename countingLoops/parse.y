@@ -20,7 +20,7 @@
 #include "bisonHelper.h"
 #include <stdio.h>
 #include <string.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 int entry_count = 0; // Used to keep track of what symbols are being inserted.
@@ -321,9 +321,19 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
             }
             |countingstmt programbody {
               if(DEBUG) printf("Got to countingstmt programbody\n");
+              $$ = malloc(sizeof(struct statement));
+              $$->count_stmt = $1;
+              $$->link = $2;
+              $$->isCount = 1;
             }
-            countingstmt {
-              if(DEBUG) printf("Got ot countingstmt programbody\n");
+            |countingstmt {
+              if(DEBUG) printf("Got to countingstmt programbody\n");
+              $$ = malloc(sizeof(struct statement));
+              $$->count_stmt = $1;
+              struct statement *temp = malloc(sizeof(struct statement));
+              temp->count_stmt = $$->count_stmt;
+              $$->link = temp;
+              $$->isCount = 1;
             }
             ;
 
@@ -744,6 +754,26 @@ whilestmt: RWWHILE bexp SEMICOLON programbody RWEND RWWHILE SEMICOLON {
               $$->body = $4;
            }
            ;
+
+countingstmt: RWCOUNTING VAR RWUPWARD bexp RWTO bexp SEMICOLON programbody RWEND RWCOUNTING SEMICOLON {
+                if(DEBUG) printf("Got to first counting upward statement\n");
+                $$ = malloc(sizeof(struct ast_counting_stmt));
+                // Change the target into an assignment
+                $$->target_assignment = malloc(sizeof(struct ast_expression));
+                $$->target_assignment->kind = KIND_OP;
+                $$->target_assignment->operator = OP_ASGN;
+                $$->target_assignment->r_operand = $4;
+                $$->target_assignment->target = &table->table[isPresent($2)]; // Get target from symbol table
+                $$->target_assignment->address = $$->target_assignment->target->address;
+                assignStmtTargets($$->target_assignment, $$->target_assignment->target);
+                $$->target_assignment->arrayOffset = 0;
+
+                $$->startexpr = $4;
+                $$->endexpr = $6;
+                $$->body = $8;
+                $$->direction = 1;
+            }
+            ;
 endmainstmt: RWEND RWMAIN SEMICOLON { if(DEBUG) printf("Got to endmainstmt\n");};
 
 %%

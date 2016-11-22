@@ -30,10 +30,12 @@ struct statement {
     struct ast_expression *exp;
     struct ast_if_stmt *if_stmt;
     struct ast_while_stmt *while_stmt;
+    struct ast_counting_stmt *count_stmt;
     // struct symbol_table_entry *target;
     int isCond;
     int isIfElse;
     int isWhile;
+    int isCount;
 };
 
 struct ast_node { // This portion will probably be used for control structures, etc
@@ -60,9 +62,14 @@ struct ast_while_stmt {
 
 struct ast_counting_stmt {
   struct statement *tempLink;
-  struct ast_expression *conditional_stmt;
+  // struct symbol_table_entry *target;
+  struct ast_expression *target_assignment;
+  struct ast_expression *startexpr;
+  struct ast_expression *endexpr;
   struct statement *body;
-}
+  int direction; // Upward = 1, downward = 0
+};
+
 struct ast_expression { // This portion will just be used for expressions(possibly just integer expressions)
     char kind;
     char operator;
@@ -87,6 +94,7 @@ void checkInstructions(int iBefore, int iAfter);
 void codeGenIfv2(struct statement *next);
 void checkInstructionsv2(int iBefore, int iAfter);
 void codeGenWhile(struct statement *next);
+void codeGenCount(struct statement *next);
 extern struct statement *list;
 extern struct statement *head; // Pointer to head of the list
 

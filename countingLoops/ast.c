@@ -75,6 +75,14 @@ void printList() {
     next = next->link;
     continue;
   }
+  // End while section
+
+  // Section that generates code for counting statements
+  if(next->isCount == 1) {
+    codeGenCount(next);
+    next = next->link;
+    continue;
+  }
   int iBefore = instructionCounter;
   // exprgen(next->exp);
   exprgenv2(next->exp);
@@ -151,12 +159,64 @@ void codeGenWhile(struct statement *next) {
   bodyCopy = whileCopy->body;
   while(bodyCopy->link != NULL) {
     // Generate code for the body of the loop
-    exprgen(bodyCopy->exp);
+    exprgenv2(bodyCopy->exp);
     bodyCopy = bodyCopy->link;
   }
   sprintf(instructionList[JPF_location], "JPF %d", instructionCounter+1); // Put location in JPF
   sprintf(instructionList[instructionCounter++], "JMP %d", conditional_location); // Jump back to conditional
 }
+
+void codeGenCount(struct statement *next) {
+  struct ast_counting_stmt *countCopy = malloc(sizeof(struct ast_counting_stmt));
+  countCopy = next->count_stmt; // Copy the counting statement into countCopy like if and while statements
+  exprgenv2(countCopy->target_assignment); // Assign the target variable the value stored in startexpr
+  int loop_location = instructionCounter; // Store the location that should be jumped to after the loop iterates
+  // Load the counting variable
+  sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+  sprintf(instructionList[instructionCounter++], "LOD");
+  // Assign the counting variable as a target for endexpr, this just makes generating an expression easier
+  countCopy->endexpr->target = &table->table[countCopy->target_assignment->address];
+  // Generate code for the end expression
+  exprgenv2(countCopy->endexpr);
+  if(countCopy->direction == 1) { // If counting upwards, do this
+    sprintf(instructionList[instructionCounter++], "LEI");
+  }
+  else if(countCopy->direction == 0) { // If counting downwards, do this
+    sprintf(instructionList[instructionCounter++], "GEI");
+  }
+  int JPF_loc = instructionCounter;
+  sprintf(instructionList[instructionCounter++], "JPF"); // Replace this
+  struct statement *bodyCopy = malloc(sizeof(struct statement)); // Copy the body of the counting statement
+  bodyCopy = countCopy->body;
+  while(bodyCopy->link != NULL) {
+    // Generate code for the body of the loop
+    exprgenv2(bodyCopy->exp);
+    bodyCopy = bodyCopy->link;
+  }
+  if(countCopy->direction == 1) {
+    // Add one to the target variable
+    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+    sprintf(instructionList[instructionCounter++], "LOD");
+    sprintf(instructionList[instructionCounter++], "LLI 1");
+    sprintf(instructionList[instructionCounter++], "ADI");
+    sprintf(instructionList[instructionCounter++], "STO");
+    sprintf(instructionList[instructionCounter++], "JMP %d", loop_location);
+    sprintf(instructionList[JPF_loc], "JPF %d", instructionCounter);
+  }
+  else if(countCopy->direction == 0) {
+    // Subtract one from the target variable
+    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+    sprintf(instructionList[instructionCounter++], "LOD");
+    sprintf(instructionList[instructionCounter++], "LLI 1");
+    sprintf(instructionList[instructionCounter++], "SBI");
+    sprintf(instructionList[instructionCounter++], "STO");
+    sprintf(instructionList[instructionCounter++], "JMP %d", loop_location);
+    sprintf(instructionList[JPF_loc], "JPF %d", instructionCounter);
+  }
+}
+
 void checkInstructionsv2(int iBefore, int iAfter) {
   int i;
   int seenReal = 0;
