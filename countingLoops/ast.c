@@ -190,11 +190,19 @@ void codeGenCount(struct statement *next) {
   bodyCopy = countCopy->body;
   while(bodyCopy->link != NULL) {
     // Generate code for the body of the loop
-    if(bodyCopy->isCond == 1) {
+    if(bodyCopy->isCond == 1) { // If loop contains an if statement
       codeGenIfv2(bodyCopy);
       bodyCopy = bodyCopy->link;
     }
-    else {
+    else if(bodyCopy->isWhile == 1) { // If loop contains a while statement
+      codeGenWhile(bodyCopy);
+      bodyCopy = bodyCopy->link;
+    }
+    else if(bodyCopy->isCount == 1) { // If this is a nested counting loop
+      codeGenCount(bodyCopy);
+      bodyCopy = bodyCopy->link;
+    }
+    else { // If the next thing in the loop is an expression
       exprgenv2(bodyCopy->exp);
       bodyCopy = bodyCopy->link;
     }
