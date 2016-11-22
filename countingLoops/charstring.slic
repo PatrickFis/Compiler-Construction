@@ -1,0 +1,62 @@
+#=================================================================
+#	Collection of tests for my compiler.
+#=================================================================
+
+main;
+	data:
+		real: N, nn;
+		integer: arr[10];
+		integer: x;
+	algorithm:
+		#print !,!,"x+2","x+3";
+		#print N*2.0;
+		#print "Asf", "Asdf";
+		#print "Asdf", N*3.2 + 2.3, "Asdf", "Asdf2";
+		#print "x+2";
+		#nn := (2.2 * 2.2) + 2.2;
+		#read N;
+		#if N<2.2;
+		#	N := 2.2;
+		#	nn := 22.3*33.2;
+		#else;
+		#	N := 22.2;
+		#	nn := 72.3 / 23.2 * 22.1;
+		#	end if;
+		#N := 22.3;
+		#N := 8.2 * (3.1 - 2.1);
+		#print "Asd ", N * 33.1 + 1.21 - (2.1 * 2.0);
+
+		#IF TEST - Passed, gstal code ran successfully. Also read works fine.
+		read N;
+		if N<3.0;
+			N := 2.0;
+			if N < 4.0;
+				N := 5.0;
+				if N < 22.12;
+					N := 212.1;
+					end if;
+				end if;
+		#	end if;
+		else;
+			N := 1337.0;
+			if N = 1337.0;
+				print "Asdf";
+				end if;
+			end if;
+		print N;
+		#PRINT TEST - Passed
+		#N := 2.0;
+		#print "This is a test string",!, N * 33.1 + 2.12,!, "This is the end of the string.";
+		#print "This is a""test string", !, N * 33.1 + 2.12, !,"Test",!;
+
+		#EXPRESSION DEBUG TEST - Looks like it passed.
+		#N := 8.1*-2.2+1.1111-2.321/32.21*22.2;
+
+		#ARRAY REFERENCE TEST - Looks like it passed.
+		#arr[5] := (32 - 3) * 29 + 2;
+		#x := 22 + arr[5];
+
+		#print N, !;
+		#print arr[5], !;
+		#print x;
+end main;
