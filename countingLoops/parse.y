@@ -20,7 +20,7 @@
 #include "bisonHelper.h"
 #include <stdio.h>
 #include <string.h>
-#define DEBUG 1
+#define DEBUG 0
 struct symbol_table *table;
 struct statement *list;
 int entry_count = 0; // Used to keep track of what symbols are being inserted.
@@ -734,7 +734,7 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
               $$->isIfElse = 0;
              }
              |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
-               printf("Found an if else\n");
+               if(DEBUG) printf("Found an if else\n");
                $$ = malloc(sizeof(struct ast_if_stmt));
                $$->conditional_stmt = $2;
                $$->body = $4;

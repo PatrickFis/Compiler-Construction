@@ -1,26 +1,45 @@
 main;
   data:
-    integer: x, y;
+    integer: x, y, z, a, b, c;
   algorithm:
     y := 0;
-    #Counting if else test
-    counting x upward 0 to 10;
-      y := y + x;
-      if x > 5;
-        print x, !;
-        #end if;
-      else;
-        print "x < 5";
-        end if;
-      while y < 10;
-        y := y + 20;
-        end while;
-      counting y upward 100 to 200;
-        print y;
-        end counting;
-      end counting;
+    a := 0;
+    b := 0;
+    c := 0;
+    #Nested counting loop testing - Passed
+    #counting x upward 0 to 10;
+    #  a := a + x;
+    #  if x > 5;
+    #    print x, !;
+    #    #end if;
+    #  else;
+    #    print "x < 5", !;
+    #    end if;
+    #  while y < 10;
+    #    y := y + 1;
+    #    print "In while loop", !;
+    #    end while;
+    #  counting y upward 1 to 5;
+    #    print y, !;
+    #    end counting;
+    #  end counting;
     #print y, !;
     #counting y downward 10 to 0;
     #  print y, !;
     #  end counting;
+
+    #Nested while loop testing - Passed
+    while y < 1024;
+      y := y + 1;
+      while a < 100;
+        a := a + 1;
+        end while;
+      if a = 100;
+        print "a = 100", !;
+        end if;
+      counting x upward 1 to 2;
+        print "x = ", x, !;
+        end counting;
+      end while;
+    print y, !, a, !;
 end main;

@@ -159,8 +159,22 @@ void codeGenWhile(struct statement *next) {
   bodyCopy = whileCopy->body;
   while(bodyCopy->link != NULL) {
     // Generate code for the body of the loop
-    exprgenv2(bodyCopy->exp);
-    bodyCopy = bodyCopy->link;
+    if(bodyCopy->isCond == 1) { // If loop contains an if statement
+      codeGenIfv2(bodyCopy);
+      bodyCopy = bodyCopy->link;
+    }
+    else if(bodyCopy->isWhile == 1) { // If loop contains a while statement
+      codeGenWhile(bodyCopy);
+      bodyCopy = bodyCopy->link;
+    }
+    else if(bodyCopy->isCount == 1) { // If this is a nested counting loop
+      codeGenCount(bodyCopy);
+      bodyCopy = bodyCopy->link;
+    }
+    else {
+      exprgenv2(bodyCopy->exp);
+      bodyCopy = bodyCopy->link;
+    }
   }
   sprintf(instructionList[JPF_location], "JPF %d", instructionCounter+1); // Put location in JPF
   sprintf(instructionList[instructionCounter++], "JMP %d", conditional_location); // Jump back to conditional
