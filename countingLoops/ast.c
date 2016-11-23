@@ -111,15 +111,23 @@ void codeGenIfv2(struct statement *next) {
   bodyCopy = nextCopy->body;
   while(bodyCopy->link != NULL) {
     // Parse this like a regular statement!
-    // printf("Hi from bodyCopy\n");
-    if(bodyCopy->isCond == 1) {
-      //printf("Hi from bodyCopy!\n");
+    if(bodyCopy->isCond == 1) { // If there is an if statement
       codeGenIfv2(bodyCopy);
       bodyCopy = bodyCopy->link;
       continue;
     }
-    exprgen(bodyCopy->exp);
-    bodyCopy = bodyCopy->link;
+    else if(bodyCopy->isWhile == 1) { // If there is a while statement
+      codeGenWhile(bodyCopy);
+      bodyCopy = bodyCopy->link;
+    }
+    else if(bodyCopy->isCount == 1) { // If there is a counting loop
+      codeGenCount(bodyCopy);
+      bodyCopy = bodyCopy->link;
+    }
+    else {
+      exprgenv2(bodyCopy->exp);
+      bodyCopy = bodyCopy->link;
+    }
   }
   // if(nextCopy->isIfElse == 1) {
   //   // printf("Houston, we have an else statement\n");
@@ -131,12 +139,29 @@ void codeGenIfv2(struct statement *next) {
     int elseJump = instructionCounter;
     sprintf(instructionList[instructionCounter++], "JMP"); // Replace this
     while(tempCopy->link != NULL) {
-      exprgen(tempCopy->exp);
-      tempCopy = tempCopy->link;
-      if(tempCopy->isCond == 1) {
+      // exprgen(tempCopy->exp);
+      // tempCopy = tempCopy->link;
+      // if(tempCopy->isCond == 1) {
+      //   codeGenIfv2(tempCopy);
+      //   tempCopy = tempCopy->link;
+      //   continue;
+      // }
+      if(tempCopy->isCond == 1) { // If there is an if statement
         codeGenIfv2(tempCopy);
         tempCopy = tempCopy->link;
         continue;
+      }
+      else if(tempCopy->isWhile == 1) { // If there is a while statement
+        codeGenWhile(tempCopy);
+        tempCopy = tempCopy->link;
+      }
+      else if(tempCopy->isCount == 1) { // If there is a counting loop
+        codeGenCount(tempCopy);
+        tempCopy = tempCopy->link;
+      }
+      else {
+        exprgenv2(tempCopy->exp);
+        tempCopy = tempCopy->link;
       }
     }
     int elseAfter = instructionCounter;
