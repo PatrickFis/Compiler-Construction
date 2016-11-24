@@ -83,6 +83,17 @@ void printList() {
     next = next->link;
     continue;
   }
+  // End counting section
+
+  // Section that generates code for exit statements
+  // if(next->isExit == 1) {
+  //   printf("FOUND AN EXIT?\n");
+  //   sprintf(instructionList[instructionCounter++], "HLT");
+  //   next = next->link;
+  //   continue;
+  // }
+  // End exit section
+
   int iBefore = instructionCounter;
   // exprgen(next->exp);
   exprgenv2(next->exp);
@@ -923,6 +934,11 @@ void exprgen(struct ast_expression *exp) {
 }
 
 void exprgenv2(struct ast_expression *exp) {
+  if(exp->operator == OP_EXIT) {
+    if(DEBUG) printf("Found an OP_EXIT\n");
+    sprintf(instructionList[instructionCounter++], "HLT");
+    return;
+  }
   if(exp->operator == OP_PRINT) { // This occurs if an expression is a print statement
     // printf("Got to OP_PRINT\n");
     // if(exp->r_operand != NULL)exprgen(exp->r_operand);
@@ -934,6 +950,18 @@ void exprgenv2(struct ast_expression *exp) {
     // printf("exp->charString, %s\n", exp->charString);
     // parsePrintStatementv2(exp);
     parsePrintv3(exp);
+    return;
+  }
+  if(exp->operator == OP_READ) {
+    sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
+    if(table->table[exp->address].type == 0) {
+      sprintf(instructionList[instructionCounter++], "INI");
+      sprintf(instructionList[instructionCounter++], "STO");
+    }
+    else if(table->table[exp->address].type == 1) {
+      sprintf(instructionList[instructionCounter++], "INF");
+      sprintf(instructionList[instructionCounter++], "STO");
+    }
     return;
   }
   if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers

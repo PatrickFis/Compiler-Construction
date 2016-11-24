@@ -18,6 +18,14 @@
  * \"([^\\*\n]|\\.)*\" <- This does not have an issue with parsing a string
  * between quotation marks that has a comma in it.
  *
+ * 11/23/2016: Changed regular expression for charstrings back to
+ * \"([^\\,\n]|\\.)*\" <- I changed this earlier to make the pretty print
+ * assignment easier. Not escaping the comma breaks print statements. I just
+ * found an error with this though. If a string contains commas it will not
+ * return that string.
+ *
+ * 11/24/2016: This regex may work for charstrings:
+ * \"(([a-zA-Z0-9 .,:']*)|([ .,:;'\[\]<>?`~\\|/{}!@#$%^&*()+-]*)|\"\")*\"
  * Also removed the -+ sign that could be in front of litints and litreals.
  * This was causing some issues with parsing certain expressions.
  * ========================================================================
@@ -107,11 +115,11 @@
                                                      return RWPRINT;
                                                    }
 
-\"([^\\*\n]|\\.)*\"                                  { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
-                                                     yylval.sval = strdup(yytext);
-                                                     return CHARSTRING;
-                                                     free(yylval.sval);
-                                                   }
+\"(([a-zA-Z0-9 .,:']*)|([ .,:;'\[\]<>?`~\\|/{}!@#$%^&*()+-]*)|\"\")*\" { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
+                                                                         yylval.sval = strdup(yytext);
+                                                                         return CHARSTRING;
+                                                                         free(yylval.sval);
+                                                                       }
 
 #.*[\n]*                                           { if(DEBUG) printf("COMMENT: %s\n", yytext); }
 

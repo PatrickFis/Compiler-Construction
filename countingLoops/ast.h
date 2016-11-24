@@ -24,6 +24,7 @@
 #define OP_NOT 14
 #define OP_PRINT 15
 #define OP_READ 17
+#define OP_EXIT 18
 
 struct statement {
     struct statement *link;
@@ -36,6 +37,7 @@ struct statement {
     int isIfElse;
     int isWhile;
     int isCount;
+    int isExit;
 };
 
 struct ast_node { // This portion will probably be used for control structures, etc

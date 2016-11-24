@@ -101,6 +101,7 @@ int entry_count = 0; // Used to keep track of what symbols are being inserted.
 %type <ifstmt> controlstmt
 %type <while_loop> whilestmt
 %type <count_loop> countingstmt
+%type <expr> exitstmt
 %%
 
 program : headingstmt datasection algsection;
@@ -327,13 +328,30 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               $$->isCount = 1;
             }
             |countingstmt {
-              if(DEBUG) printf("Got to countingstmt programbody\n");
+              if(DEBUG) printf("Got to countingstmt\n");
               $$ = malloc(sizeof(struct statement));
               $$->count_stmt = $1;
               struct statement *temp = malloc(sizeof(struct statement));
               temp->count_stmt = $$->count_stmt;
               $$->link = temp;
               $$->isCount = 1;
+            }
+            |
+            exitstmt programbody {
+              if(DEBUG) printf("Got to exitstmt programbody\n");
+              $$ = malloc(sizeof(struct statement));
+              $$->exp = $1;
+              $$->link = $2;
+            }
+            |exitstmt {
+              if(DEBUG) printf("Got to exitstmt\n");
+              $$ = malloc(sizeof(struct statement));
+              $$->exp = $1;
+              struct statement *temp = malloc(sizeof(struct statement));
+              temp->exp = $1;
+              temp->link = NULL;
+              $$->link = temp;
+              if(DEBUG) printf("Finished exit...\n");
             }
             ;
 
@@ -792,6 +810,16 @@ countingstmt: RWCOUNTING VAR RWUPWARD bexp RWTO bexp SEMICOLON programbody RWEND
               $$->direction = 0;
             }
             ;
+
+exitstmt: RWEXIT SEMICOLON {
+          if(DEBUG) printf("Found an exit\n");
+          $$ = malloc(sizeof(struct ast_expression));
+          $$->operator = OP_EXIT;
+          $$->l_operand = NULL;
+          $$->r_operand = NULL;
+        }
+        ;
+
 endmainstmt: RWEND RWMAIN SEMICOLON { if(DEBUG) printf("Got to endmainstmt\n");};
 
 %%
