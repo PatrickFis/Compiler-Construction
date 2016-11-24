@@ -26,6 +26,9 @@
  *
  * 11/24/2016: This regex may work for charstrings:
  * \"(([a-zA-Z0-9 .,:']*)|([ .,:;'\[\]<>?`~\\|/{}!@#$%^&*()+-]*)|\"\")*\"
+ * Changed to \"(([a-zA-Z0-9]*)|([ .,:;'\[\]<>?`~\\|/{}!@#$%^&*()=+-]*)|\"\")*\"
+ * to account for equals signs.
+ *
  * Also removed the -+ sign that could be in front of litints and litreals.
  * This was causing some issues with parsing certain expressions.
  * ========================================================================
@@ -115,11 +118,11 @@
                                                      return RWPRINT;
                                                    }
 
-\"(([a-zA-Z0-9 .,:']*)|([ .,:;'\[\]<>?`~\\|/{}!@#$%^&*()+-]*)|\"\")*\" { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
-                                                                         yylval.sval = strdup(yytext);
-                                                                         return CHARSTRING;
-                                                                         free(yylval.sval);
-                                                                       }
+\"(([a-zA-Z0-9]*)|([ .,:;'\[\]<>?`~\\|/{}!@#$%^&*()=+-]*)|\"\")*\" { if(DEBUG) printf("CHARSTRING: %s\n", yytext);
+                                                                     yylval.sval = strdup(yytext);
+                                                                     return CHARSTRING;
+                                                                     free(yylval.sval);
+                                                                   }
 
 #.*[\n]*                                           { if(DEBUG) printf("COMMENT: %s\n", yytext); }
 

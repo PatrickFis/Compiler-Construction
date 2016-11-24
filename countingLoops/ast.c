@@ -883,16 +883,16 @@ void exprgen(struct ast_expression *exp) {
       // printf("LLI 1\n");
       // printf("EQI\n"); // Check if l_op * r_op = 1
       sprintf(instructionList[instructionCounter++], "MLI");
-      sprintf(instructionList[instructionCounter++], "LLI 1");
-      sprintf(instructionList[instructionCounter++], "EQI");
+      sprintf(instructionList[instructionCounter++], "LLI 0");
+      sprintf(instructionList[instructionCounter++], "NEI");
     }
     else if(getPreviousInstructionType(instructionCounter) == 1) {
       // printf("MLF\n");
       // printf("LLF 1.0\n");
       // printf("EQF\n");
       sprintf(instructionList[instructionCounter++], "MLF");
-      sprintf(instructionList[instructionCounter++], "LLF 1.0");
-      sprintf(instructionList[instructionCounter++], "EQF");
+      sprintf(instructionList[instructionCounter++], "LLF 0.0");
+      sprintf(instructionList[instructionCounter++], "NEF");
     }
     break;
 
@@ -902,13 +902,13 @@ void exprgen(struct ast_expression *exp) {
     if(getPreviousInstructionType(instructionCounter) == 0) {
       // Boolean or = addition
       sprintf(instructionList[instructionCounter++], "ADI");
-      sprintf(instructionList[instructionCounter++], "LLI 1");
-      sprintf(instructionList[instructionCounter++], "EQI");
+      sprintf(instructionList[instructionCounter++], "LLI 0");
+      sprintf(instructionList[instructionCounter++], "NEI");
     }
     else if(getPreviousInstructionType(instructionCounter) == 1) {
       sprintf(instructionList[instructionCounter++], "ADF");
-      sprintf(instructionList[instructionCounter++], "LLF 1.0");
-      sprintf(instructionList[instructionCounter++], "EQF");
+      sprintf(instructionList[instructionCounter++], "LLF 0.0");
+      sprintf(instructionList[instructionCounter++], "NEI");
     }
     break;
 
@@ -1120,7 +1120,7 @@ void exprgenv2(struct ast_expression *exp) {
         sprintf(instructionList[instructionCounter++], "GEI");
       }
       else if(exp->target->type == 1) {
-        sprintf(instructionList[instructionCounter++], "GEI");
+        sprintf(instructionList[instructionCounter++], "GEF");
       }
       break;
 
