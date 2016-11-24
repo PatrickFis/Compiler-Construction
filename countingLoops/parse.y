@@ -381,6 +381,7 @@ assignstmt: VAR assign bexp SEMICOLON
               $$->r_operand = $6;
               if(DEBUG) printf("Address: %d\n", $$->address);
               $$->arrayOffset = $$->address;
+              assignStmtTargets($$, $$->target);
             };
 
 assign: ASSIGNOP;
