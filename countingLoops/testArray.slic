@@ -17,7 +17,8 @@ main;
     integer: array[10];
 
    algorithm:
-    test := 21;
-    array[test] := 12;
+    test := 3;
+    array[test] := 1337;
+    print array[3];
 
 end main;

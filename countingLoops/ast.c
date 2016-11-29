@@ -934,7 +934,6 @@ void exprgen(struct ast_expression *exp) {
 }
 
 void exprgenv2(struct ast_expression *exp) {
-  int arrayRefLoc = 0; // This will be used to overwrite a load instruction for arrays
   if(exp->operator == OP_EXIT) {
     if(DEBUG) printf("Found an OP_EXIT\n");
     sprintf(instructionList[instructionCounter++], "HLT");
@@ -981,7 +980,6 @@ void exprgenv2(struct ast_expression *exp) {
     if(DEBUG) printf("Got to variable type\n");
     // printf("LAA %d\n",exp->l_operand->target->address);
     // printf("LOD\n");
-    arrayRefLoc = instructionCounter;
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
     if(exp->l_operand->target->type != exp->target->type) {
@@ -1010,7 +1008,11 @@ void exprgenv2(struct ast_expression *exp) {
         // evaluated and then added to the base address of the array.
         // After this is done, the array location can be used for loading and
         // storing values.
-        exprgenv2(exp->l_operand);
+        exprgenv2(exp->l_operand); // Evaluate array location
+        sprintf(instructionList[instructionCounter++], "LLI %d", exp->address); // Load base address
+        sprintf(instructionList[instructionCounter++], "ADI"); // Add the array location and base address together
+        exprgenv2(exp->r_operand); // Evaluate the assignment portion of this expression
+        sprintf(instructionList[instructionCounter++], "STO");
         return;
       }
       if(exp->r_operand != NULL) {// Load the address used for assignment
