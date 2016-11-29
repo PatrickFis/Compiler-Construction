@@ -336,8 +336,7 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               $$->link = temp;
               $$->isCount = 1;
             }
-            |
-            exitstmt programbody {
+            |exitstmt programbody {
               if(DEBUG) printf("Got to exitstmt programbody\n");
               $$ = malloc(sizeof(struct statement));
               $$->exp = $1;
@@ -370,19 +369,32 @@ assignstmt: VAR assign bexp SEMICOLON
               if(DEBUG) printf("Address %d\n", $$->address);
               $$->arrayOffset = 0;
             }
-            |VAR LBRACK LITINT RBRACK assign bexp SEMICOLON
-            {
+            // |VAR LBRACK LITINT RBRACK assign bexp SEMICOLON
+            // { // So this only works for array's with integer references...
+            //   if(DEBUG) printf("Got to array assignment\n");
+            //   $$ = malloc(sizeof(struct ast_expression));
+            //   $$->kind = KIND_OP;
+            //   $$->operator = OP_ASGN;
+            //   $$->target = &table->table[isPresent($1)];
+            //   $$->address = $$->target->address + $3;
+            //   $$->r_operand = $6;
+            //   if(DEBUG) printf("Address: %d\n", $$->address);
+            //   $$->arrayOffset = $$->address;
+            //   assignStmtTargets($$, $$->target);
+            // }
+            |VAR LBRACK bexp RBRACK assign bexp SEMICOLON {
               if(DEBUG) printf("Got to array assignment\n");
               $$ = malloc(sizeof(struct ast_expression));
               $$->kind = KIND_OP;
               $$->operator = OP_ASGN;
               $$->target = &table->table[isPresent($1)];
-              $$->address = $$->target->address + $3;
-              $$->r_operand = $6;
-              if(DEBUG) printf("Address: %d\n", $$->address);
-              $$->arrayOffset = $$->address;
+              $$->address = $$->target->address; // Get address of array, the offset will be calculated from l_operand
+              $$->l_operand = $3; // Store array location in l_operand
+              $$->r_operand = $6; // Store assignment value in r_operand
+              $$->arrayOffset = $$->address; // Will be incremented later
               assignStmtTargets($$, $$->target);
-            };
+            }
+            ;
 
 assign: ASSIGNOP;
 

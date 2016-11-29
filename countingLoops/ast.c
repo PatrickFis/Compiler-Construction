@@ -934,6 +934,7 @@ void exprgen(struct ast_expression *exp) {
 }
 
 void exprgenv2(struct ast_expression *exp) {
+  int arrayRefLoc = 0; // This will be used to overwrite a load instruction for arrays
   if(exp->operator == OP_EXIT) {
     if(DEBUG) printf("Found an OP_EXIT\n");
     sprintf(instructionList[instructionCounter++], "HLT");
@@ -980,6 +981,7 @@ void exprgenv2(struct ast_expression *exp) {
     if(DEBUG) printf("Got to variable type\n");
     // printf("LAA %d\n",exp->l_operand->target->address);
     // printf("LOD\n");
+    arrayRefLoc = instructionCounter;
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
     if(exp->l_operand->target->type != exp->target->type) {
@@ -1000,6 +1002,17 @@ void exprgenv2(struct ast_expression *exp) {
       // assignTarget(exp, *exp->target);
       // Load values
       // printf("OP_ASGN FOUND\n");
+      if(exp->target->kind == KIND_ARRAY) {
+        // This portion will be used if an array reference is found.
+        // I noticed that my array's required integer values to be used as the
+        // reference, and this is obviously not the most optimal solution.
+        // l_operand will store the array location, which will have to be
+        // evaluated and then added to the base address of the array.
+        // After this is done, the array location can be used for loading and
+        // storing values.
+        exprgenv2(exp->l_operand);
+        return;
+      }
       if(exp->r_operand != NULL) {// Load the address used for assignment
         if(DEBUG) printf("r_operand != NULL\n");
         // printf("LAA %d\n", exp->address);
@@ -1008,6 +1021,7 @@ void exprgenv2(struct ast_expression *exp) {
         // exprgen(exp->l_operand);
       }
       if(exp->l_operand != NULL) {// This check is probably unnecessary
+        // This check may actually be useful for array references
         if(DEBUG) printf("l_operand != NULL\n");
         exprgenv2(exp->l_operand);
       }
