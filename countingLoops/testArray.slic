@@ -17,8 +17,11 @@ main;
     integer: array[10];
 
    algorithm:
-    test := 3;
+    #test := 3;
+    #array[test] := 1337;
+    #array[test] := 21321;
+    array[2] := 32;
     array[test] := 1337;
-    print array[test/2];
+    print array[2];
 
 end main;

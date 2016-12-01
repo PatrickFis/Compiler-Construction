@@ -997,7 +997,12 @@ void exprgenv2(struct ast_expression *exp) {
     printf("Got to array type\n");
     if(exp->r_operand != NULL) {
       printf("R op not null\n");
+      // sprintf(instructionList[instructionCounter++], "LLI %d", exp->l_operand->target->address);
+      // exp->r_operand->target = exp->l_operand->target;
       exprgenv2(exp->r_operand);
+      sprintf(instructionList[instructionCounter++], "ADI");
+      sprintf(instructionList[instructionCounter++], "LOD");
+      return;
     }
     // if(exp->l_operand->r_operand != NULL) {
     //   // This will be executed if the array index is an expression
