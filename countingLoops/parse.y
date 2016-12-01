@@ -631,16 +631,16 @@ unit: LITINT { // Parses integers
            $$->l_operand->type = TYPE_VAR;
            $$->l_operand->target = &table->table[tableLoc]; // Get initial location of array
            $$->r_operand = $3;
-           $$->r_operand->target = $3->target;
+          //  $$->r_operand->target = $3->target;
          }
          if(varType == TYPE_REAL) {
            $$->l_operand = malloc(sizeof(struct ast_expression));
            $$->l_operand->type = TYPE_VAR;
            $$->l_operand->target = &table->table[tableLoc]; // Get initial location of array
            $$->r_operand = $3;
-           $$->r_operand->target = $3->target;
+          //  $$->r_operand->target = $3->target;
          }
-         assignStmtTargets($$->r_operand, &table->table[tableLoc]);
+         assignStmtTargets($$, &table->table[tableLoc]);
        }
        ;
 

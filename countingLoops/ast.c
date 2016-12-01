@@ -964,7 +964,8 @@ void exprgenv2(struct ast_expression *exp) {
     }
     return;
   }
-  if(exp->kind == KIND_INT && exp->type != TYPE_VAR) { // If expression involves integers
+  if(exp->kind == KIND_INT && (exp->type != TYPE_VAR && exp->type != TYPE_ARRAY)) { // If expression involves integers
+    // Had to add another check to make sure that exp->type is not an array.
     if(DEBUG) printf("Got to load int\n");
     // printf("LLI %d\n", exp->value);
     // printf("exp->type = %d\n", exp->type);
@@ -994,10 +995,15 @@ void exprgenv2(struct ast_expression *exp) {
     return; // Just stop the recursion when you reach a variable reference
   }
   if(exp->type == TYPE_ARRAY) {
-    printf("Got to array type\n");
-    if(exp->r_operand != NULL) {
-      printf("R op not null\n");
-      // sprintf(instructionList[instructionCounter++], "LLI %d", exp->l_operand->target->address);
+    // Had to add a check to a conditional above this to ensure that random loads
+    // were not getting printed. Note that this will most likely only be
+    // reached if the statement is not an assignment statement.
+    if(DEBUG) printf("Got to array type\n");
+    if(exp->r_operand != NULL) { // The array index is stored in r_operand
+      if(DEBUG) printf("R op not null\n");
+      // Load the base address of the array, evaluate the r_operand, and then
+      // add them together to get the correct memory address.
+      sprintf(instructionList[instructionCounter++], "LLI %d", exp->l_operand->target->address);
       // exp->r_operand->target = exp->l_operand->target;
       exprgenv2(exp->r_operand);
       sprintf(instructionList[instructionCounter++], "ADI");
