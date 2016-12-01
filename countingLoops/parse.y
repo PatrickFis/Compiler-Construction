@@ -594,27 +594,49 @@ unit: LITINT { // Parses integers
            $$->l_operand->target = &table->table[tableLoc];
          }
        }
-       |VAR LBRACK LITINT RBRACK {
-         if(DEBUG) printf("Got to VAR LBRACK LITINT RBRACK\n");
+      //  |VAR LBRACK LITINT RBRACK {
+      //    // This works for array references that are integers
+      //    if(DEBUG) printf("Got to VAR LBRACK LITINT RBRACK\n");
+      //    $$ = malloc(sizeof(struct ast_expression));
+      //    $$->type = TYPE_VAR;
+      //    int tableLoc = isPresent($1);
+      //    if(DEBUG) printf("tableLoc: %d\n", tableLoc);
+      //    int varType = table->table[tableLoc].type;
+      //    if(DEBUG) printf("varType: %d\n", varType);
+      //    if(varType == TYPE_INT) {
+      //      $$->l_operand = malloc(sizeof(struct ast_expression));
+      //      $$->l_operand->type = TYPE_VAR;
+      //      $$->l_operand->target = &table->table[tableLoc];
+      //     //  $$->l_operand->address = table->table[tableLoc].address + $3;
+      //      $$->l_operand->arrayOffset = $3;
+      //    }
+      //    if(varType == TYPE_REAL) {
+      //      $$->l_operand = malloc(sizeof(struct ast_expression));
+      //      $$->l_operand->type = TYPE_VAR;
+      //      $$->l_operand->target = &table->table[tableLoc];
+      //     //  $$->l_operand->address = table->table[tableLoc].address + $3;
+      //      $$->l_operand->arrayOffset = $3;
+      //    }
+      //  }
+       |VAR LBRACK bexp RBRACK {
+         // This is a rewritten portion of the above code that deals with
+         // array references involving expressions
+         if(DEBUG) printf("Got to VAR LBRACK bexp RBRACK\n");
          $$ = malloc(sizeof(struct ast_expression));
          $$->type = TYPE_VAR;
          int tableLoc = isPresent($1);
-         if(DEBUG) printf("tableLoc: %d\n", tableLoc);
          int varType = table->table[tableLoc].type;
-         if(DEBUG) printf("varType: %d\n", varType);
          if(varType == TYPE_INT) {
            $$->l_operand = malloc(sizeof(struct ast_expression));
            $$->l_operand->type = TYPE_VAR;
-           $$->l_operand->target = &table->table[tableLoc];
-          //  $$->l_operand->address = table->table[tableLoc].address + $3;
-           $$->l_operand->arrayOffset = $3;
+           $$->l_operand->target = &table->table[tableLoc]; // Get initial location of array
+           $$->r_operand = $3;
          }
          if(varType == TYPE_REAL) {
            $$->l_operand = malloc(sizeof(struct ast_expression));
            $$->l_operand->type = TYPE_VAR;
-           $$->l_operand->target = &table->table[tableLoc];
-          //  $$->l_operand->address = table->table[tableLoc].address + $3;
-           $$->l_operand->arrayOffset = $3;
+           $$->l_operand->target = &table->table[tableLoc]; // Get initial location of array
+           $$->r_operand = $3;
          }
        }
        ;

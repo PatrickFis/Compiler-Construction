@@ -473,7 +473,7 @@ void parsePrintv3(struct ast_expression *exp) {
     if(x->charString == NULL) {
       x->l_operand->target = &table->table[0];
       int iCounterBefore = instructionCounter;
-      exprgen(x->l_operand);
+      exprgenv2(x->l_operand);
       int iCounterAfter = instructionCounter;
       if(DEBUG) printf("iB: %d, iA: %d\n", iCounterBefore, iCounterAfter);
 
@@ -980,6 +980,9 @@ void exprgenv2(struct ast_expression *exp) {
     if(DEBUG) printf("Got to variable type\n");
     // printf("LAA %d\n",exp->l_operand->target->address);
     // printf("LOD\n");
+    if(exp->r_operand != NULL) {
+      printf("Possible array reference?\n");
+    }
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
     if(exp->l_operand->target->type != exp->target->type) {
