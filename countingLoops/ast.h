@@ -6,6 +6,7 @@
 #define KIND_OP 2
 
 #define TYPE_VAR 3 // This is for parsing exp = varname
+#define TYPE_ARRAY 4
 
 #define OP_ASGN 16 // Changed this to 16 instead of 0 because of segmentation faults...
 #define OP_ADD 1
