@@ -19,6 +19,6 @@ main;
    algorithm:
     test := 3;
     array[test] := 1337;
-    print array[test];
+    print array[test/2];
 
 end main;

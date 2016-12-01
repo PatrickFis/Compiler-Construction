@@ -20,7 +20,7 @@
 #include "bisonHelper.h"
 #include <stdio.h>
 #include <string.h>
-#define DEBUG 0
+#define DEBUG 1
 struct symbol_table *table;
 struct statement *list;
 int entry_count = 0; // Used to keep track of what symbols are being inserted.
@@ -623,7 +623,7 @@ unit: LITINT { // Parses integers
          // array references involving expressions
          if(DEBUG) printf("Got to VAR LBRACK bexp RBRACK\n");
          $$ = malloc(sizeof(struct ast_expression));
-         $$->type = TYPE_VAR;
+         $$->type = TYPE_ARRAY;
          int tableLoc = isPresent($1);
          int varType = table->table[tableLoc].type;
          if(varType == TYPE_INT) {

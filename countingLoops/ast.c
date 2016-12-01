@@ -980,18 +980,6 @@ void exprgenv2(struct ast_expression *exp) {
     if(DEBUG) printf("Got to variable type\n");
     // printf("LAA %d\n",exp->l_operand->target->address);
     // printf("LOD\n");
-    // if(exp->r_operand != NULL) {
-    //   // There's an error here... it will be executed on any expression with an r_operand that has a variable in it...
-    //   // This will be executed if the array index is an expression
-    //   printf("Possible array reference?\n");
-    //   // Load the base address of the array
-    //   sprintf(instructionList[instructionCounter++], "LLI %d", exp->l_operand->target->address);
-    //   // Evaluate the array index
-    //   exprgenv2(exp->r_operand);
-    //   // Add the value of the index to the base address and load the correct memory location
-    //   sprintf(instructionList[instructionCounter++], "ADI");
-    //   sprintf(instructionList[instructionCounter++], "LOD");
-    // }
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
     if(exp->l_operand->target->type != exp->target->type) {
@@ -1004,6 +992,26 @@ void exprgenv2(struct ast_expression *exp) {
     }
     if(DEBUG) printf("Finished variable type\n"); // Debug
     return; // Just stop the recursion when you reach a variable reference
+  }
+  if(exp->type == TYPE_ARRAY) {
+    printf("Got to array type\n");
+    if(exp->r_operand != NULL) {
+      printf("R op not null\n");
+      exprgenv2(exp->r_operand);
+    }
+    // if(exp->l_operand->r_operand != NULL) {
+    //   // This will be executed if the array index is an expression
+    //   printf("Possible array reference?\n");
+    //   // Load the base address of the array
+    //   sprintf(instructionList[instructionCounter++], "LLI %d", exp->l_operand->target->address);
+    //   // Evaluate the array index
+    //   printf("Above exp\n");
+    //   exprgenv2(exp->l_operand->r_operand);
+    //   // Add the value of the index to the base address and load the correct memory location
+    //   sprintf(instructionList[instructionCounter++], "ADI");
+    //   sprintf(instructionList[instructionCounter++], "LOD");
+    //   return;
+    // }
   }
   if(DEBUG) printf("Got to switch statement\n");
   switch(exp->operator) {
