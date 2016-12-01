@@ -179,8 +179,9 @@ void codeGenIfv2(struct statement *next) {
     sprintf(instructionList[elseJump], "JMP %d", instructionCounter);
   }
   int iAfter = instructionCounter;
-  if(!sawElse)
-  sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
+  if(!sawElse) {
+    sprintf(instructionList[jumpLocation], "JPF %d", iAfter);
+  }
 }
 
 void codeGenWhile(struct statement *next) {

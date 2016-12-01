@@ -1,10 +1,25 @@
 main;
   data:
     integer: test;
+    integer: i;
+    integer: count;
+    integer: monthSize[13]; # A table for number of days in each month.
+    integer: month;
   algorithm:
-    if(test > 2);
-      print test;
-    else;
-      print test;
+    #test := 1;
+    #if(test > 2 & test < 4);
+    #  print test, !;
+    #else;
+    #  if(test = 1);
+    #    print "test = ",test, !;
+    #    end if;
+    #  print "test", !;
+    #  end if;
+    #  print test, !, test, !, test, !, "adsf", !;
+    i := 1;
+    count := 0;
+    monthSize[12] := 30;
+    if(count = 0 & i < monthSize[12]);
+      print "This should be true",!;
       end if;
 end main;
