@@ -472,7 +472,7 @@ void parsePrintv3(struct ast_expression *exp) {
     *  l_operand is a bexp, which should be passed to exprgen for code generation.
     */
     if(x->charString == NULL) {
-      x->l_operand->target = &table->table[0];
+      // x->l_operand->target = &table->table[0]; // This line is no longer necessary after some modifications
       int iCounterBefore = instructionCounter;
       exprgenv2(x->l_operand);
       int iCounterAfter = instructionCounter;
@@ -497,15 +497,15 @@ void parsePrintv3(struct ast_expression *exp) {
       for(int i = iCounterBefore; i < iCounterAfter; i++) {
         if(tarType == 1) {
           // If the target is a real number
-          if(instructionList[i][2] == 'I') {
-            instructionList[i][2] = 'F';
-          }
+          // if(instructionList[i][2] == 'I') {
+          //   instructionList[i][2] = 'F';
+          // }
         }
         else if(tarType == 0) {
           // If the target is an integer number
-          if(instructionList[i][2] == 'F') {
-            instructionList[i][2] = 'I';
-          }
+          // if(instructionList[i][2] == 'F') {
+          //   instructionList[i][2] = 'I';
+          // }
         }
         // printf("%s\n", instructionList[i]);
       }
@@ -1010,12 +1010,13 @@ void exprgenv2(struct ast_expression *exp) {
     // printf("LLI %d\n", exp->value);
     // printf("exp->type = %d\n", exp->type);
     sprintf(instructionList[instructionCounter++], "LLI %d", exp->value);
-    if(exp->target->type == 1) sprintf(instructionList[instructionCounter++], "ITF");
+    if(exp->target->type == 1 && exp->target->kind != KIND_ARRAY) sprintf(instructionList[instructionCounter++], "ITF");
   }
-  else if(exp->kind == KIND_REAL && exp->type != TYPE_VAR) { // If expression involves reals
+  else if(exp->kind == KIND_REAL && (exp->type != TYPE_VAR && exp->type != TYPE_ARRAY)) { // If expression involves reals
     if(DEBUG) printf("Got to load real\n");
     sprintf(instructionList[instructionCounter++], "LLF %f", exp->rvalue);
-    if(exp->target->type == 0) sprintf(instructionList[instructionCounter++], "FTI");
+    if(exp->target->kind == KIND_ARRAY) sprintf(instructionList[instructionCounter++], "FTI");
+    else if(exp->target->type == 0) sprintf(instructionList[instructionCounter++], "FTI");
   }
   if(exp->type == TYPE_VAR) {
     if(DEBUG) printf("Got to variable type\n");

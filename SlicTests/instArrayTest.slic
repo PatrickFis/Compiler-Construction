@@ -4,7 +4,8 @@
 
 main;
 	data:
-		integer: n;
+		integer: x,y;
+		real: realArray[10];
 	algorithm:
-    n := 80 + 80;
+    realArray[2.1] := 21;
 end main;

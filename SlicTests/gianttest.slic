@@ -1,0 +1,141 @@
+main;
+  data:
+    integer: a,b,c,d,e,f,g,h,i;
+    real: x,y,z;
+    integer: array[10];
+    real: realArray[10];
+  algorithm:
+    a := 20;
+    array[(a/2) - 1] := 12;
+    print "array[9] = ", array[9], !;
+    #Nested ifs
+    if(array[9] = 12);
+      array[9] := 200;
+      if(array[9] = 200);
+        array[0] := 0;
+        if(array[0] = 0);
+          print "array[""0""] = 0",!;
+        end if;
+      end if;
+    end if;
+
+    #Nested if + else
+    a := 1;
+    if(a <> 2);
+        a := 2;
+        if(a = 3);
+          print a, !;
+        else;
+          print "a <> 3",!;
+        end if;
+    else;
+      a := 18239432;
+    end if;
+
+    a := 2;
+    if(a <> 2);
+      a := 12344;
+      if(a = 32);
+        a := 3213;
+      end if;
+    else;
+      if(a = 2);
+        print "a == ", a,!;
+        end if;
+    end if;
+
+    #Counting
+    counting a upward 0 to 10;
+      counting b upward 0 to a;
+        if(a = b);
+          print a, "=", b,!;
+          else;
+            print "b = ", b, " a = ", a,!;
+        end if;
+        end counting;
+      end counting;
+
+    #Conversions
+    x := 21212;
+    print x,!;
+    x := 21212/x;
+    print x,!;
+    x := 12 + 12 + 12.1;
+    print x,!;
+    y := 71.251;
+    a := 71;
+    x := y / a;
+    print x,!;
+    b := 21.21321;
+    print b,!;
+    b := a + 21 * 2.02;
+    print b,!;
+
+    #While loops
+    a := 0;
+    b := 10;
+    while((a < b) & (b > a));
+      a := a + 1;
+      b := b - 1;
+      print "a = ",a," b = ",b,!;
+      end while;
+    a := 0.01;
+    b := 1;
+    c := 10;
+    while(a < 10);
+      a := a + 1;
+      while(b < 10);
+        b := b * 2;
+        while(c > 0);
+          c := c - 1;
+          end while;
+        end while;
+      end while;
+    print "a = ", a, " b = ", b, " c = ", c, !;
+
+    #More loops
+    b := -2;
+    counting a upward 0 to 10;
+      while(b < 0);
+        b := b * -200;
+        end while;
+      if(b > 0);
+        print b,!;
+        end if;
+      if(a = 5);
+        print a,!;
+      else;
+        print b,!;
+      end if;
+    end counting;
+
+    #Print test
+    print "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", !;
+    print "~!@#$%^&*()_+"" 1234567890-=[]\;',./{}|:<>?",!;
+
+    #Read test
+    print "Enter an integer:",!;
+    read a;
+    print "Value you just entered = ", a,!;
+    print "Enter a float:",!;
+    read x;
+    print "Value you just entered = ", x,!;
+
+    #Expressions
+    a := 12 * 12 + 12 - 21 / 2 & 1;
+    print a,!;
+    b := 12 | 12;
+    print b,!;
+    c := a + b * 987;
+    print c,!;
+    d := a + b * c / a;
+    print d,!;
+    x := 21.215;
+    y := x * x / x;
+    print y,!;
+    counting i upward 0 to 9;
+      array[i] := i;
+      end counting;
+    realArray[2] := 75.2;
+    print realArray[2];
+end main;
