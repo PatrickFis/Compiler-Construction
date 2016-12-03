@@ -4,8 +4,10 @@
 
 main;
 	data:
-		integer: x,y;
-		real: realArray[10];
+	integer: a,b,c,d,e,f,g,h,i, xasdf[10];
+	real: x,y,z, realArray[5000];
 	algorithm:
-    realArray[2.1] := 21;
+		x := 2;
+    realArray[2] := 21.21;
+		print realArray[x];
 end main;

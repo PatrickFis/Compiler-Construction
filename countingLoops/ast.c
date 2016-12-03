@@ -488,6 +488,15 @@ void parsePrintv3(struct ast_expression *exp) {
       char *targetToken = strtok(iListCopy, " ");
       targetToken = strtok(NULL, " ");
       int tar = atoi(targetToken);
+      // So if there are multiple arrays in a program tar may get the wrong number, since it actually get's the address of something
+      struct symbol_table_entry *findTarget = malloc(sizeof(struct symbol_table_entry));
+      for(int i = 0; i < table->count; i++) {
+        findTarget = &table->table[i];
+        if(tar == findTarget->address) {
+          tar = i;
+          break;
+        }
+      }
       int tarType = table->table[tar].type;
       // printf("tar = %d\n", tar);
       // printf("tar type = %d\n", table->table[tar].type);
@@ -1015,8 +1024,8 @@ void exprgenv2(struct ast_expression *exp) {
   else if(exp->kind == KIND_REAL && (exp->type != TYPE_VAR && exp->type != TYPE_ARRAY)) { // If expression involves reals
     if(DEBUG) printf("Got to load real\n");
     sprintf(instructionList[instructionCounter++], "LLF %f", exp->rvalue);
-    if(exp->target->kind == KIND_ARRAY) sprintf(instructionList[instructionCounter++], "FTI");
-    else if(exp->target->type == 0) sprintf(instructionList[instructionCounter++], "FTI");
+    // if(exp->target->kind == KIND_ARRAY) sprintf(instructionList[instructionCounter++], "FTI");
+    if(exp->target->type == 0) sprintf(instructionList[instructionCounter++], "FTI");
   }
   if(exp->type == TYPE_VAR) {
     if(DEBUG) printf("Got to variable type\n");

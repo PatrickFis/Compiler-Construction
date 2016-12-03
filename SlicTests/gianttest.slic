@@ -1,9 +1,7 @@
 main;
   data:
-    integer: a,b,c,d,e,f,g,h,i;
-    real: x,y,z;
-    integer: array[10];
-    real: realArray[10];
+    real: x,y,z,realArray[10];
+    integer: a,b,c,d,e,f,g,h,i,array[10];
   algorithm:
     a := 20;
     array[(a/2) - 1] := 12;
@@ -136,6 +134,6 @@ main;
     counting i upward 0 to 9;
       array[i] := i;
       end counting;
-    realArray[2] := 75.2;
+    realArray[2] := 75.21;
     print realArray[2];
 end main;
