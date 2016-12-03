@@ -940,7 +940,36 @@ void exprgenv2(struct ast_expression *exp) {
   tempInt->type = TYPE_INT;
   tempReal->type = TYPE_REAL;
   if(exp->target == NULL) {
-    exp->target = tempInt;
+    // If the expression doesn't have a target assigned, look back through the symbol table for recent loads.
+    int i;
+    for(i = instructionCounter-1; i > 0; i--) {
+      char *strCpy = malloc(sizeof(instructionList[i]));
+      strcpy(strCpy, instructionList[i]);
+      char *ins = strtok(strCpy, " "); // Get the instruction
+      if(strcmp(ins, "ITF") == 0) {
+        exp->target = tempReal;
+        // printf("assigned int\n");
+        break;
+      }
+      else if(strcmp(ins, "FTI") == 0) {
+        exp->target = tempInt;
+        // printf("assigned real\n");
+        break;
+      }
+      else if(strcmp(ins, "LAA") == 0) {
+        ins = strtok(NULL, " "); // Get address
+        if(table->table[atoi(ins)].type == TYPE_INT) {
+          exp->target = tempInt;
+          // printf("assigned int\n");
+          break;
+        }
+        else if(table->table[atoi(ins)].type == TYPE_REAL) {
+          exp->target = tempReal;
+          // printf("assigned real\n");
+          break;
+        }
+      }
+    }
   }
   // if(exp->target == NULL) {
   //   printf("FOUND A NULL TARGET, THIS IS A PROBLEM\n");
@@ -994,9 +1023,6 @@ void exprgenv2(struct ast_expression *exp) {
     // printf("LOD\n");
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
-    if(exp->target == NULL) {
-      printf("Oh look, we have an issue\n");
-    }
     if(exp->l_operand->target->type != exp->target->type) {
       if(exp->target->type == 0) { // Real to integer
         sprintf(instructionList[instructionCounter++], "FTI");
