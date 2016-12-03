@@ -113,7 +113,7 @@ void codeGenIfv2(struct statement *next) {
   nextCopy = next->if_stmt;
   int sawElse = 0;
   // Parse the conditional statement
-  exprgen(nextCopy->conditional_stmt);
+  exprgenv2(nextCopy->conditional_stmt);
   int jumpLocation = instructionCounter;
   sprintf(instructionList[instructionCounter++], "JPF"); // Replace this
 
@@ -935,6 +935,16 @@ void exprgen(struct ast_expression *exp) {
 }
 
 void exprgenv2(struct ast_expression *exp) {
+  struct symbol_table_entry *tempInt = malloc(sizeof(struct symbol_table_entry));
+  struct symbol_table_entry *tempReal = malloc(sizeof(struct symbol_table_entry));
+  tempInt->type = TYPE_INT;
+  tempReal->type = TYPE_REAL;
+  if(exp->target == NULL) {
+    exp->target = tempInt;
+  }
+  // if(exp->target == NULL) {
+  //   printf("FOUND A NULL TARGET, THIS IS A PROBLEM\n");
+  // }
   if(exp->operator == OP_EXIT) {
     if(DEBUG) printf("Found an OP_EXIT\n");
     sprintf(instructionList[instructionCounter++], "HLT");
@@ -984,6 +994,9 @@ void exprgenv2(struct ast_expression *exp) {
     // printf("LOD\n");
     sprintf(instructionList[instructionCounter++], "LAA %d", exp->l_operand->target->address + exp->l_operand->arrayOffset);
     sprintf(instructionList[instructionCounter++], "LOD");
+    if(exp->target == NULL) {
+      printf("Oh look, we have an issue\n");
+    }
     if(exp->l_operand->target->type != exp->target->type) {
       if(exp->target->type == 0) { // Real to integer
         sprintf(instructionList[instructionCounter++], "FTI");
@@ -1129,8 +1142,8 @@ void exprgenv2(struct ast_expression *exp) {
       break;
 
     case OP_LSTHN:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
       if(exp->target->type == 0) {
         sprintf(instructionList[instructionCounter++], "LTI");
       }
@@ -1140,8 +1153,8 @@ void exprgenv2(struct ast_expression *exp) {
       break;
 
     case OP_LSTHNEQL:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
       if(exp->target->type == 0) {
         sprintf(instructionList[instructionCounter++], "LEI");
       }
@@ -1151,8 +1164,8 @@ void exprgenv2(struct ast_expression *exp) {
       break;
 
     case OP_GRTHN:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
       if(exp->target->type == 0) {
         sprintf(instructionList[instructionCounter++], "GTI");
       }
@@ -1162,8 +1175,8 @@ void exprgenv2(struct ast_expression *exp) {
       break;
 
     case OP_GRTHNEQL:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
       if(exp->target->type == 0) {
         sprintf(instructionList[instructionCounter++], "GEI");
       }
@@ -1173,8 +1186,8 @@ void exprgenv2(struct ast_expression *exp) {
       break;
 
     case OP_EQUAL:
-      if(exp->l_operand != NULL) exprgen(exp->l_operand);
-      if(exp->r_operand != NULL) exprgen(exp->r_operand);
+      if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
+      if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
       if(exp->target->type == 0) {
         sprintf(instructionList[instructionCounter++], "EQI");
       }
