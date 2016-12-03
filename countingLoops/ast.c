@@ -188,7 +188,7 @@ void codeGenWhile(struct statement *next) {
   struct ast_while_stmt *whileCopy = malloc(sizeof(struct ast_while_stmt));
   whileCopy = next->while_stmt; // Copy the while_stmt into whileCopy, handle it like if statements.
   int conditional_location = instructionCounter; // This is the location of the conditional
-  exprgen(whileCopy->conditional_stmt); // Parse the conditional statement
+  exprgenv2(whileCopy->conditional_stmt); // Parse the conditional statement
   int JPF_location = instructionCounter; // Location of jump statement
   sprintf(instructionList[instructionCounter++], "JPF"); // Replace this with the instruction after the while loop
 

@@ -1,0 +1,25 @@
+main;
+  data:
+    integer: x, y, z;
+    integer: array[10];
+  algorithm:
+    x := 0;
+    array[1] := 10;
+    while (x < array[1]);
+    	print x," ";
+    	if ((x / 2) * 2 = x);
+    		print "is even";
+    		if (x = 4);
+    			print ", and a square number";
+    		end if;
+    		print "!",!;
+    	else;
+    		print "is odd";
+    		if (x = 9);
+    			print ", and a square number";
+    		end if;
+    		print "!",!;
+    	end if;
+    	x := x + 1;
+    end while;
+end main;

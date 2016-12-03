@@ -1,0 +1,10 @@
+main;
+	data:
+		integer: array[10];
+		integer: i;
+	algorithm:
+		array[2] := 7;
+		array[9] := 12/2;
+		array[array[2]] := 1;
+		print array[7];
+end main;

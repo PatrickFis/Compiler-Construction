@@ -1,0 +1,58 @@
+#comment here
+#comment there
+#comments everywhere!!!!
+main;
+
+daTa:
+real: jam,kyle[1000];
+rEal: pepep[222];
+intEGER: kljdsa,james[2],pete;
+integer: kkkl, myint;
+
+algorithm:
+print "Testing ","printing ","multiple ","strings ",!;
+
+print !,"Testing Boolean and realtype indices",!;
+pete := 3;
+kkkl := 15;
+pepep[5] := 2.345;
+jam := 5.564;
+print pete <= kkkl,!, pete = kkkl,!, pepep[jam],!;
+print pepep[jam]=jam,!,pepep[jam]=pepep[5],!,pepep[jam]=jam & pepep[jam]=pepep[5],!;
+
+#print !,"Testing nested counts and realtype counting variables",!;
+#counting myint upward 0 to 10;
+#	counting james[0] downward 10 to 0;
+#		counting pepep[3] upward 4 to 12+6/2-1;
+#			print  "(", myint, ", ", james[0], ", ", pepep[3.231],")",!;
+#		end counting;
+#	end counting;
+#end counting;
+
+print !, "Testing while loops and if statements", !;
+myint := 0;
+james[0] := 10;
+james[1] := 0;
+while (myint < james[james[1]]);
+	print myint," ";
+	if ((myint / 2) * 2 = myint);
+		print "is even";
+		if (myint = 4);
+			print ", and a square number";
+		end if;
+		print "!",!;
+	else;
+		print "is odd";
+		if (myint = 9);
+			print ", and a square number";
+		end if;
+		print "!",!;
+	end if;
+	myint := myint + 1;
+end while;
+
+print !, "Testing string constants like this and this $%^&*()_!+@)""%$()""@#)", !;
+
+
+
+end main;
