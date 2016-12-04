@@ -8,6 +8,11 @@ main;
 	real: x,y,z, realArray[5000];
 	algorithm:
 		x := 2;
-    realArray[2] := 21.21;
+    realArray[2] := 21;
 		print realArray[x];
+		xasdf[2] := 21.1;
+		print xasdf[2];
+		while(xasdf[2] < 40);
+			xasdf[2] := xasdf[2] + 1;
+			end while;
 end main;

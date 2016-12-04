@@ -1019,7 +1019,7 @@ void exprgenv2(struct ast_expression *exp) {
     // printf("LLI %d\n", exp->value);
     // printf("exp->type = %d\n", exp->type);
     sprintf(instructionList[instructionCounter++], "LLI %d", exp->value);
-    if(exp->target->type == 1 && exp->target->kind != KIND_ARRAY) sprintf(instructionList[instructionCounter++], "ITF");
+    if(exp->target->type == 1 /*&& exp->target->kind != KIND_ARRAY*/) sprintf(instructionList[instructionCounter++], "ITF");
   }
   else if(exp->kind == KIND_REAL && (exp->type != TYPE_VAR && exp->type != TYPE_ARRAY)) { // If expression involves reals
     if(DEBUG) printf("Got to load real\n");
@@ -1056,6 +1056,9 @@ void exprgenv2(struct ast_expression *exp) {
       sprintf(instructionList[instructionCounter++], "LLI %d", exp->l_operand->target->address);
       // exp->r_operand->target = exp->l_operand->target;
       exprgenv2(exp->r_operand);
+      if(strcmp(instructionList[instructionCounter - 1], "ITF") == 0) {
+        instructionCounter--;
+      }
       sprintf(instructionList[instructionCounter++], "ADI");
       sprintf(instructionList[instructionCounter++], "LOD");
       return;
@@ -1090,6 +1093,9 @@ void exprgenv2(struct ast_expression *exp) {
         // After this is done, the array location can be used for loading and
         // storing values.
         exprgenv2(exp->l_operand); // Evaluate array location
+        if(strcmp(instructionList[instructionCounter - 1], "ITF") == 0) {
+          instructionCounter--;
+        }
         sprintf(instructionList[instructionCounter++], "LLI %d", exp->address); // Load base address
         sprintf(instructionList[instructionCounter++], "ADI"); // Add the array location and base address together
         exprgenv2(exp->r_operand); // Evaluate the assignment portion of this expression
