@@ -57,6 +57,10 @@ void insertStmt(struct statement *stmt) {
 void printList() {
   struct statement *next;
   next = list;
+  if(next == NULL) { // If this is a program with no expressions just stop compiling.
+    printf("Passed in a program with no expressions. Stopping.\n");
+    return;
+  }
   sprintf(instructionList[instructionCounter++], "ISP %d", table->memorySize);
   // printf("ISP %d\n", table->memorySize);
   while(next->link != NULL) {
