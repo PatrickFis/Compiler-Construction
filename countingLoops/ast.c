@@ -298,8 +298,8 @@ void checkInstructionsv2(int iBefore, int iAfter) {
     strcpy(lastCopy, instructionList[iAfter-1]);
     char *instAfter = strtok(lastCopy, " ");
     if(strcmp(instAfter, "STO") == 0) {
-      printf("Target name: %s, target type: %d, tar variable: %s\n", table->table[atoi(tar)].name, table->table[atoi(tar)].type, tar);
-      printf("This is an assignment statement. Check the instructions and do conversions.\n");
+      if(DEBUG) printf("Target name: %s, target type: %d, tar variable: %s\n", table->table[atoi(tar)].name, table->table[atoi(tar)].type, tar);
+      if(DEBUG) printf("This is an assignment statement. Check the instructions and do conversions.\n");
       if(type == 0) {
         // Integer conversions, don't need to check first or last instruction
         for(i = iBefore+1; i < iAfter-1; i++) {

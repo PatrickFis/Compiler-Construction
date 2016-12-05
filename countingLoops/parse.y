@@ -847,42 +847,46 @@ countingstmt: RWCOUNTING VAR RWUPWARD bexp RWTO bexp SEMICOLON programbody RWEND
               $$->body = $8;
               $$->direction = 0;
             }
-            // |RWCOUNTING VAR LBRACK LITINT RBRACK RWUPWARD bexp RWTO bexp SEMICOLON programbody RWEND RWCOUNTING SEMICOLON {
-            //   if(DEBUG) printf("Got to counting upward statement\n");
-            //   $$ = malloc(sizeof(struct ast_counting_stmt));
-            //   // Change the target into an assignment
-            //   $$->target_assignment = malloc(sizeof(struct ast_expression));
-            //   $$->target_assignment->kind = KIND_OP;
-            //   $$->target_assignment->operator = OP_ASGN;
-            //   $$->target_assignment->r_operand = $7;
-            //   $$->target_assignment->target = &table->table[isPresent($2)]; // Get target from symbol table
-            //   $$->target_assignment->address = $$->target_assignment->target->address + $4;
-            //   assignStmtTargets($$->target_assignment, $$->target_assignment->target);
-            //   $$->target_assignment->arrayOffset = $4;
-            //
-            //   $$->startexpr = $7;
-            //   $$->endexpr = $9;
-            //   $$->body = $11;
-            //   $$->direction = 1;
-            // }
-            // |RWCOUNTING VAR LBRACK LITINT RBRACK RWDOWNWARD bexp RWTO bexp SEMICOLON programbody RWEND RWCOUNTING SEMICOLON {
-            //   if(DEBUG) printf("Got to counting upward statement\n");
-            //   $$ = malloc(sizeof(struct ast_counting_stmt));
-            //   // Change the target into an assignment
-            //   $$->target_assignment = malloc(sizeof(struct ast_expression));
-            //   $$->target_assignment->kind = KIND_OP;
-            //   $$->target_assignment->operator = OP_ASGN;
-            //   $$->target_assignment->r_operand = $7;
-            //   $$->target_assignment->target = &table->table[isPresent($2)]; // Get target from symbol table
-            //   $$->target_assignment->address = $$->target_assignment->target->address + $4;
-            //   assignStmtTargets($$->target_assignment, $$->target_assignment->target);
-            //   $$->target_assignment->arrayOffset = $4;
-            //
-            //   $$->startexpr = $7;
-            //   $$->endexpr = $9;
-            //   $$->body = $11;
-            //   $$->direction = 0;
-            // }
+            |RWCOUNTING VAR LBRACK bexp RBRACK RWUPWARD bexp RWTO bexp SEMICOLON programbody RWEND RWCOUNTING SEMICOLON {
+              if(DEBUG) printf("Got to counting upward statement\n");
+              if(DEBUG) printf("Got to counting loop with an array\n");
+              $$ = malloc(sizeof(struct ast_counting_stmt));
+              // Change the target into an assignment
+              $$->target_assignment = malloc(sizeof(struct ast_expression));
+              $$->target_assignment->kind = KIND_OP;
+              $$->target_assignment->operator = OP_ASGN;
+              $$->target_assignment->l_operand = $4; // Array index is stored in l_operand
+              $$->target_assignment->r_operand = $7;
+              $$->target_assignment->target = &table->table[isPresent($2)]; // Get target from symbol table
+              $$->target_assignment->address = $$->target_assignment->target->address;
+              assignStmtTargets($$->target_assignment, $$->target_assignment->target);
+              $$->target_assignment->arrayOffset = 0;
+
+              $$->startexpr = $7;
+              $$->endexpr = $9;
+              $$->body = $11;
+              $$->direction = 1;
+            }
+            |RWCOUNTING VAR LBRACK bexp RBRACK RWDOWNWARD bexp RWTO bexp SEMICOLON programbody RWEND RWCOUNTING SEMICOLON {
+              if(DEBUG) printf("Got to counting upward statement\n");
+              if(DEBUG) printf("Got to counting loop with an array\n");
+              $$ = malloc(sizeof(struct ast_counting_stmt));
+              // Change the target into an assignment
+              $$->target_assignment = malloc(sizeof(struct ast_expression));
+              $$->target_assignment->kind = KIND_OP;
+              $$->target_assignment->operator = OP_ASGN;
+              $$->target_assignment->l_operand = $4; // Array index is stored in l_operand
+              $$->target_assignment->r_operand = $7;
+              $$->target_assignment->target = &table->table[isPresent($2)]; // Get target from symbol table
+              $$->target_assignment->address = $$->target_assignment->target->address;
+              assignStmtTargets($$->target_assignment, $$->target_assignment->target);
+              $$->target_assignment->arrayOffset = 0;
+
+              $$->startexpr = $7;
+              $$->endexpr = $9;
+              $$->body = $11;
+              $$->direction = 0;
+            }
             ;
 
 exitstmt: RWEXIT SEMICOLON {
