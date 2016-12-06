@@ -16,29 +16,25 @@
 #include <stdlib.h>
 extern int yydebug; // Can be used when bison is called with the --debug flag
 struct symbol_table *table; // Symbol table
-// struct statement *list; // Linked list holding our abstract syntax tree
-// struct statement *head; // Head of the linked list
 int main()
 {
   int i; // Removed declaration from for loop for easier compilation
   // Initalize the symbol table
   table = malloc(sizeof(struct symbol_table));
-  // list = malloc(sizeof(struct statement));
 
   table->count = 0;
   table->memorySize = 0;
   int n;
+  // Uncomment this if you need to see Bison's stack throughout the compilation
+  // process.
   // yydebug = 1;
   n = yyparse();
+  // Uncomment this if you would like to see the symbol table.
   // struct symbol_table_entry y;
   // for(i = 0; i < table->count; i++) {
   //   y = table->table[i];
   //   printf("name = %s, address = %d, kind = %d, type = %d, size = %d\n", y.name, y.address, y.kind, y.type, y.size);
   // }
   printList();
-  // struct statement *test = malloc(sizeof(struct statement));
-  // test = head;
-  // printf("head->exp->kind: %c\n", head->exp->operator);
-  // printf("\nyyparse returns %d\n", n);
   exit(0);
 }

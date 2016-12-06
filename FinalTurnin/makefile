@@ -1,16 +1,16 @@
-a.out: parse.y check2.l main.c
+a.out: parse.y flex.l main.c
 	bison -y -d parse.y
-	flex check2.l
+	flex flex.l
 	gcc lex.yy.c y.tab.c main.c stable.c stable.h ast.c ast.h bisonHelper.c bisonHelper.h -ll
 
-debug: parse.y check2.l main.c
+debug: parse.y flex.l main.c
 	bison --debug --verbose -y -d parse.y
-	flex check2.l
+	flex flex.l
 	gcc -g lex.yy.c y.tab.c main.c stable.c stable.h ast.c ast.h bisonHelper.c bisonHelper.h -ll
 
-windows: parse.y check2.l main.c
+windows: parse.y flex.l main.c
 	bison -y -d parse.y
-	flex check2.l
+	flex flex.l
 	gcc lex.yy.c y.tab.c main.c stable.c stable.h ast.c ast.h -lfl
 clean:
 	rm -f a.exe a.out lex.yy.c y.tab.c y.tab.h stable.h.gch ast.h.gch bisonHelper.h.gch

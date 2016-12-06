@@ -3,7 +3,7 @@
 /*
  * ========================================================================
  *
- * check2.l
+ * flex.l
  * This is the flex input file for my compiler.
  *
  * Programmer --- Patrick Fischer

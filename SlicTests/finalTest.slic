@@ -1,0 +1,55 @@
+main;
+  data:
+    integer: x, y, z;
+    real: a, b, c;
+    integer: ia[10];
+    real: ra[10];
+  algorithm:
+  counting x upward 0 to 10;
+    print x, !;
+    counting y upward 0 to 2;
+      print y, !;
+      end counting;
+    end counting;
+  x := 82;
+  if(x > 41);
+    x := x / 2;
+    end if;
+  print "x = ", x,!;
+  if(x = 41);
+    x := 20;
+    if(x = 20);
+      x := 10;
+      if(x = 10);
+        print "x = ",x,!;
+        end if;
+      end if;
+    end if;
+
+  if(x = 11);
+    print x,!;
+  else;
+    if(x <> 11);
+      print "x != 11", !;
+      end if;
+    end if;
+
+  while(x < 20);
+    print "x < 20, x = ", x,!;
+    x := x + 1;
+    end while;
+
+  counting y upward 0 to 2;
+    print "Enter a float: ";
+    read a;
+    ra[y] := a;
+    end counting;
+  counting y upward 0 to 2;
+    print "ra[",y,"] = ",ra[y],!;
+    end counting;
+
+  a := 2.2;
+  if(a = 2.2);
+    print "a = ",a,!;
+    end if;
+end main;

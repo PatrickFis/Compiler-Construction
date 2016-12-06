@@ -101,7 +101,7 @@ void codeGenIfv2(struct statement *next) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
   int sawElse = 0;
-  
+
   // Parse the conditional statement
   exprgenv2(nextCopy->conditional_stmt);
   int jumpLocation = instructionCounter;
