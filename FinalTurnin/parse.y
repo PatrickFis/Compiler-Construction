@@ -116,7 +116,7 @@ decstmtlist: decstmtlist decstmt
             |decstmt
             ; // decstmt is just a variable declaration.
 
-decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry));
+decstmt: RWINT COLON varlist {
                                   $3 = malloc(sizeof(struct symbol_table_entry));
                                   $3->type = TYPE_INT;
                                   if(DEBUG) printf("$3->type: %d\n",$3->type);
@@ -126,12 +126,6 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
                                   }
                                   entry_count = 0;
                                   if(DEBUG) printf("Finished integer varlist\n");
-                                //$$->type=TYPE_INT;
-                                //$$->name=$3->name;
-                                //$$->kind = $3->kind;
-                                //$$->address = $3->address;
-                                //$$->size = $3->size;
-                                //insert(*$$);
                                 }
         |RWREAL COLON varlist { $3 = malloc(sizeof(struct symbol_table_entry));
                                 $3->type=TYPE_REAL;
@@ -142,11 +136,6 @@ decstmt: RWINT COLON varlist {  //$$ = malloc(sizeof(struct symbol_table_entry))
                                 }
                                 entry_count = 0;
                                 if(DEBUG) printf("Finished real varlist\n");
-                                //$$->name=$3->name;
-                                //$$->kind = $3->kind;
-                                //$$->address = $3->address;
-                                //$$->size = $3->size;
-                                //insert(*$$);
                                 }
         ; // The reserved word is followed by a list because any number of variables can be declared on a single line.
 
@@ -154,14 +143,6 @@ varlist: varref COMMA varlist {
                                 $$->name = $1->name;
                                 $$->kind = $1->kind;
                                 $1->type = $$->type;
-                                // $1->type = 0; // So without this line of code
-                                // // my program will seg fault on OS X, but not
-                                // // Windows or Linux. It produces the correct
-                                // // output without this being set correctly.
-                                // // I have a feeling the output might not be fully
-                                // // correct for later expressions, as this relies
-                                // // on the parser to recognize real and integer
-                                // // values for later instructions.
                                 $$->address = 0;
                                 $$->size = $1->size;
                                 insert(*$$);
@@ -206,10 +187,8 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               $$ = malloc(sizeof(struct statement));
               $$->exp = $1;
               $$->link = $2;
-              //insertStmt($$);
              }
             |assignstmt { // Only one assignment
-              // printf("Only one assignment");
               $$ = malloc(sizeof(struct statement));
               $$->exp = $1;
               // Added the temp struct to insert the last expressions into the linked list.
@@ -222,22 +201,11 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               // Note that if else statements will be parsed using this rule...
               $$ = malloc(sizeof(struct statement));
               $$->if_stmt = $1;
-              // if($2->link != NULL) {
-              //   $$->link = $2->link;
-              //   printf("MADE IT HERE\n");
-              // }
-              // else {
-              //   $$->link = $2;
-              // }
               $$->link = $2;
               $$->isCond = 1;
-              // if($$->if_stmt->tempLink != NULL) {
-              //   $$->link->link = $$->if_stmt->tempLink;
-              // }
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
-              // printf("Controlstmt\n");
               if(DEBUG) printf("Got to controlstmt programbody\n");
             }
             |controlstmt {
@@ -246,20 +214,11 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               // Added the temp struct to insert the last expressions into the linked list.
               struct statement *temp = malloc(sizeof(struct statement));
               temp->if_stmt = $$->if_stmt;
-              // if($1->body->link != NULL) {
-              //   printf("Got here temp link\n");
-              //   temp->link = $1->body->link;
-              // }
-              // else {
-              //   temp->link = NULL;
-              // }
-              // temp->link = NULL;
               $$->link = temp;
               $$->isCond = 1;
               if($1->isIfElse == 1) {
                 $$->isIfElse = 1;
               }
-              // printf("Controlstmt2\n");
               if(DEBUG) printf("Got to controlstmt\n");
             }
             |outputstmt programbody {
@@ -310,13 +269,6 @@ programbody: assignstmt programbody { // Multiple assignments, removed endmainst
               temp->while_stmt = $$->while_stmt;
               $$->link = temp;
               $$->isWhile = 1;
-              // $$ = malloc(sizeof(struct statement));
-              // struct statement *temp = malloc(sizeof(struct statement));
-              // temp->while_stmt = $1;
-              // temp->link = NULL;
-              // $$->link = temp;
-              // // $$->link->while_stmt = temp->while_stmt;
-              // $$->isWhile = 1;
 
               if(DEBUG) printf("Finished whilestmt\n");
             }
@@ -369,19 +321,6 @@ assignstmt: VAR assign bexp SEMICOLON
               if(DEBUG) printf("Address %d\n", $$->address);
               $$->arrayOffset = 0;
             }
-            // |VAR LBRACK LITINT RBRACK assign bexp SEMICOLON
-            // { // So this only works for array's with integer references...
-            //   if(DEBUG) printf("Got to array assignment\n");
-            //   $$ = malloc(sizeof(struct ast_expression));
-            //   $$->kind = KIND_OP;
-            //   $$->operator = OP_ASGN;
-            //   $$->target = &table->table[isPresent($1)];
-            //   $$->address = $$->target->address + $3;
-            //   $$->r_operand = $6;
-            //   if(DEBUG) printf("Address: %d\n", $$->address);
-            //   $$->arrayOffset = $$->address;
-            //   assignStmtTargets($$, $$->target);
-            // }
             |VAR LBRACK bexp RBRACK assign bexp SEMICOLON {
               if(DEBUG) printf("Got to array assignment\n");
               $$ = malloc(sizeof(struct ast_expression));
@@ -423,7 +362,6 @@ bexp: bexp AND rexp { // Code to parse & booleans, bexp = Boolean Expression
       }
       |rexp {
         $$ = $1;
-        // $$->type = $1->type;
       }
       ;
 
@@ -478,11 +416,7 @@ rexp: rexp LESS exp { // Code to parse < booleans, rexp = Relation Expression
                        ;
     |exp {
       if(DEBUG) printf("Got to exp\n");
-      //$$ = malloc(sizeof(struct ast_expression));
-      //$$->kind = KIND_OP;
-      //$$->l_operand = $1;
       $$ = $1;
-      // $$->type = $1->type;
     }
 
 exp: exp ADD term {// Code to parse expressions
@@ -503,11 +437,7 @@ exp: exp ADD term {// Code to parse expressions
                     }
     |term {
             if(DEBUG) printf("Got to term\n");
-            //$$ = malloc(sizeof(struct ast_expression));
-            //$$->kind = KIND_OP;
-            //$$->l_operand = $1;
             $$ = $1;
-            // $$->type = $1->type;
           }
           ;
 
@@ -529,11 +459,7 @@ term: term MULT factor {
                       }
      |factor {
               if(DEBUG) printf("Got to factor\n");
-                //$$ = malloc(sizeof(struct ast_expression));
-                //$$->kind = KIND_OP;
-                //$$->l_operand = $1;
                 $$ = $1;
-                // $$->type = $1->type;
              }
              ;
 factor: MINUS unit {
@@ -546,7 +472,6 @@ factor: MINUS unit {
        |unit {
               if(DEBUG) printf("Got to unit\n");
               $$ = $1;
-              // $$->type = $1->type;
              }
              ;
 
@@ -570,7 +495,6 @@ unit: LITINT { // Parses integers
                 }
        |LPAREN bexp RPAREN {
                             if(DEBUG) printf("Got to parenthesized expression\n");
-                            // $2 = malloc(sizeof(struct ast_expression));
                             $$ = $2;
                           }
        |VAR {
@@ -583,41 +507,15 @@ unit: LITINT { // Parses integers
          if(DEBUG) printf("varType: %d\n", varType);
          if(varType == TYPE_INT) {
            $$->l_operand = malloc(sizeof(struct ast_expression)); // Trying to hack together a solution with this
-          //  $$->l_operand->kind = KIND_INT;
            $$->l_operand->type = TYPE_VAR;
            $$->l_operand->target = &table->table[tableLoc];
          }
          if(varType == TYPE_REAL) {
            $$->l_operand = malloc(sizeof(struct ast_expression)); // Trying to hack together a solution with this
-          //  $$->l_operand->kind = KIND_REAL;
            $$->l_operand->type = TYPE_VAR;
            $$->l_operand->target = &table->table[tableLoc];
          }
        }
-      //  |VAR LBRACK LITINT RBRACK {
-      //    // This works for array references that are integers
-      //    if(DEBUG) printf("Got to VAR LBRACK LITINT RBRACK\n");
-      //    $$ = malloc(sizeof(struct ast_expression));
-      //    $$->type = TYPE_VAR;
-      //    int tableLoc = isPresent($1);
-      //    if(DEBUG) printf("tableLoc: %d\n", tableLoc);
-      //    int varType = table->table[tableLoc].type;
-      //    if(DEBUG) printf("varType: %d\n", varType);
-      //    if(varType == TYPE_INT) {
-      //      $$->l_operand = malloc(sizeof(struct ast_expression));
-      //      $$->l_operand->type = TYPE_VAR;
-      //      $$->l_operand->target = &table->table[tableLoc];
-      //     //  $$->l_operand->address = table->table[tableLoc].address + $3;
-      //      $$->l_operand->arrayOffset = $3;
-      //    }
-      //    if(varType == TYPE_REAL) {
-      //      $$->l_operand = malloc(sizeof(struct ast_expression));
-      //      $$->l_operand->type = TYPE_VAR;
-      //      $$->l_operand->target = &table->table[tableLoc];
-      //     //  $$->l_operand->address = table->table[tableLoc].address + $3;
-      //      $$->l_operand->arrayOffset = $3;
-      //    }
-      //  }
        |VAR LBRACK bexp RBRACK {
          // This is a rewritten portion of the above code that deals with
          // array references involving expressions
@@ -631,46 +529,22 @@ unit: LITINT { // Parses integers
            $$->l_operand->type = TYPE_VAR;
            $$->l_operand->target = &table->table[tableLoc]; // Get initial location of array
            $$->r_operand = $3;
-          //  $$->r_operand->target = $3->target;
          }
          if(varType == TYPE_REAL) {
            $$->l_operand = malloc(sizeof(struct ast_expression));
            $$->l_operand->type = TYPE_VAR;
            $$->l_operand->target = &table->table[tableLoc]; // Get initial location of array
            $$->r_operand = $3;
-          //  $$->r_operand->target = $3->target;
          }
          assignStmtTargets($$, &table->table[tableLoc]);
        }
        ;
 
-// controlstmt: RWIF bexp SEMICOLON RWEND RWIF SEMICOLON // condstmt is a conditional, may need to have this read in programbody after the first semicolon?
-//             |RWELSE SEMICOLON RWEND RWIF SEMICOLON
-//             ;
-
 outputstmt: RWPRINT printlist {
               if(DEBUG) printf("Got to outputstmt: RWPRINT printlist\n");
-              // printf("printlist = %s\n", $2); // Doesn't work with carriage returns
               $$ = malloc(sizeof(struct ast_expression));
               $$->operator = OP_PRINT;
               $$->r_operand = $2;
-              // printf("%d\n",strlen($$->charString));
-              // char buf[1024];
-              // struct ast_expression *tempExp = $$->r_operand;
-              // while(tempExp != NULL) {
-              //   // Parse the entire charstring
-              //   // printf("GOT HERE\n");
-              //   if(tempExp->l_operand != NULL) {
-              //     tempExp = tempExp->r_operand;
-              //     continue;
-              //   }
-              //   strcat(buf, tempExp->charString);
-              //   printf("%s\n",buf);
-              //   tempExp = tempExp->r_operand;
-              // }
-            // if(DEBUG) printf("buf = %s\n", buf);
-            //   $$->charString = strdup(buf);
-            // if(DEBUG) printf("Got out of loop\n");
             };
 
 printlist: CHARSTRING printlist {
@@ -686,9 +560,6 @@ printlist: CHARSTRING printlist {
             if(DEBUG) printf("CHARSTRING: %s\n", $1);
             $$ = malloc(sizeof(struct ast_expression));
             $$->r_operand = malloc(sizeof(struct ast_expression));
-            // Temporarily getting rid of this comma to see if it makes printing easier
-            // char *temp = ",";
-            // strncat($1, temp, 1); // Append a comma to this string.
             $$->charString = $1;
             $$->r_operand = $3;
           }
@@ -709,10 +580,6 @@ printlist: CHARSTRING printlist {
           |bexp COMMA printlist {
             if(DEBUG) printf("Got to bexp COMMA printlist\n");
             $$ = malloc(sizeof(struct ast_expression));
-            // $$->r_operand = $3;
-            // What if I set $$->l_operand to $1? Then I could just parse that part for bexp's...
-            // $$ = $1;
-            // $$->charString = $3->charString;
             $$->l_operand = malloc(sizeof(struct ast_expression));
             $$->r_operand = malloc(sizeof(struct ast_expression));
             $$->l_operand = $1;
@@ -721,23 +588,12 @@ printlist: CHARSTRING printlist {
           |bexp SEMICOLON{
             $$ = malloc(sizeof(struct ast_expression));
             if(DEBUG) printf("Got to bexp SEMICOLON\n");
-            // $$->charString = NULL;
             // Added for debug...
             $$->l_operand = malloc(sizeof(struct ast_expression));
             $$->l_operand = $1;
-            // $$->r_operand = malloc(sizeof(struct ast_expression));
-            // $$->r_operand = $1;
-            // Variable references are stored on the l_operand side of an exp
-            // There's a segfault under this line... probably because the address isn't being assigned if a literal is passed in?
-            // $$->address = $$->l_operand->target->address;
-            // $$->target = &table->table[isPresent($1->l_operand->target->name)];
-            // printf("$1->l_operand->target->name: %s\n", $1->l_operand->target->name);
-            // $$->r_operand->charString = NULL;
-            // $$->charString = "Found_a_vari";
           }
           |SEMICOLON {
             $$ = NULL;
-            // $$->r_operand = NULL;
           }
           ;
 
@@ -748,39 +604,6 @@ inputstmt: RWREAD varref SEMICOLON {
               $$->operator = OP_READ;
            }
            ;
-
-// Kind of surprised that this rule did not produce any shift/reduce conflicts.
-// Would not be a bad plan to keep an eye on it and watch for conflicts.
-// controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
-//              if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON\n");
-//              $$ = malloc(sizeof(struct ast_if_stmt));
-//              // Testing something to fix nested if statements
-//              $$->if_link = malloc(sizeof(struct ast_if_stmt));
-//              $$->if_link->conditional_stmt = $2;
-//              $$->if_link->body = $4;
-//              $$->if_link->isIfElse = 0;
-//             //  $$->conditional_stmt = $2;
-//             //  $$->body = $4;
-//             //  $$->isIfElse = 0;
-//              if(DEBUG) printf("Got to end of if statement\n");
-//            }
-//            |RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON {
-//              if(DEBUG) printf("Got to controlstmt RWIF bexp SEMICOLON programbody RWELSE SEMICOLON programbody RWEND RWIF SEMICOLON\n");
-//              $$ = malloc(sizeof(struct ast_if_stmt));
-//              $$->if_link = malloc(sizeof(struct ast_if_stmt));
-//              $$->if_link->conditional_stmt = $2;
-//              $$->if_link->body = $4;
-//              $$->if_link->if_link = malloc(sizeof(struct ast_if_stmt));
-//              $$->if_link->if_link->body = $7;
-//              $$->if_link->isIfElse = 1;
-//             //  $$->conditional_stmt = $2;
-//             //  $$->body = $4;
-//             //  $$->if_link = malloc(sizeof(struct ast_if_stmt));
-//             //  $$->if_link->body = $7; // Dunno if this will work.
-//             //  $$->isIfElse = 1;
-//              if(DEBUG) printf("Got to end of if else statement\n");
-//            }
-//            ;
 
 controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
               if(DEBUG) printf("Found an if\n");
@@ -797,9 +620,6 @@ controlstmt: RWIF bexp SEMICOLON programbody RWEND RWIF SEMICOLON {
                // Added the tempLink structure to actually get nested if statements to work when else statements are present.
                $$->tempLink = malloc(sizeof(struct statement));
                $$->tempLink = $7;
-              //  $$->body->link = malloc(sizeof(struct statement));
-              //  $$->body->link = $7;
-              //  $$->body->link->isCond = 1;
               $$->isIfElse = 1;
              }
              ;

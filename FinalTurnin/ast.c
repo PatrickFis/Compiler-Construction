@@ -14,6 +14,7 @@ char instructionList[10000][100]; // Instructions will be stored in this array..
 // This will be incremented to determine where instructions need to go in the array
 int instructionCounter = 0;
 
+// Inserts statements into the abstract syntax tree.
 void insertStmt(struct statement *stmt) {
   count++;
   // printf("stmt->exp->kind: %d\n", stmt->exp->operator);
@@ -100,6 +101,7 @@ void codeGenIfv2(struct statement *next) {
   struct ast_if_stmt *nextCopy = malloc(sizeof(struct ast_if_stmt));
   nextCopy = next->if_stmt;
   int sawElse = 0;
+  
   // Parse the conditional statement
   exprgenv2(nextCopy->conditional_stmt);
   int jumpLocation = instructionCounter;
@@ -269,9 +271,6 @@ void codeGenCount(struct statement *next) {
 /*
 *  This function recursively assigns targets to expressions, which allows the
 *  code generator to know what kind of instructions to print.
-*  Checkpoint 7 - Found a bug in this that caused expressions with more than one
-*  operation to fail. Fixed by returning from this function if exp->kind
-*  is equal to KIND_OP.
 */
 void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) {
   if(exp->type == TYPE_VAR) {
@@ -304,11 +303,8 @@ void assignTarget(struct ast_expression *exp, struct symbol_table_entry target) 
 
 void parsePrintv3(struct ast_expression *exp) {
   struct ast_expression *x = exp->r_operand;
-  // if(x->charString == NULL) printf("NULL\n");
-  // char *giantString = malloc(sizeof(char));
   if(x != NULL) {
     if(x->charString != NULL) {
-      // printf("%s\n", x->charString);
       int i;
       // Print a newline character
       if(strcmp(x->charString, "!,") == 0 || strcmp(x->charString, "!") == 0) {
@@ -316,7 +312,6 @@ void parsePrintv3(struct ast_expression *exp) {
       }
       // Print characters enclosed by quotation marks. Will add a check for "" later.
       for(i = 1; i < strlen(x->charString)-1; i++) {
-        // printf("%d\n", (int)x->charString[i]);
         sprintf(instructionList[instructionCounter++], "LLI %d", (int)x->charString[i]);
         sprintf(instructionList[instructionCounter++], "PTC");
         if(strcmp(instructionList[instructionCounter-2], "LLI 34") == 0) {
@@ -326,12 +321,6 @@ void parsePrintv3(struct ast_expression *exp) {
         }
       }
     }
-    // if(x->r_operand != NULL) {
-    //   if(strcmp(instructionList[instructionCounter-1], "PTL") == 0) {
-    //     sprintf(instructionList[instructionCounter++], "LLI 34");
-    //     sprintf(instructionList[instructionCounter++], "PTC");
-    //   }
-    // }
     /*
     *  Tree is structed like this... exp->r_operand->r_operand->r_operand...
     *  If r_operand has a charString, then it should be printed.
@@ -345,17 +334,21 @@ void parsePrintv3(struct ast_expression *exp) {
       int iCounterAfter = instructionCounter;
       if(DEBUG) printf("iB: %d, iA: %d\n", iCounterBefore, iCounterAfter);
 
-      // Get the first instruction inserted by the above call to exprgen and
-      // find the address used by it. May need to change this to scan all
-      // instructions generated between iCounterBefore and iCounterAfter.
-      // Getting the tokens from a copy because apparently using strtok modifies
-      // the target of the function.
+      /* Get the first instruction inserted by the above call to exprgen and
+       * find the address used by it. May need to change this to scan all
+       * instructions generated between iCounterBefore and iCounterAfter.
+       * Getting the tokens from a copy because apparently using strtok modifies
+       * the target of the function.
+       */
       char *iListCopy = malloc(sizeof(strlen(instructionList[iCounterBefore])));
       strcpy(iListCopy, instructionList[iCounterBefore]);
       char *targetToken = strtok(iListCopy, " ");
       targetToken = strtok(NULL, " ");
       int tar = atoi(targetToken);
-      // So if there are multiple arrays in a program tar may get the wrong number, since it actually get's the address of something
+      /* So if there are multiple arrays in a program tar may get the wrong number,
+       * since it actually get's the address of something.
+       * The for loop should fix that issue.
+       */
       struct symbol_table_entry *findTarget = malloc(sizeof(struct symbol_table_entry));
       for(int i = 0; i < table->count; i++) {
         findTarget = &table->table[i];
@@ -376,6 +369,11 @@ void parsePrintv3(struct ast_expression *exp) {
   }
 }
 
+/*
+ *  This code goes through expressions and generates code based on an operator
+ *  supplied by the parser. It does some error checking in case an expression
+ *  with an array is passed in as an argument.
+ */
 void exprgenv2(struct ast_expression *exp) {
   struct symbol_table_entry *tempInt = malloc(sizeof(struct symbol_table_entry));
   struct symbol_table_entry *tempReal = malloc(sizeof(struct symbol_table_entry));
@@ -390,47 +388,31 @@ void exprgenv2(struct ast_expression *exp) {
       char *ins = strtok(strCpy, " "); // Get the instruction
       if(strcmp(ins, "ITF") == 0) {
         exp->target = tempReal;
-        // printf("assigned int\n");
         break;
       }
       else if(strcmp(ins, "FTI") == 0) {
         exp->target = tempInt;
-        // printf("assigned real\n");
         break;
       }
       else if(strcmp(ins, "LAA") == 0) {
         ins = strtok(NULL, " "); // Get address
         if(table->table[atoi(ins)].type == TYPE_INT) {
           exp->target = tempInt;
-          // printf("assigned int\n");
           break;
         }
         else if(table->table[atoi(ins)].type == TYPE_REAL) {
           exp->target = tempReal;
-          // printf("assigned real\n");
           break;
         }
       }
     }
   }
-  // if(exp->target == NULL) {
-  //   printf("FOUND A NULL TARGET, THIS IS A PROBLEM\n");
-  // }
   if(exp->operator == OP_EXIT) {
     if(DEBUG) printf("Found an OP_EXIT\n");
     sprintf(instructionList[instructionCounter++], "HLT");
     return;
   }
   if(exp->operator == OP_PRINT) { // This occurs if an expression is a print statement
-    // printf("Got to OP_PRINT\n");
-    // if(exp->r_operand != NULL)exprgen(exp->r_operand);
-    // struct ast_expression *x = exp->r_operand;
-    // while(x != NULL) {
-    //   printf("x->charString, %s\n", x->charString);
-    //   x = x->r_operand;
-    // }
-    // printf("exp->charString, %s\n", exp->charString);
-    // parsePrintStatementv2(exp);
     parsePrintv3(exp);
     return;
   }
@@ -487,7 +469,6 @@ void exprgenv2(struct ast_expression *exp) {
       // Load the base address of the array, evaluate the r_operand, and then
       // add them together to get the correct memory address.
       sprintf(instructionList[instructionCounter++], "LLI %d", exp->l_operand->target->address);
-      // exp->r_operand->target = exp->l_operand->target;
       exprgenv2(exp->r_operand);
       if(strcmp(instructionList[instructionCounter - 1], "ITF") == 0) {
         instructionCounter--;
@@ -496,27 +477,12 @@ void exprgenv2(struct ast_expression *exp) {
       sprintf(instructionList[instructionCounter++], "LOD");
       return;
     }
-    // if(exp->l_operand->r_operand != NULL) {
-    //   // This will be executed if the array index is an expression
-    //   printf("Possible array reference?\n");
-    //   // Load the base address of the array
-    //   sprintf(instructionList[instructionCounter++], "LLI %d", exp->l_operand->target->address);
-    //   // Evaluate the array index
-    //   printf("Above exp\n");
-    //   exprgenv2(exp->l_operand->r_operand);
-    //   // Add the value of the index to the base address and load the correct memory location
-    //   sprintf(instructionList[instructionCounter++], "ADI");
-    //   sprintf(instructionList[instructionCounter++], "LOD");
-    //   return;
-    // }
   }
   if(DEBUG) printf("Got to switch statement\n");
   switch(exp->operator) {
     case OP_ASGN:
       if(DEBUG) printf("Got to OP_ASGN\n");
-      // assignTarget(exp, *exp->target);
       // Load values
-      // printf("OP_ASGN FOUND\n");
       if(exp->target->kind == KIND_ARRAY) {
         // This portion will be used if an array reference is found.
         // I noticed that my array's required integer values to be used as the
@@ -537,24 +503,19 @@ void exprgenv2(struct ast_expression *exp) {
       }
       if(exp->r_operand != NULL) {// Load the address used for assignment
         if(DEBUG) printf("r_operand != NULL\n");
-        // printf("LAA %d\n", exp->address);
         sprintf(instructionList[instructionCounter++], "LAA %d", exp->address);
         exprgenv2(exp->r_operand);
-        // exprgen(exp->l_operand);
       }
       if(exp->l_operand != NULL) {// This check is probably unnecessary
         // This check may actually be useful for array references
         if(DEBUG) printf("l_operand != NULL\n");
         exprgenv2(exp->l_operand);
       }
-      // if(exp->r_operand != NULL) // Why is this check here?
-      //   exprgen(exp->r_operand);
       if(exp->l_operand == NULL && exp->r_operand != NULL) {
         if(DEBUG) printf("Got to STO\n");
         // Surprisingly, checking if r_operand is not NULL seems to have fixed
         // an issue where the STO instruction was being printed more than
         // once.
-        // printf("STO\n");
         sprintf(instructionList[instructionCounter++], "STO");
       }
       break;
@@ -570,8 +531,6 @@ void exprgenv2(struct ast_expression *exp) {
       break;
 
     case OP_ADD:
-      // printf("GOT TO OP_ADD PORTION!!!\n");
-      // printf("exp->type: %d\n", exp->type);
       if(exp->l_operand != NULL) exprgenv2(exp->l_operand);
       if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
       if(exp->target->type == 0) {
@@ -688,17 +647,11 @@ void exprgenv2(struct ast_expression *exp) {
       if(exp->target->type == 0) {
         // Boolean and = multiplication
         // If the result is != 0, then the result is true.
-        // printf("MLI\n");
-        // printf("LLI 1\n");
-        // printf("EQI\n"); // Check if l_op * r_op = 1
         sprintf(instructionList[instructionCounter++], "MLI");
         sprintf(instructionList[instructionCounter++], "LLI 0");
         sprintf(instructionList[instructionCounter++], "NEI");
       }
       else if(exp->target->type == 1) {
-        // printf("MLF\n");
-        // printf("LLF 1.0\n");
-        // printf("EQF\n");
         sprintf(instructionList[instructionCounter++], "MLF");
         sprintf(instructionList[instructionCounter++], "LLF 0.0");
         sprintf(instructionList[instructionCounter++], "NEF");
@@ -722,13 +675,10 @@ void exprgenv2(struct ast_expression *exp) {
       break;
 
     case OP_NOT:
-      // if(exp->l_operand != NULL) exprgen(exp->l_operand);
       if(exp->r_operand != NULL) exprgenv2(exp->r_operand);
-      // printf("exp->type %d\n", exp->type);
       if(exp->target->type == 0) {
         // Boolean not = complement
-        // printf("LLI 0\n");
-        // printf("NEI\n"); // If exp != 0, then exp is true
+         // If exp != 0, then exp is true
         sprintf(instructionList[instructionCounter++], "LLI 0");
         sprintf(instructionList[instructionCounter++], "NEI");
       }
