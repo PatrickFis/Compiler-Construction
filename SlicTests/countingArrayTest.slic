@@ -1,19 +1,26 @@
 main;
 	data:
+		integer: x;
 		integer: array[10];
 		real: rA[20];
 		integer: i;
 	algorithm:
-		array[2] := 7;
-		array[9] := 12/2;
-		array[array[2]+1] := 1337;
-		print array[7],!;
-		print array[array[2] + 1],!;
-		counting array[0.9] upward 0 to 10;
-			print array[0],!;
+		#array[2] := 7;
+		#array[9] := 12/2;
+		#array[array[2]+1] := 1337;
+		#print array[7],!;
+		#print array[array[2] + 1],!;
+		#counting array[0.9] upward 0 to 10;
+		#	print array[0],!;
+		#	end counting;
+		#counting i downward 19 to 0;
+		#	rA[i] := i;
+		#	end counting;
+		#print rA[2],!;
+		counting array[4] upward 0 to 2;
+			print array[4],!;
 			end counting;
-		counting i downward 19 to 0;
-			rA[i] := i;
-			end counting;
-		print rA[2],!;
+		#counting rA[1] upward 0 to 2;
+		#	print rA[1],!;
+		#	end counting;
 end main;

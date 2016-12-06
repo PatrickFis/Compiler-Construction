@@ -206,11 +206,35 @@ void codeGenWhile(struct statement *next) {
 void codeGenCount(struct statement *next) {
   struct ast_counting_stmt *countCopy = malloc(sizeof(struct ast_counting_stmt));
   countCopy = next->count_stmt; // Copy the counting statement into countCopy like if and while statements
+  int baseAddr = countCopy->target_assignment->address; // Store the address of the counting variable
   exprgenv2(countCopy->target_assignment); // Assign the target variable the value stored in startexpr
   int loop_location = instructionCounter; // Store the location that should be jumped to after the loop iterates
   // Load the counting variable
-  sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
-  sprintf(instructionList[instructionCounter++], "LOD");
+  for(int i = 0; i < table->count; i++) {
+    // So if an array is used as the counting variable it is entirely possible that
+    // the target address will not be in the symbol table. This should fix any
+    // loading issues.
+    struct symbol_table_entry *tempTableEntry = malloc(sizeof(struct symbol_table_entry));
+    tempTableEntry = &table->table[i];
+    if(baseAddr == tempTableEntry->address) {
+      // printf("i = %d\n", i);
+      baseAddr = i;
+      // countCopy->target_assignment->address = i;
+      break;
+    }
+  }
+  if(table->table[baseAddr].kind == KIND_ARRAY) {
+    // This is executed if the counting variable is an array reference
+    baseAddr = countCopy->target_assignment->address;
+    sprintf(instructionList[instructionCounter++], "LLI %d", baseAddr);
+    exprgenv2(countCopy->target_assignment->l_operand);
+    sprintf(instructionList[instructionCounter++], "ADI");
+    sprintf(instructionList[instructionCounter++], "LOD");
+  }
+  else {
+    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+    sprintf(instructionList[instructionCounter++], "LOD");
+  }
   // Assign the counting variable as a target for endexpr, this just makes generating an expression easier
   countCopy->endexpr->target = &table->table[countCopy->target_assignment->address];
   // Generate code for the end expression
@@ -246,22 +270,64 @@ void codeGenCount(struct statement *next) {
   }
   if(countCopy->direction == 1) {
     // Add one to the target variable
-    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
-    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
-    sprintf(instructionList[instructionCounter++], "LOD");
+    if(table->table[baseAddr].kind == KIND_ARRAY) {
+      // This must be done to properly increment the counting variable if it is
+      // an array reference
+      sprintf(instructionList[instructionCounter++], "LLI %d", baseAddr);
+      exprgenv2(countCopy->target_assignment->l_operand);
+      sprintf(instructionList[instructionCounter++], "ADI");
+      sprintf(instructionList[instructionCounter++], "LLI %d", baseAddr);
+      exprgenv2(countCopy->target_assignment->l_operand);
+      sprintf(instructionList[instructionCounter++], "ADI");
+      sprintf(instructionList[instructionCounter++], "LOD");
+    }
+    else {
+      sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+      sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+      sprintf(instructionList[instructionCounter++], "LOD");
+    }
+    if(table->table[countCopy->target_assignment->address].type == 1) {
+      // If counting variable is a real, convert it.
+      sprintf(instructionList[instructionCounter++], "FTI");
+    }
     sprintf(instructionList[instructionCounter++], "LLI 1");
     sprintf(instructionList[instructionCounter++], "ADI");
+    if(table->table[countCopy->target_assignment->address].type == 1) {
+      // If counting variable is a real, convert it back to a floating point number.
+      sprintf(instructionList[instructionCounter++], "ITF");
+    }
     sprintf(instructionList[instructionCounter++], "STO");
     sprintf(instructionList[instructionCounter++], "JMP %d", loop_location);
     sprintf(instructionList[JPF_loc], "JPF %d", instructionCounter);
   }
   else if(countCopy->direction == 0) {
     // Subtract one from the target variable
-    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
-    sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
-    sprintf(instructionList[instructionCounter++], "LOD");
+    if(table->table[baseAddr].kind == KIND_ARRAY) {
+      // This must be done to properly increment the counting variable if it is
+      // an array reference
+      sprintf(instructionList[instructionCounter++], "LLI %d", baseAddr);
+      exprgenv2(countCopy->target_assignment->l_operand);
+      sprintf(instructionList[instructionCounter++], "ADI");
+      sprintf(instructionList[instructionCounter++], "LLI %d", baseAddr);
+      exprgenv2(countCopy->target_assignment->l_operand);
+      sprintf(instructionList[instructionCounter++], "ADI");
+      sprintf(instructionList[instructionCounter++], "LOD");
+    }
+    else {
+      sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+      sprintf(instructionList[instructionCounter++], "LAA %d", countCopy->target_assignment->address);
+      sprintf(instructionList[instructionCounter++], "LOD");
+    }
+    if(table->table[countCopy->target_assignment->address].type == 1) {
+      // If counting variable is a real, convert it.
+      sprintf(instructionList[instructionCounter++], "FTI");
+    }
     sprintf(instructionList[instructionCounter++], "LLI 1");
     sprintf(instructionList[instructionCounter++], "SBI");
+    if(table->table[countCopy->target_assignment->address].type == 1) {
+      // If counting variable is a real, convert it back to a floating point number.
+      sprintf(instructionList[instructionCounter++], "ITF");
+    }
     sprintf(instructionList[instructionCounter++], "STO");
     sprintf(instructionList[instructionCounter++], "JMP %d", loop_location);
     sprintf(instructionList[JPF_loc], "JPF %d", instructionCounter);
