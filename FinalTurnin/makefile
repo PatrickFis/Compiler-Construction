@@ -1,7 +1,7 @@
 a.out: parse.y flex.l main.c
 	bison -y -d parse.y
 	flex flex.l
-	gcc lex.yy.c y.tab.c main.c stable.c stable.h ast.c ast.h bisonHelper.c bisonHelper.h -ll
+	gcc lex.yy.c y.tab.c main.c stable.c stable.h ast.c ast.h bisonHelper.c bisonHelper.h -lfl
 
 debug: parse.y flex.l main.c
 	bison --debug --verbose -y -d parse.y
